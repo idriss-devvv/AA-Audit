@@ -1,8 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
+
+type UploadResult = {
+  status: "processed" | "pending" | "error";
+  anomaliesCount?: number;
+};
 
 function UploadIcon() {
   return (
@@ -24,10 +30,12 @@ function UploadIcon() {
 }
 
 export function PayslipUploadButton() {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<UploadState>("idle");
   const [fileName, setFileName] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [result, setResult] = useState<UploadResult | null>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -35,6 +43,7 @@ export function PayslipUploadButton() {
 
     setFileName(file.name);
     setErrorMessage(null);
+    setResult(null);
     setStatus("uploading");
 
     const formData = new FormData();
@@ -53,7 +62,9 @@ export function PayslipUploadButton() {
         return;
       }
 
+      setResult(data);
       setStatus("success");
+      router.refresh();
     } catch {
       setErrorMessage("Une erreur est survenue, réessayez.");
       setStatus("error");
@@ -92,7 +103,11 @@ export function PayslipUploadButton() {
       )}
       {status === "success" && (
         <p className="text-sm font-medium text-blue-600">
-          {fileName} reçu ✓ — l&apos;analyse automatique arrive bientôt.
+          {result?.status === "processed"
+            ? result.anomaliesCount && result.anomaliesCount > 0
+              ? `${fileName} analysé ✓ — ${result.anomaliesCount} anomalie(s) détectée(s), consultez l'onglet Anomalies.`
+              : `${fileName} analysé ✓ — aucune anomalie détectée.`
+            : `${fileName} reçu ✓ — stocké en sécurité, analyse en attente.`}
         </p>
       )}
       {status === "error" && (

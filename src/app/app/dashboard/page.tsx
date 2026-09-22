@@ -1,12 +1,22 @@
 import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
+import { createClient } from "@/lib/supabase/server";
 
-const stats = [
-  { label: "Fiches contrôlées", value: "0" },
-  { label: "Anomalies détectées", value: "0" },
-  { label: "Employés suivis", value: "0" },
-];
+export default async function DashboardPage() {
+  const supabase = await createClient();
 
-export default function DashboardPage() {
+  const [{ count: payslipsCount }, { count: anomaliesCount }, { count: employeesCount }] =
+    await Promise.all([
+      supabase.from("payslips").select("*", { count: "exact", head: true }),
+      supabase.from("anomalies").select("*", { count: "exact", head: true }),
+      supabase.from("employees").select("*", { count: "exact", head: true }),
+    ]);
+
+  const stats = [
+    { label: "Fiches contrôlées", value: String(payslipsCount ?? 0) },
+    { label: "Anomalies détectées", value: String(anomaliesCount ?? 0) },
+    { label: "Employés suivis", value: String(employeesCount ?? 0) },
+  ];
+
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold text-ink-900">Tableau de bord</h1>

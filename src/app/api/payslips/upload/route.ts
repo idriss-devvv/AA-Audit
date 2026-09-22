@@ -1,14 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
+// Import direct du module interne : évite le mode "debug" de pdf-parse qui
+// tente de lire un fichier de test au chargement quand il est bundlé par Next.js.
+import pdfParse from "pdf-parse/lib/pdf-parse.js";
+import { createClient } from "@/lib/supabase/server";
+import { parsePayslip } from "@/lib/parsers/payslip-parser";
+import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
+import type { PayslipData } from "@/types/payslip";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo
 const ALLOWED_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 
 /**
  * POST /api/payslips/upload
- * Reçoit une fiche de paie (PDF ou image) et la stocke avant analyse.
- * À implémenter : stockage (Vercel Blob/S3) + parsing (src/lib/parsers).
+ *
+ * Reçoit une fiche de paie (PDF ou image), la stocke dans le bucket privé
+ * "payslips" (dossier = id de l'utilisateur), extrait les données (PDF
+ * uniquement pour l'instant), enregistre la fiche + les anomalies détectées
+ * en base. Grâce aux policies RLS, seul l'utilisateur qui a uploadé la fiche
+ * peut y accéder ensuite.
  */
 export async function POST(req: NextRequest) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Vous devez être connecté." }, { status: 401 });
+  }
+
   const formData = await req.formData();
   const file = formData.get("file");
 
@@ -30,8 +54,137 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // TODO: stocker le fichier (Vercel Blob/S3), extraire les données
-  // (src/lib/parsers) et créer l'entrée Payslip en base (src/lib/db.ts).
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("company_id, full_name")
+    .eq("id", user.id)
+    .single();
 
-  return NextResponse.json({ status: "received", fileName: file.name });
+  if (profileError || !profile?.company_id) {
+    return NextResponse.json(
+      { error: "Profil ou entreprise introuvable pour cet utilisateur." },
+      { status: 400 }
+    );
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  // 1. Stockage du fichier original — dossier nommé d'après l'utilisateur,
+  // ce qui permet aux policies RLS du bucket de restreindre l'accès.
+  const extension = file.name.split(".").pop()?.toLowerCase() || "pdf";
+  const storagePath = `${user.id}/${randomUUID()}.${extension}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("payslips")
+    .upload(storagePath, buffer, { contentType: file.type, upsert: false });
+
+  if (uploadError) {
+    return NextResponse.json(
+      { error: `Échec du stockage du fichier : ${uploadError.message}` },
+      { status: 500 }
+    );
+  }
+
+  // 2. Extraction des données — pour l'instant uniquement pour les PDF
+  // (les images nécessiteront un moteur OCR, à brancher plus tard).
+  let extracted: PayslipData | null = null;
+  let status: "processed" | "pending" | "error" = "pending";
+
+  if (file.type === "application/pdf") {
+    try {
+      const pdfResult = await pdfParse(buffer);
+      extracted = parsePayslip(pdfResult.text);
+      status = "processed";
+    } catch {
+      status = "error";
+    }
+  }
+
+  // 3. Fiche "employé" représentant le titulaire du compte (find-or-create),
+  // pour rester compatible avec le schéma existant (payslips -> employee).
+  const employeeRef = user.id;
+  const { data: existingEmployee } = await supabase
+    .from("employees")
+    .select("id")
+    .eq("company_id", profile.company_id)
+    .eq("employee_ref", employeeRef)
+    .maybeSingle();
+
+  let employeeId: string | undefined = existingEmployee?.id;
+
+  if (!employeeId) {
+    const fullName = profile.full_name || user.email || "Salarié";
+    const [firstName, ...rest] = fullName.split(" ").filter(Boolean);
+
+    const { data: newEmployee, error: employeeError } = await supabase
+      .from("employees")
+      .insert({
+        company_id: profile.company_id,
+        first_name: firstName || "Salarié",
+        last_name: rest.join(" ") || "-",
+        employee_ref: employeeRef,
+      })
+      .select("id")
+      .single();
+
+    if (employeeError || !newEmployee) {
+      return NextResponse.json(
+        { error: "Impossible de créer la fiche employé associée." },
+        { status: 500 }
+      );
+    }
+    employeeId = newEmployee.id;
+  }
+
+  // 4. Enregistrement de la fiche de paie
+  const { data: payslip, error: payslipError } = await supabase
+    .from("payslips")
+    .insert({
+      company_id: profile.company_id,
+      employee_id: employeeId,
+      uploaded_by: user.id,
+      period: extracted?.period ?? new Date().toISOString().slice(0, 7),
+      file_url: storagePath,
+      gross_pay: extracted?.grossPay ?? null,
+      net_pay: extracted?.netPay ?? null,
+      status,
+      original_filename: file.name,
+      mime_type: file.type,
+      extracted_data: extracted,
+    })
+    .select("id")
+    .single();
+
+  if (payslipError || !payslip) {
+    return NextResponse.json(
+      { error: `Échec de l'enregistrement de la fiche : ${payslipError?.message ?? ""}` },
+      { status: 500 }
+    );
+  }
+
+  // 5. Détection d'anomalies sur les données extraites
+  let anomaliesCount = 0;
+  if (extracted) {
+    const anomalies = runAnomalyRules(extracted);
+    anomaliesCount = anomalies.length;
+
+    if (anomalies.length > 0) {
+      await supabase.from("anomalies").insert(
+        anomalies.map((anomaly) => ({
+          payslip_id: payslip.id,
+          rule_id: anomaly.ruleId,
+          severity: anomaly.severity,
+          message: anomaly.message,
+        }))
+      );
+    }
+  }
+
+  return NextResponse.json({
+    status,
+    payslipId: payslip.id,
+    fileName: file.name,
+    extracted,
+    anomaliesCount,
+  });
 }
