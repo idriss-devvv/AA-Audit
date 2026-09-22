@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { PayslipRow, type PayslipRowData } from "@/components/historique/payslip-row";
+import type { PayslipData } from "@/types/payslip";
 
 const MONTHS = [
   "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -23,7 +25,7 @@ const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   error: { label: "Erreur", className: "bg-red-100 text-red-700" },
 };
 
-type PayslipRow = {
+type PayslipRecord = {
   id: string;
   period: string | null;
   original_filename: string | null;
@@ -31,6 +33,7 @@ type PayslipRow = {
   net_pay: number | null;
   status: string;
   uploaded_at: string;
+  extracted_data: PayslipData | null;
   anomalies: { count: number }[] | null;
 };
 
@@ -38,10 +41,24 @@ export default async function HistoriquePage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("payslips")
-    .select("id, period, original_filename, gross_pay, net_pay, status, uploaded_at, anomalies(count)")
+    .select(
+      "id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, anomalies(count)"
+    )
     .order("uploaded_at", { ascending: false });
 
-  const payslips = (data as PayslipRow[] | null) ?? [];
+  const records = (data as unknown as PayslipRecord[] | null) ?? [];
+
+  const payslips: PayslipRowData[] = records.map((record) => ({
+    id: record.id,
+    fileName: record.original_filename || "Fiche de paie",
+    periodLabel: formatPeriod(record.period),
+    grossLabel: formatAmount(record.gross_pay),
+    netLabel: formatAmount(record.net_pay),
+    anomaliesCount: record.anomalies?.[0]?.count ?? 0,
+    statusInfo: STATUS_LABELS[record.status] ?? STATUS_LABELS.pending,
+    dateLabel: new Date(record.uploaded_at).toLocaleDateString("fr-FR"),
+    extracted: record.extracted_data,
+  }));
 
   return (
     <div className="p-8">
@@ -62,6 +79,7 @@ export default async function HistoriquePage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-beige-100 text-xs font-semibold uppercase tracking-wide text-ink-500">
               <tr>
+                <th className="px-3 py-3" aria-label="Détails" />
                 <th className="px-6 py-3">Fichier</th>
                 <th className="px-6 py-3">Période</th>
                 <th className="px-6 py-3">Brut</th>
@@ -72,35 +90,9 @@ export default async function HistoriquePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-beige-100">
-              {payslips.map((payslip) => {
-                const anomaliesCount = payslip.anomalies?.[0]?.count ?? 0;
-                const statusInfo = STATUS_LABELS[payslip.status] ?? STATUS_LABELS.pending;
-                return (
-                  <tr key={payslip.id}>
-                    <td className="px-6 py-4 font-medium text-ink-900">
-                      {payslip.original_filename || "Fiche de paie"}
-                    </td>
-                    <td className="px-6 py-4 text-ink-700">{formatPeriod(payslip.period)}</td>
-                    <td className="px-6 py-4 text-ink-700">{formatAmount(payslip.gross_pay)}</td>
-                    <td className="px-6 py-4 text-ink-700">{formatAmount(payslip.net_pay)}</td>
-                    <td className="px-6 py-4 text-ink-700">
-                      {anomaliesCount > 0 ? (
-                        <span className="font-semibold text-red-600">{anomaliesCount}</span>
-                      ) : (
-                        "0"
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusInfo.className}`}>
-                        {statusInfo.label}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-ink-500">
-                      {new Date(payslip.uploaded_at).toLocaleDateString("fr-FR")}
-                    </td>
-                  </tr>
-                );
-              })}
+              {payslips.map((payslip) => (
+                <PayslipRow key={payslip.id} payslip={payslip} />
+              ))}
             </tbody>
           </table>
         </div>

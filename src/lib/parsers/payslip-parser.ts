@@ -1,4 +1,4 @@
-import type { PayslipData } from "@/types/payslip";
+import type { PaidLeaveInfo, PayslipData } from "@/types/payslip";
 
 /**
  * Extrait les données structurées d'une fiche de paie à partir du texte brut
@@ -83,6 +83,52 @@ function extractContributions(text: string): { label: string; amount: number }[]
   return contributions.slice(0, 30); // garde-fou anti faux positifs sur texte mal extrait
 }
 
+/**
+ * Champs complémentaires (v1, best-effort) : convention collective, poste,
+ * ancienneté, congés payés. Formats très variables d'un logiciel de paie à
+ * l'autre — à affiner avec de vrais bulletins. Les règles de contrôle qui
+ * s'appuieront sur ces champs seront paramétrées plus tard.
+ */
+function extractCollectiveAgreement(text: string): string | null {
+  const match = text.match(/convention\s+collective(?:\s+applicable)?\s*[:\-]?\s*([^\n]{3,90})/i);
+  return match ? match[1].trim().replace(/\s{2,}/g, " ") : null;
+}
+
+function extractPosition(text: string): string | null {
+  const match = text.match(/(?:emploi|poste)\s*[:\-]?\s*([A-Za-zÀ-ÿ0-9'\- ]{2,60})/i);
+  return match ? match[1].trim().replace(/\s{2,}/g, " ") : null;
+}
+
+function extractSeniorityDate(text: string): string | null {
+  const match = text.match(/date\s+d['’]entr[ée]e\s*[:\-]?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i);
+  return match ? match[1] : null;
+}
+
+function findDaysNear(text: string, labelPattern: RegExp): number | null {
+  const match = text.match(labelPattern);
+  if (!match) return null;
+  const numberMatches = match[0].match(/\d+(?:[.,]\d+)?/g);
+  if (!numberMatches || numberMatches.length === 0) return null;
+  const value = parseFloat(numberMatches[numberMatches.length - 1].replace(",", "."));
+  return Number.isFinite(value) ? value : null;
+}
+
+function extractPaidLeave(text: string): PaidLeaveInfo {
+  const acquired = findDaysNear(
+    text,
+    /cong[ée]s?\s+pay[ée]s?[^\n\d]{0,40}acquis[^\n\d]{0,15}\d+(?:[.,]\d+)?/i
+  );
+  const taken = findDaysNear(
+    text,
+    /cong[ée]s?\s+pay[ée]s?[^\n\d]{0,60}pris[^\n\d]{0,15}\d+(?:[.,]\d+)?/i
+  );
+  const balance = findDaysNear(
+    text,
+    /(?:solde[^\n\d]{0,30}cong[ée]s?\s+pay[ée]s?|cong[ée]s?\s+pay[ée]s?[^\n\d]{0,60}solde)[^\n\d]{0,15}\d+(?:[.,]\d+)?/i
+  );
+  return { acquired, taken, balance };
+}
+
 export function parsePayslip(rawContent: string): PayslipData {
   const text = rawContent.replace(/\u0000/g, "");
 
@@ -105,5 +151,9 @@ export function parsePayslip(rawContent: string): PayslipData {
     grossPay,
     netPay,
     contributions: extractContributions(text),
+    collectiveAgreement: extractCollectiveAgreement(text),
+    position: extractPosition(text),
+    seniorityDate: extractSeniorityDate(text),
+    paidLeave: extractPaidLeave(text),
   };
 }
