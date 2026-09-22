@@ -18,6 +18,10 @@ export interface PayslipData {
   position: string | null; // emploi / poste
   seniorityDate: string | null; // date d'entrée
   paidLeave: PaidLeaveInfo; // congés payés
+  // Champs v1.1 — support des règles paramétrables (barèmes configurés par
+  // l'entreprise/le cabinet, jamais de valeur légale présumée par défaut).
+  netTaxable: number | null; // net imposable, si détecté distinctement du net à payer
+  mentionsArretOuIjss: boolean; // arrêt de travail / IJSS / subrogation détecté dans le texte
 }
 
 export interface Anomaly {
@@ -26,7 +30,7 @@ export interface Anomaly {
   message: string;
   // Catégorie de la règle (cohérence, cotisations, congés...), dérivable du
   // préfixe du ruleId. Fournie par le moteur pour l'affichage ; optionnelle
-  // pour rester compatible avec d'éventuelles anomalies déjà stockées sans
+  // pour rester compatible avec d'éventuelles anomalies déjà en base sans
   // ce champ.
   category?: string;
 }

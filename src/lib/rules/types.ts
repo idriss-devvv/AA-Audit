@@ -18,7 +18,9 @@ export type RuleCategory =
   | "cotisations"
   | "conges"
   | "qualite-donnees"
-  | "plausibilite";
+  | "plausibilite"
+  | "baremes"
+  | "arrets-travail";
 
 export const CATEGORY_LABELS: Record<RuleCategory, string> = {
   coherence: "Cohérence des montants",
@@ -26,6 +28,8 @@ export const CATEGORY_LABELS: Record<RuleCategory, string> = {
   conges: "Congés payés",
   "qualite-donnees": "Qualité des données",
   plausibilite: "Plausibilité",
+  baremes: "Barèmes paramétrés",
+  "arrets-travail": "Arrêts de travail",
 };
 
 export type RuleFinding = {
@@ -33,12 +37,30 @@ export type RuleFinding = {
   message: string;
 };
 
+/**
+ * Barèmes de contrôle paramétrables — jamais de valeur légale par défaut.
+ * Ces valeurs ne sont renseignées que si l'entreprise (ou le cabinet qui la
+ * gère) les a explicitement configurées dans Paramètres ; sinon les règles
+ * qui en dépendent restent silencieuses (pas de faux contrôle basé sur une
+ * hypothèse non confirmée).
+ */
+export type ContributionRateSetting = {
+  label: string;
+  expectedRatePercent: number;
+};
+
+export type RuleContext = {
+  contributionRates?: ContributionRateSetting[];
+  csgCrdsNonDeductiblePercent?: number | null;
+  salaireMinimumConventionnel?: number | null;
+};
+
 export type AnomalyRule = {
   /** Format impératif "<categorie>.<slug>", ex: "coherence.net-superieur-brut" */
   id: string;
   category: RuleCategory;
   description: string;
-  check: (payslip: PayslipData) => RuleFinding | null;
+  check: (payslip: PayslipData, context: RuleContext) => RuleFinding | null;
 };
 
 /**

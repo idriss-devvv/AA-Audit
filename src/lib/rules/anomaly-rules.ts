@@ -1,13 +1,15 @@
 import type { Anomaly, PayslipData } from "@/types/payslip";
-import type { AnomalyRule } from "./types";
+import type { AnomalyRule, RuleContext } from "./types";
 import { runRules } from "./engine";
 import { coherenceRules } from "./catalog/coherence";
 import { cotisationsRules } from "./catalog/cotisations";
 import { congesRules } from "./catalog/conges";
 import { qualiteDonneesRules } from "./catalog/qualite-donnees";
 import { plausibiliteRules } from "./catalog/plausibilite";
+import { arretsTravailRules } from "./catalog/arrets-travail";
+import { baremesParametrablesRules } from "./catalog/baremes-parametrables";
 
-export type { AnomalyRule, RuleCategory, RuleFinding } from "./types";
+export type { AnomalyRule, RuleCategory, RuleFinding, RuleContext, ContributionRateSetting } from "./types";
 export { CATEGORY_LABELS, categoryFromRuleId } from "./types";
 
 /**
@@ -26,8 +28,10 @@ export const RULES: AnomalyRule[] = [
   ...congesRules,
   ...qualiteDonneesRules,
   ...plausibiliteRules,
+  ...arretsTravailRules,
+  ...baremesParametrablesRules,
 ];
 
-export function runAnomalyRules(payslip: PayslipData): Anomaly[] {
-  return runRules(RULES, payslip);
+export function runAnomalyRules(payslip: PayslipData, context: RuleContext = {}): Anomaly[] {
+  return runRules(RULES, payslip, context);
 }

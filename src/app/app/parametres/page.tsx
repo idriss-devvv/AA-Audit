@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
+import { getCompanyPaySettings } from "@/lib/pay-settings";
 import { ChangePasswordForm } from "@/components/auth/change-password-form";
 import { ManageSubscriptionButton } from "@/components/app/manage-subscription-button";
+import { PaySettingsForm } from "@/components/app/pay-settings-form";
+import { ContributionRatesManager } from "@/components/app/contribution-rates-manager";
 
 const PLAN_LABELS: Record<string, string> = {
   free: "Gratuit",
@@ -36,7 +39,12 @@ export default async function ParametresPage() {
         .single()
     : { data: null };
 
-  const { isCabinet, ownCompanyName, clients } = await getActiveCompanyContext();
+  const { isCabinet, ownCompanyName, clients, activeCompanyId, activeCompanyName } =
+    await getActiveCompanyContext();
+
+  const paySettings = activeCompanyId
+    ? await getCompanyPaySettings(activeCompanyId)
+    : { csgCrdsNonDeductiblePercent: null, salaireMinimumConventionnel: null, contributionRates: [] };
 
   const plan = subscription?.plan ?? "free";
   const status = subscription?.status ?? "inactive";
@@ -78,6 +86,33 @@ export default async function ParametresPage() {
             </div>
           )}
         </dl>
+      </div>
+
+      <div className="mt-6 max-w-2xl rounded-2xl border border-beige-200 bg-white p-6 shadow-soft">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
+          Barèmes de contrôle
+        </h2>
+        <p className="mt-1 text-xs text-ink-500">
+          {activeCompanyName || "Cette entreprise"} — ces valeurs ne sont jamais préremplies :
+          renseignez-les vous-même (ou via votre expert-comptable) selon la convention collective
+          et les taux réellement applicables. Tant qu&apos;un champ est vide, le contrôle
+          correspondant reste inactif.
+        </p>
+        <PaySettingsForm
+          initialCsgCrds={paySettings.csgCrdsNonDeductiblePercent}
+          initialSalaireMinimum={paySettings.salaireMinimumConventionnel}
+        />
+
+        <div className="mt-6 border-t border-beige-100 pt-5">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            Taux de cotisations attendus (% du brut)
+          </h3>
+          <p className="mt-1 text-xs text-ink-500">
+            Utilisé pour contrôler les cotisations détectées sur les fiches (AT/MP, mutuelle,
+            prévoyance, sécurité sociale...) — un libellé par cotisation à vérifier.
+          </p>
+          <ContributionRatesManager rates={paySettings.contributionRates} />
+        </div>
       </div>
 
       <div className="mt-6 max-w-xl rounded-2xl border border-beige-200 bg-white p-6 shadow-soft">

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
+import { getCompanyPaySettings, toRuleContext } from "@/lib/pay-settings";
 import type { PayslipData } from "@/types/payslip";
 
 export const runtime = "nodejs";
@@ -180,10 +181,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 5. Détection d'anomalies sur les données extraites
+  // 5. Détection d'anomalies sur les données extraites — les règles de la
+  // catégorie "baremes" utilisent les barèmes paramétrés par l'entreprise
+  // (jamais de valeur légale par défaut, cf. lib/pay-settings.ts).
   let anomaliesCount = 0;
   if (extracted) {
-    const anomalies = runAnomalyRules(extracted);
+    const paySettings = await getCompanyPaySettings(targetCompanyId);
+    const anomalies = runAnomalyRules(extracted, toRuleContext(paySettings));
     anomaliesCount = anomalies.length;
 
     if (anomalies.length > 0) {

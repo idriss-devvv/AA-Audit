@@ -1,5 +1,5 @@
 import type { PayslipData } from "@/types/payslip";
-import type { AnomalyRule } from "./types";
+import type { AnomalyRule, RuleContext } from "./types";
 
 export type EngineAnomaly = {
   ruleId: string;
@@ -16,12 +16,16 @@ export type EngineAnomaly = {
  * échouer l'analyse complète de la fiche — elle est simplement journalisée
  * et ignorée pour ce contrôle-là.
  */
-export function runRules(rules: AnomalyRule[], payslip: PayslipData): EngineAnomaly[] {
+export function runRules(
+  rules: AnomalyRule[],
+  payslip: PayslipData,
+  context: RuleContext = {}
+): EngineAnomaly[] {
   const anomalies: EngineAnomaly[] = [];
 
   for (const rule of rules) {
     try {
-      const finding = rule.check(payslip);
+      const finding = rule.check(payslip, context);
       if (finding) {
         anomalies.push({
           ruleId: rule.id,

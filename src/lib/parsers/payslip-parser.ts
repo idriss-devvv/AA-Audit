@@ -30,7 +30,7 @@ const MONTHS_FR: Record<string, string> = {
 
 function normalizeAmount(raw: string): number {
   const cleaned = raw
-    .replace(/\s| /g, "")
+    .replace(/\s| /g, "")
     .replace(/€/g, "")
     .replace(/\.(?=\d{3}(?:,|$))/g, "") // sépare les milliers "1.234,56"
     .replace(",", ".");
@@ -41,7 +41,7 @@ function normalizeAmount(raw: string): number {
 function findAmountNear(text: string, labelPattern: RegExp): number | null {
   const match = text.match(labelPattern);
   if (!match) return null;
-  const amountMatch = match[0].match(/(\d[\d\s. ]*,\d{2})|(\d+[.,]\d{2})/);
+  const amountMatch = match[0].match(/(\d[\d\s. ]*,\d{2})|(\d+[.,]\d{2})/);
   if (!amountMatch) return null;
   return normalizeAmount(amountMatch[0]);
 }
@@ -68,10 +68,14 @@ function extractContributions(text: string): { label: string; amount: number }[]
   const contributions: { label: string; amount: number }[] = [];
 
   for (const line of lines) {
-    if (!/cotisation|s[ée]curit[ée] sociale|retraite|urssaf|mutuelle|pr[ée]voyance|ch[ôo]mage/i.test(line)) {
+    if (
+      !/cotisation|s[ée]curit[ée] sociale|retraite|urssaf|mutuelle|pr[ée]voyance|ch[ôo]mage|accident|maladie|vieillesse|allocations?\s+familiales|csg|crds|at\s*\/\s*mp|compl[ée]mentaire/i.test(
+        line
+      )
+    ) {
       continue;
     }
-    const amountMatch = line.match(/(\d[\d\s. ]*,\d{2})|(\d+[.,]\d{2})/);
+    const amountMatch = line.match(/(\d[\d\s. ]*,\d{2})|(\d+[.,]\d{2})/);
     if (!amountMatch) continue;
 
     const label = line.slice(0, amountMatch.index ?? 0).trim().replace(/\s{2,}/g, " ");
@@ -113,6 +117,33 @@ function findDaysNear(text: string, labelPattern: RegExp): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
+/**
+ * Net imposable — extrait séparément du net à payer lorsque la fiche
+ * l'indique explicitement. Sert de base à un contrôle facultatif et
+ * paramétrable (taux de CSG/CRDS non déductible saisi par le client), jamais
+ * à un calcul basé sur un taux légal présumé.
+ */
+function extractNetTaxable(text: string): number | null {
+  return findAmountNear(
+    text,
+    /net\s+imposable[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i
+  );
+}
+
+/**
+ * Détection (purement textuelle, sans calcul) d'une mention d'arrêt de
+ * travail, d'indemnités journalières de sécurité sociale (IJSS) ou de
+ * subrogation. Le calcul de ces indemnités suit des règles spécifiques
+ * (historique de salaire, CPAM, éventuel maintien conventionnel) qui ne
+ * sont pas vérifiées automatiquement ici — on se contente de signaler la
+ * présence de la mention pour inviter à une vérification manuelle.
+ */
+function detectArretOuIjss(text: string): boolean {
+  return /\bijss\b|indemnit[ée]s?\s+journali[èe]res?|subrogation|arr[êe]t\s+(?:de\s+travail|maladie)/i.test(
+    text
+  );
+}
+
 function extractPaidLeave(text: string): PaidLeaveInfo {
   const acquired = findDaysNear(
     text,
@@ -133,14 +164,14 @@ export function parsePayslip(rawContent: string): PayslipData {
   const text = rawContent.replace(/\u0000/g, "");
 
   const grossPay =
-    findAmountNear(text, /salaire\s+brut[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
-    findAmountNear(text, /brut\s*(?:mensuel)?[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /salaire\s+brut[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /brut\s*(?:mensuel)?[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
     0;
 
   const netPay =
-    findAmountNear(text, /net\s*(?:à|a)\s*payer[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
-    findAmountNear(text, /net\s+pay[ée][^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
-    findAmountNear(text, /net\s+imposable[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /net\s*(?:à|a)\s*payer[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /net\s+pay[ée][^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /net\s+imposable[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
     0;
 
   const employeeNameMatch = text.match(/(?:salarié|nom\s*(?:et\s*pr[ée]nom)?|employ[ée])\s*[:\-]?\s*([A-ZÀ-Ü][\wÀ-ÿ'\- ]{2,40})/i);
@@ -155,5 +186,7 @@ export function parsePayslip(rawContent: string): PayslipData {
     position: extractPosition(text),
     seniorityDate: extractSeniorityDate(text),
     paidLeave: extractPaidLeave(text),
+    netTaxable: extractNetTaxable(text),
+    mentionsArretOuIjss: detectArretOuIjss(text),
   };
 }
