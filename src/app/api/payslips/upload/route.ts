@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-// Import direct du module interne : évite le mode "debug" de pdf-parse qui
-// tente de lire un fichier de test au chargement quand il est bundlé par Next.js.
-import pdfParse from "pdf-parse/lib/pdf-parse.js";
+// unpdf embarque une version récente et maintenue de pdf.js, compatible
+// serverless/Node — contrairement à pdf-parse (abandonné, moteur PDF de 2017)
+// qui plante sur de nombreux PDF réels valides (ex. "Illegal character").
+import { extractText, getDocumentProxy } from "unpdf";
 import { createClient } from "@/lib/supabase/server";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
@@ -94,8 +95,9 @@ export async function POST(req: NextRequest) {
 
   if (file.type === "application/pdf") {
     try {
-      const pdfResult = await pdfParse(buffer);
-      extracted = parsePayslip(pdfResult.text);
+      const pdf = await getDocumentProxy(new Uint8Array(buffer));
+      const { text } = await extractText(pdf, { mergePages: true });
+      extracted = parsePayslip(text);
       status = "processed";
     } catch (err) {
       status = "error";

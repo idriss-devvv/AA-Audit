@@ -19,7 +19,7 @@
     "@supabase/supabase-js": "^2.45.0",
     "@supabase/ssr": "^0.5.1",
     "stripe": "^16.8.0",
-    "pdf-parse": "^1.1.1"
+    "unpdf": "^0.12.1"
   },
   "devDependencies": {
     "typescript": "^5.5.4",
@@ -31,7 +31,6 @@
     "tailwindcss": "^3.4.7",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
-    "prisma": "^5.17.0",
-    "@types/pdf-parse": "^1.1.4"
+    "prisma": "^5.17.0"
   }
 }
