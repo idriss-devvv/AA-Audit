@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { PayslipData } from "@/types/payslip";
 
 type StatusInfo = { label: string; className: string };
@@ -87,11 +88,19 @@ export function PayslipRow({ payslip }: { payslip: PayslipRowData }) {
           </span>
         </td>
         <td className="px-6 py-4 text-ink-500">{payslip.dateLabel}</td>
+        <td className="px-6 py-4">
+          <Link
+            href={`/app/historique/${payslip.id}`}
+            className="text-sm font-medium text-blue-600 hover:underline"
+          >
+            Rapport
+          </Link>
+        </td>
       </tr>
 
       {open && (
         <tr className="bg-beige-50">
-          <td colSpan={8} className="px-6 pb-6 pt-1">
+          <td colSpan={9} className="px-6 pb-6 pt-1">
             {!extracted ? (
               <p className="text-sm text-ink-500">
                 Aucune donnée détaillée disponible pour cette fiche (analyse en attente ou en

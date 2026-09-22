@@ -27,7 +27,7 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen bg-beige-50">
-      <header className="border-b border-beige-200 bg-white">
+      <header className="border-b border-beige-200 bg-white print:hidden">
         <div className="flex h-14 items-center justify-between gap-4 px-6">
           <Link href="/app/dashboard" className="flex shrink-0 items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-600 text-xs font-bold text-beige-50">
@@ -53,7 +53,7 @@ export default async function AppLayout({
       </header>
       <div className="flex">
         <SidebarNav isCabinet={companyContext.isCabinet} />
-        <main className="min-w-0 flex-1">{children}</main>
+        <main className="min-w-0 flex-1 print:w-full">{children}</main>
       </div>
     </div>
   );

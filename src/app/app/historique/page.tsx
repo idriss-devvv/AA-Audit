@@ -65,10 +65,22 @@ export default async function HistoriquePage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold text-ink-900">Historique</h1>
-      <p className="mt-1 text-sm text-ink-500">
-        Retrouvez ici toutes les fiches de paie importées et contrôlées.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-ink-900">Historique</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            Retrouvez ici toutes les fiches de paie importées et contrôlées.
+          </p>
+        </div>
+        {payslips.length > 0 && (
+          <a
+            href="/api/export/payslips"
+            className="shrink-0 rounded-full border border-beige-300 bg-white px-4 py-2 text-sm font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600"
+          >
+            Exporter en Excel
+          </a>
+        )}
+      </div>
 
       {payslips.length === 0 ? (
         <div className="mt-10 rounded-2xl border border-dashed border-beige-300 bg-beige-100 p-10 text-center">
@@ -90,6 +102,7 @@ export default async function HistoriquePage() {
                 <th className="px-6 py-3">Anomalies</th>
                 <th className="px-6 py-3">Statut</th>
                 <th className="px-6 py-3">Importée le</th>
+                <th className="px-6 py-3" aria-label="Rapport" />
               </tr>
             </thead>
             <tbody className="divide-y divide-beige-100">

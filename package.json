@@ -19,7 +19,8 @@
     "@supabase/supabase-js": "^2.45.0",
     "@supabase/ssr": "^0.5.1",
     "stripe": "^16.8.0",
-    "unpdf": "^0.12.1"
+    "unpdf": "^0.12.1",
+    "exceljs": "^4.4.0"
   },
   "devDependencies": {
     "typescript": "^5.5.4",

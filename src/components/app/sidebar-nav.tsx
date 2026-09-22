@@ -19,7 +19,7 @@ export function SidebarNav({ isCabinet = false }: { isCabinet?: boolean }) {
     : baseNavItems;
 
   return (
-    <nav className="flex w-56 shrink-0 flex-col gap-1 border-r border-beige-200 bg-white p-4">
+    <nav className="print:hidden flex w-56 shrink-0 flex-col gap-1 border-r border-beige-200 bg-white p-4">
       {navItems.map((item) => {
         const active =
           pathname === item.href || pathname?.startsWith(`${item.href}/`);
