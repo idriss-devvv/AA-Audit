@@ -3,15 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const navItems = [
+const baseNavItems = [
   { href: "/app/dashboard", label: "Accueil" },
   { href: "/app/historique", label: "Historique" },
   { href: "/app/anomalies", label: "Anomalies" },
   { href: "/app/parametres", label: "Paramètres" },
 ];
 
-export function SidebarNav() {
+const cabinetNavItem = { href: "/app/clients", label: "Mes clients" };
+
+export function SidebarNav({ isCabinet = false }: { isCabinet?: boolean }) {
   const pathname = usePathname();
+  const navItems = isCabinet
+    ? [baseNavItems[0], cabinetNavItem, ...baseNavItems.slice(1)]
+    : baseNavItems;
 
   return (
     <nav className="flex w-56 shrink-0 flex-col gap-1 border-r border-beige-200 bg-white p-4">

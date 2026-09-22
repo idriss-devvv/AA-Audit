@@ -5,6 +5,7 @@ import { randomUUID } from "crypto";
 // qui plante sur de nombreux PDF réels valides (ex. "Illegal character").
 import { extractText, getDocumentProxy } from "unpdf";
 import { createClient } from "@/lib/supabase/server";
+import { getActiveCompanyContext } from "@/lib/active-company";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
 import type { PayslipData } from "@/types/payslip";
@@ -21,8 +22,9 @@ const ALLOWED_TYPES = ["application/pdf", "image/jpeg", "image/png"];
  * Reçoit une fiche de paie (PDF ou image), la stocke dans le bucket privé
  * "payslips" (dossier = id de l'utilisateur), extrait les données (PDF
  * uniquement pour l'instant), enregistre la fiche + les anomalies détectées
- * en base. Grâce aux policies RLS, seul l'utilisateur qui a uploadé la fiche
- * peut y accéder ensuite.
+ * en base, rattachée à l'entreprise actuellement sélectionnée (la sienne, ou
+ * un client de son cabinet). Grâce aux policies RLS, seuls les membres de
+ * cette entreprise — ou le cabinet qui la gère — peuvent y accéder ensuite.
  */
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
@@ -67,6 +69,13 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+
+  // Pour un compte cabinet comptable, la fiche est rattachée au client
+  // actuellement sélectionné (cf. lib/active-company.ts) plutôt qu'à
+  // l'entreprise propre du cabinet. Les policies RLS refusent de toute façon
+  // l'insertion si ce company_id n'est pas accessible à l'utilisateur.
+  const { activeCompanyId } = await getActiveCompanyContext();
+  const targetCompanyId = activeCompanyId ?? profile.company_id;
 
   const buffer = Buffer.from(await file.arrayBuffer());
 
@@ -115,7 +124,7 @@ export async function POST(req: NextRequest) {
   const { data: existingEmployee } = await supabase
     .from("employees")
     .select("id")
-    .eq("company_id", profile.company_id)
+    .eq("company_id", targetCompanyId)
     .eq("employee_ref", employeeRef)
     .maybeSingle();
 
@@ -128,7 +137,7 @@ export async function POST(req: NextRequest) {
     const { data: newEmployee, error: employeeError } = await supabase
       .from("employees")
       .insert({
-        company_id: profile.company_id,
+        company_id: targetCompanyId,
         first_name: firstName || "Salarié",
         last_name: rest.join(" ") || "-",
         employee_ref: employeeRef,
@@ -149,7 +158,7 @@ export async function POST(req: NextRequest) {
   const { data: payslip, error: payslipError } = await supabase
     .from("payslips")
     .insert({
-      company_id: profile.company_id,
+      company_id: targetCompanyId,
       employee_id: employeeId,
       uploaded_by: user.id,
       period: extracted?.period ?? new Date().toISOString().slice(0, 7),

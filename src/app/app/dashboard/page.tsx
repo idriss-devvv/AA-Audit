@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
 import { createClient } from "@/lib/supabase/server";
+import { getActiveCompanyContext } from "@/lib/active-company";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   processed: { label: "Analysée", className: "bg-green-100 text-green-700" },
@@ -29,6 +30,12 @@ function startOfCurrentMonthIso() {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const { activeCompanyId } = await getActiveCompanyContext();
+
+  // Sans entreprise active (profil incomplet), on affiche un tableau de bord
+  // vide plutôt que de planter — les policies RLS renverraient de toute
+  // façon zéro ligne pour un company_id inexistant.
+  const companyId = activeCompanyId ?? "";
 
   const [
     { count: payslipsCount },
@@ -40,19 +47,36 @@ export default async function DashboardPage() {
     { count: payslipsThisMonth },
     { data: recentPayslipsData },
   ] = await Promise.all([
-    supabase.from("payslips").select("*", { count: "exact", head: true }),
-    supabase.from("anomalies").select("*", { count: "exact", head: true }),
-    supabase.from("employees").select("*", { count: "exact", head: true }),
-    supabase.from("anomalies").select("*", { count: "exact", head: true }).eq("severity", "critical"),
-    supabase.from("anomalies").select("*", { count: "exact", head: true }).eq("severity", "warning"),
-    supabase.from("anomalies").select("*", { count: "exact", head: true }).eq("severity", "info"),
+    supabase.from("payslips").select("*", { count: "exact", head: true }).eq("company_id", companyId),
+    supabase
+      .from("anomalies")
+      .select("id, payslips!inner(company_id)", { count: "exact", head: true })
+      .eq("payslips.company_id", companyId),
+    supabase.from("employees").select("*", { count: "exact", head: true }).eq("company_id", companyId),
+    supabase
+      .from("anomalies")
+      .select("id, payslips!inner(company_id)", { count: "exact", head: true })
+      .eq("payslips.company_id", companyId)
+      .eq("severity", "critical"),
+    supabase
+      .from("anomalies")
+      .select("id, payslips!inner(company_id)", { count: "exact", head: true })
+      .eq("payslips.company_id", companyId)
+      .eq("severity", "warning"),
+    supabase
+      .from("anomalies")
+      .select("id, payslips!inner(company_id)", { count: "exact", head: true })
+      .eq("payslips.company_id", companyId)
+      .eq("severity", "info"),
     supabase
       .from("payslips")
       .select("*", { count: "exact", head: true })
+      .eq("company_id", companyId)
       .gte("uploaded_at", startOfCurrentMonthIso()),
     supabase
       .from("payslips")
       .select("id, period, original_filename, status, uploaded_at")
+      .eq("company_id", companyId)
       .order("uploaded_at", { ascending: false })
       .limit(5),
   ]);

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getActiveCompanyContext } from "@/lib/active-company";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
 
 const SEVERITY_LABELS: Record<string, { label: string; className: string }> = {
@@ -18,9 +19,13 @@ type AnomalyRow = {
 
 export default async function AnomaliesPage() {
   const supabase = await createClient();
+  const { activeCompanyId } = await getActiveCompanyContext();
   const { data } = await supabase
     .from("anomalies")
-    .select("id, rule_id, severity, message, detected_at, payslip:payslips(period, original_filename)")
+    .select(
+      "id, rule_id, severity, message, detected_at, payslip:payslips!inner(period, original_filename, company_id)"
+    )
+    .eq("payslip.company_id", activeCompanyId ?? "")
     .order("detected_at", { ascending: false });
 
   const anomalies = (data as unknown as AnomalyRow[] | null) ?? [];

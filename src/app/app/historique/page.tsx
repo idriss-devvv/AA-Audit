@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getActiveCompanyContext } from "@/lib/active-company";
 import { PayslipRow, type PayslipRowData } from "@/components/historique/payslip-row";
 import type { PayslipData } from "@/types/payslip";
 
@@ -39,11 +40,13 @@ type PayslipRecord = {
 
 export default async function HistoriquePage() {
   const supabase = await createClient();
+  const { activeCompanyId } = await getActiveCompanyContext();
   const { data } = await supabase
     .from("payslips")
     .select(
       "id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, anomalies(count)"
     )
+    .eq("company_id", activeCompanyId ?? "")
     .order("uploaded_at", { ascending: false });
 
   const records = (data as unknown as PayslipRecord[] | null) ?? [];

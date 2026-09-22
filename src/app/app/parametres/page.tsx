@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getActiveCompanyContext } from "@/lib/active-company";
 import { ChangePasswordForm } from "@/components/auth/change-password-form";
 import { ManageSubscriptionButton } from "@/components/app/manage-subscription-button";
 
@@ -35,6 +36,8 @@ export default async function ParametresPage() {
         .single()
     : { data: null };
 
+  const { isCabinet, ownCompanyName, clients } = await getActiveCompanyContext();
+
   const plan = subscription?.plan ?? "free";
   const status = subscription?.status ?? "inactive";
   const planLabel = PLAN_LABELS[plan] ?? plan;
@@ -57,11 +60,23 @@ export default async function ParametresPage() {
             <dd className="font-medium text-ink-900">{user?.email}</dd>
           </div>
           <div className="flex items-center justify-between">
-            <dt className="text-ink-500">Entreprise</dt>
+            <dt className="text-ink-500">{isCabinet ? "Cabinet" : "Entreprise"}</dt>
             <dd className="font-medium text-ink-900">
-              {(user?.user_metadata?.company_name as string) || "—"}
+              {ownCompanyName || (user?.user_metadata?.company_name as string) || "—"}
             </dd>
           </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-ink-500">Type de compte</dt>
+            <dd className="font-medium text-ink-900">
+              {isCabinet ? "Cabinet comptable" : "Entreprise"}
+            </dd>
+          </div>
+          {isCabinet && (
+            <div className="flex items-center justify-between">
+              <dt className="text-ink-500">Clients gérés</dt>
+              <dd className="font-medium text-ink-900">{clients.length}</dd>
+            </div>
+          )}
         </dl>
       </div>
 
