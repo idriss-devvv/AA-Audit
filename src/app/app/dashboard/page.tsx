@@ -1,3 +1,5 @@
+import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
+
 const stats = [
   { label: "Fiches contrôlées", value: "0" },
   { label: "Anomalies détectées", value: "0" },
@@ -6,7 +8,7 @@ const stats = [
 
 export default function DashboardPage() {
   return (
-    <div className="container-page py-10">
+    <div className="p-8">
       <h1 className="text-2xl font-bold text-ink-900">Tableau de bord</h1>
       <p className="mt-1 text-sm text-ink-500">
         Vue d&apos;ensemble des fiches de paie analysées et des anomalies
@@ -29,13 +31,15 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div className="mt-10 rounded-2xl border border-dashed border-beige-300 bg-beige-100 p-10 text-center">
-        <p className="text-sm text-ink-500">
-          Aucune fiche de paie importée pour le moment. Branchez
-          l&apos;upload (<code>/api/payslips/upload</code>) et l&apos;analyse
-          (<code>/api/analyze</code>) pour commencer à alimenter ce
-          tableau de bord.
+      <div className="mt-10 flex flex-col items-center gap-4 rounded-2xl border border-dashed border-beige-300 bg-beige-100 p-10 text-center">
+        <h2 className="text-lg font-semibold text-ink-900">
+          Importer une fiche de paie
+        </h2>
+        <p className="max-w-md text-sm text-ink-500">
+          Déposez un fichier PDF ou une photo de fiche de paie : PayAudit la
+          réceptionne immédiatement et prépare l&apos;analyse d&apos;anomalies.
         </p>
+        <PayslipUploadButton />
       </div>
     </div>
   );

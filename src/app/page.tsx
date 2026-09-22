@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { MarketingShell } from "@/components/layout/marketing-shell";
-import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
 import { SubscribeButton } from "@/components/pricing/subscribe-button";
 
 const features = [
@@ -98,23 +97,6 @@ export default function Home() {
           >
             Demander une démo
           </Link>
-        </div>
-      </section>
-
-      {/* Upload */}
-      <section id="essayer" className="border-t border-beige-200 bg-beige-100 py-20">
-        <div className="container-page flex flex-col items-center gap-6 text-center">
-          <span className="rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
-            Essayez maintenant
-          </span>
-          <h2 className="max-w-lg text-3xl font-bold text-ink-900">
-            Importez une fiche de paie pour voir PayAudit à l&apos;œuvre
-          </h2>
-          <p className="max-w-lg text-ink-500">
-            Déposez un fichier PDF ou une photo de fiche de paie : PayAudit la
-            réceptionne immédiatement et prépare l&apos;analyse d&apos;anomalies.
-          </p>
-          <PayslipUploadButton />
         </div>
       </section>
 
