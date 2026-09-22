@@ -90,13 +90,20 @@ export async function POST(req: NextRequest) {
   let extracted: PayslipData | null = null;
   let status: "processed" | "pending" | "error" = "pending";
 
+  let extractionError: string | null = null;
+
   if (file.type === "application/pdf") {
     try {
       const pdfResult = await pdfParse(buffer);
       extracted = parsePayslip(pdfResult.text);
       status = "processed";
-    } catch {
+    } catch (err) {
       status = "error";
+      extractionError =
+        err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+      // Journalisé côté serveur (Vercel > Logs) pour diagnostiquer les échecs
+      // d'extraction PDF sans jamais exposer de détail technique au client.
+      console.error("[payslips/upload] Échec extraction PDF:", err);
     }
   }
 
