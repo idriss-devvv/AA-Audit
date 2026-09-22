@@ -48,6 +48,40 @@ const config: Config = {
       boxShadow: {
         soft: "0 4px 24px -4px rgba(31, 58, 95, 0.08)",
       },
+      keyframes: {
+        "fade-in-up": {
+          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0) translateX(0)" },
+          "50%": { transform: "translateY(-18px) translateX(10px)" },
+        },
+        "float-slow": {
+          "0%, 100%": { transform: "translateY(0) translateX(0) scale(1)" },
+          "50%": { transform: "translateY(16px) translateX(-14px) scale(1.05)" },
+        },
+        "pulse-soft": {
+          "0%, 100%": { opacity: "0.6" },
+          "50%": { opacity: "1" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+      },
+      animation: {
+        "fade-in-up": "fade-in-up 0.7s cubic-bezier(0.22,1,0.36,1) both",
+        "fade-in": "fade-in 0.8s ease-out both",
+        float: "float 7s ease-in-out infinite",
+        "float-slow": "float-slow 11s ease-in-out infinite",
+        "pulse-soft": "pulse-soft 3.5s ease-in-out infinite",
+        marquee: "marquee 28s linear infinite",
+      },
     },
   },
   plugins: [],

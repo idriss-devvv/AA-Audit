@@ -30,6 +30,11 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link href="/#faq" className="text-ink-700 hover:text-blue-600">
+                FAQ
+              </Link>
+            </li>
+            <li>
               <Link href="/contact" className="text-ink-700 hover:text-blue-600">
                 Contact
               </Link>
