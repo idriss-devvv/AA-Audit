@@ -6,9 +6,21 @@ SaaS qui vérifie et contrôle les fiches de paie pour détecter les anomalies e
 
 - **Framework** : Next.js 14+ (App Router) + TypeScript
 - **Style** : Tailwind CSS
-- **Base de données** : PostgreSQL via Prisma ORM (à connecter — Vercel Postgres / Supabase / Neon)
+- **Authentification + base de données** : Supabase (Postgres + Auth, email/mot de passe et Google)
+- **Paiement** : Stripe Checkout (abonnements)
 - **Déploiement** : Vercel
 - **Suivi** : GitHub (repo à créer) + Notion (espace "PayAudit — Espace de Pilotage MVP")
+
+## Configuration requise avant mise en ligne complète
+
+1. **Google OAuth** : dans le Dashboard Supabase → Authentication → Providers → Google,
+   activer le provider et renseigner un Client ID / Secret créés sur Google Cloud Console
+   (URL de redirection à autoriser : `https://<votre-projet>.supabase.co/auth/v1/callback`).
+2. **Stripe** : créer les produits/prix (Starter 30€, Pro 100€) dans le Dashboard Stripe,
+   puis remplacer les `priceId` de démonstration dans `src/app/page.tsx` par les vrais
+   Price IDs. Renseigner `STRIPE_SECRET_KEY` dans les variables d'environnement Vercel.
+3. **Variables d'environnement Vercel** : `NEXT_PUBLIC_SUPABASE_URL`,
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `STRIPE_SECRET_KEY` (voir `.env.example`).
 
 ## Démarrage
 

@@ -1,8 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
+// Sous-domaine réservé à l'application (ex: app.domaine.fr).
 const APP_SUBDOMAIN = "app";
 
+type CookieToSet = {
+  name: string;
+  value: string;
+  options?: CookieOptions;
+};
+
+/**
+ * 1. Rafraîchit la session Supabase (nécessaire pour que les Server
+ *    Components voient un utilisateur connecté).
+ * 2. Réécrit les requêtes venant de app.domaine.fr vers le préfixe /app
+ *    (src/app/app) sans changer l'URL visible côté utilisateur.
+ */
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -15,7 +28,7 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: CookieToSet[]) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
@@ -27,6 +40,7 @@ export async function middleware(request: NextRequest) {
       },
     });
 
+    // Ne bloque jamais la requête si Supabase est indisponible.
     await supabase.auth.getUser().catch(() => null);
   }
 

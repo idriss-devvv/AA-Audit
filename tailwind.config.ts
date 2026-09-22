@@ -8,6 +8,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Beige — fond neutre et chaleureux
         beige: {
           50: "#FBF8F3",
           100: "#F5EEE3",
@@ -15,6 +16,7 @@ const config: Config = {
           300: "#D8C7A1",
           400: "#C3AC7C",
         },
+        // Bleu — marque, actions, éléments de confiance
         blue: {
           50: "#EAF1F8",
           100: "#D3E3F2",
@@ -23,6 +25,7 @@ const config: Config = {
           600: "#1F3A5F",
           700: "#152A45",
         },
+        // Texte — brun-noir chaud plutôt que noir pur, plus doux avec le beige
         ink: {
           900: "#262420",
           700: "#3F3B34",

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+// Shell de l'application (destinée au sous-domaine app.domaine.fr).
+// Volontairement sans le header/footer du site vitrine.
 export default function AppLayout({
   children,
 }: {

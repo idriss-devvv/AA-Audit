@@ -6,6 +6,11 @@ type Rule = {
   check: (payslip: PayslipData) => Anomaly | null;
 };
 
+/**
+ * Base de règles de détection d'anomalies.
+ * Chaque règle inspecte la fiche de paie et retourne une anomalie si
+ * un écart est détecté (cotisation incohérente, plafond dépassé, etc.).
+ */
 const rules: Rule[] = [
   {
     id: "net-superieur-brut",

@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * POST /api/contact-entreprise
+ * Reçoit une demande de devis "Entreprise" (nom, email, téléphone,
+ * volume mensuel de fiches de paie).
+ * TODO: envoyer un email de notification et/ou stocker le lead en base.
+ */
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const name = formData.get("name");
@@ -13,6 +19,9 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+
+  // TODO: brancher un service d'envoi d'email (Resend, Postmark...)
+  // et/ou créer un enregistrement "lead" dans Supabase.
 
   return NextResponse.json({ status: "ok" });
 }

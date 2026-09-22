@@ -50,7 +50,7 @@ const plans = [
       "Moteur de règles standard",
       "1 utilisateur",
     ],
-    priceId: "price_starter_30",
+    priceId: "price_starter_30", // à remplacer par le vrai Price ID Stripe
     highlighted: false,
   },
   {
@@ -63,7 +63,7 @@ const plans = [
       "Règles personnalisées",
       "5 utilisateurs",
     ],
-    priceId: "price_pro_150",
+    priceId: "price_pro_150", // à remplacer par le vrai Price ID Stripe
     highlighted: true,
   },
 ];
@@ -71,6 +71,7 @@ const plans = [
 export default function Home() {
   return (
     <MarketingShell>
+      {/* Hero */}
       <section className="container-page flex flex-col items-center gap-6 py-24 text-center md:py-32">
         <span className="rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
           Contrôle de paie automatisé
@@ -100,6 +101,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Upload */}
       <section id="essayer" className="border-t border-beige-200 bg-beige-100 py-20">
         <div className="container-page flex flex-col items-center gap-6 text-center">
           <span className="rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
@@ -116,6 +118,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Features */}
       <section id="fonctionnalites" className="border-t border-beige-200 bg-white py-24">
         <div className="container-page">
           <h2 className="text-center text-3xl font-bold text-ink-900">
@@ -139,6 +142,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How it works */}
       <section id="comment-ca-marche" className="py-24">
         <div className="container-page">
           <h2 className="text-center text-3xl font-bold text-ink-900">
@@ -162,6 +166,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing */}
       <section id="tarifs" className="border-t border-beige-200 bg-white py-24">
         <div className="container-page">
           <h2 className="text-center text-3xl font-bold text-ink-900">
@@ -250,6 +255,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* CTA banner */}
       <section className="border-t border-beige-200 bg-blue-600 py-20">
         <div className="container-page flex flex-col items-center gap-6 text-center">
           <h2 className="text-3xl font-bold text-beige-50">

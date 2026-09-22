@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+/**
+ * POST /api/checkout
+ * Crée une session Stripe Checkout pour l'abonnement choisi et
+ * retourne son URL de redirection.
+ *
+ * Nécessite STRIPE_SECRET_KEY et de vrais price IDs Stripe (voir
+ * les constantes `priceId` dans src/app/page.tsx à remplacer par les
+ * IDs créés dans le Dashboard Stripe).
+ */
 export async function POST(req: NextRequest) {
   const secretKey = process.env.STRIPE_SECRET_KEY;
 
