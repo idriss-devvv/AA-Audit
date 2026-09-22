@@ -24,4 +24,9 @@ export interface Anomaly {
   ruleId: string;
   severity: "info" | "warning" | "critical";
   message: string;
+  // Catégorie de la règle (cohérence, cotisations, congés...), dérivable du
+  // préfixe du ruleId. Fournie par le moteur pour l'affichage ; optionnelle
+  // pour rester compatible avec d'éventuelles anomalies déjà stockées sans
+  // ce champ.
+  category?: string;
 }

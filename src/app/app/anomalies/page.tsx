@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
 
 const SEVERITY_LABELS: Record<string, { label: string; className: string }> = {
   critical: { label: "Critique", className: "border-red-300 bg-red-50 text-red-700" },
@@ -43,15 +44,24 @@ export default async function AnomaliesPage() {
         <div className="mt-8 flex flex-col gap-3">
           {anomalies.map((anomaly) => {
             const severityInfo = SEVERITY_LABELS[anomaly.severity] ?? SEVERITY_LABELS.info;
+            const category = categoryFromRuleId(anomaly.rule_id);
+            const categoryLabel = category ? CATEGORY_LABELS[category] : null;
             return (
               <div
                 key={anomaly.id}
                 className={`rounded-2xl border p-5 shadow-soft ${severityInfo.className}`}
               >
-                <div className="flex items-center justify-between gap-4">
-                  <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-                    {severityInfo.label}
-                  </span>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                      {severityInfo.label}
+                    </span>
+                    {categoryLabel && (
+                      <span className="rounded-full bg-white/40 px-3 py-1 text-xs font-medium">
+                        {categoryLabel}
+                      </span>
+                    )}
+                  </div>
                   <span className="text-xs text-ink-500">
                     {new Date(anomaly.detected_at).toLocaleDateString("fr-FR")}
                   </span>

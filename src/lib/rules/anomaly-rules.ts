@@ -1,35 +1,33 @@
 import type { Anomaly, PayslipData } from "@/types/payslip";
+import type { AnomalyRule } from "./types";
+import { runRules } from "./engine";
+import { coherenceRules } from "./catalog/coherence";
+import { cotisationsRules } from "./catalog/cotisations";
+import { congesRules } from "./catalog/conges";
+import { qualiteDonneesRules } from "./catalog/qualite-donnees";
+import { plausibiliteRules } from "./catalog/plausibilite";
 
-type Rule = {
-  id: string;
-  description: string;
-  check: (payslip: PayslipData) => Anomaly | null;
-};
+export type { AnomalyRule, RuleCategory, RuleFinding } from "./types";
+export { CATEGORY_LABELS, categoryFromRuleId } from "./types";
 
 /**
- * Base de règles de détection d'anomalies.
- * Chaque règle inspecte la fiche de paie et retourne une anomalie si
- * un écart est détecté (cotisation incohérente, plafond dépassé, etc.).
+ * Registre central des règles de contrôle.
+ *
+ * Pour ajouter une nouvelle règle (net imposable, taux AT/MP, IJSS, taux de
+ * sécurité sociale, réduction générale des cotisations patronales,
+ * conventions collectives...) : créer un fichier dans src/lib/rules/catalog/
+ * exportant un tableau d'AnomalyRule, puis l'ajouter ci-dessous. Le moteur
+ * (engine.ts) et les points d'appel (API upload, /api/analyze) n'ont jamais
+ * besoin d'être modifiés.
  */
-const rules: Rule[] = [
-  {
-    id: "net-superieur-brut",
-    description: "Le net ne doit jamais dépasser le brut",
-    check: (payslip) => {
-      if (payslip.netPay > payslip.grossPay) {
-        return {
-          ruleId: "net-superieur-brut",
-          severity: "critical",
-          message: `Net (${payslip.netPay}) supérieur au brut (${payslip.grossPay})`,
-        };
-      }
-      return null;
-    },
-  },
+export const RULES: AnomalyRule[] = [
+  ...coherenceRules,
+  ...cotisationsRules,
+  ...congesRules,
+  ...qualiteDonneesRules,
+  ...plausibiliteRules,
 ];
 
 export function runAnomalyRules(payslip: PayslipData): Anomaly[] {
-  return rules
-    .map((rule) => rule.check(payslip))
-    .filter((a): a is Anomaly => a !== null);
+  return runRules(RULES, payslip);
 }
