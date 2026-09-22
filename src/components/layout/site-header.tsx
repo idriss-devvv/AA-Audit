@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const navLinks = [
   { href: "/#fonctionnalites", label: "Fonctionnalités" },
-  { href: "/#comment-ca-marche", label: "Comment ça marche" },
+  { href: "/#tarifs", label: "Tarifs" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -31,12 +31,20 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <Link
-          href="/app/dashboard"
-          className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-beige-50 shadow-soft transition hover:bg-blue-700"
-        >
-          Accéder au dashboard
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/connexion"
+            className="rounded-full border border-beige-300 bg-white px-5 py-2 text-sm font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600"
+          >
+            Se connecter
+          </Link>
+          <Link
+            href="/inscription"
+            className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-beige-50 shadow-soft transition hover:bg-blue-700"
+          >
+            S&apos;inscrire
+          </Link>
+        </div>
       </div>
     </header>
   );

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { MarketingShell } from "@/components/layout/marketing-shell";
+import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
+import { SubscribeButton } from "@/components/pricing/subscribe-button";
 
 const features = [
   {
@@ -37,6 +39,35 @@ const steps = [
   },
 ];
 
+const plans = [
+  {
+    name: "Starter",
+    price: "30€",
+    period: "/mois",
+    description: "Pour démarrer le contrôle de vos fiches de paie.",
+    features: [
+      "Jusqu'à 30 fiches de paie / mois",
+      "Moteur de règles standard",
+      "1 utilisateur",
+    ],
+    priceId: "price_starter_30",
+    highlighted: false,
+  },
+  {
+    name: "Pro",
+    price: "100€",
+    period: "/mois",
+    description: "Pour les cabinets et PME avec plusieurs entités.",
+    features: [
+      "Jusqu'à 150 fiches de paie / mois",
+      "Règles personnalisées",
+      "5 utilisateurs",
+    ],
+    priceId: "price_pro_150",
+    highlighted: true,
+  },
+];
+
 export default function Home() {
   return (
     <MarketingShell>
@@ -66,6 +97,22 @@ export default function Home() {
           >
             Demander une démo
           </Link>
+        </div>
+      </section>
+
+      <section id="essayer" className="border-t border-beige-200 bg-beige-100 py-20">
+        <div className="container-page flex flex-col items-center gap-6 text-center">
+          <span className="rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
+            Essayez maintenant
+          </span>
+          <h2 className="max-w-lg text-3xl font-bold text-ink-900">
+            Importez une fiche de paie pour voir PayAudit à l&apos;œuvre
+          </h2>
+          <p className="max-w-lg text-ink-500">
+            Déposez un fichier PDF ou une photo de fiche de paie : PayAudit la
+            réceptionne immédiatement et prépare l&apos;analyse d&apos;anomalies.
+          </p>
+          <PayslipUploadButton />
         </div>
       </section>
 
@@ -111,6 +158,94 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="tarifs" className="border-t border-beige-200 bg-white py-24">
+        <div className="container-page">
+          <h2 className="text-center text-3xl font-bold text-ink-900">
+            Des tarifs simples et transparents
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg text-center text-ink-500">
+            Choisissez la formule adaptée à votre volume de fiches de paie.
+            Sans engagement.
+          </p>
+
+          <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {plans.map((plan) => (
+              <div
+                key={plan.name}
+                className={`flex flex-col rounded-2xl border p-8 ${
+                  plan.highlighted
+                    ? "border-blue-600 bg-blue-50 shadow-soft"
+                    : "border-beige-200 bg-beige-50"
+                }`}
+              >
+                {plan.highlighted && (
+                  <span className="mb-3 w-fit rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-beige-50">
+                    Le plus populaire
+                  </span>
+                )}
+                <h3 className="text-lg font-semibold text-ink-900">
+                  {plan.name}
+                </h3>
+                <p className="mt-1 text-sm text-ink-500">
+                  {plan.description}
+                </p>
+                <p className="mt-6 text-4xl font-extrabold text-ink-900">
+                  {plan.price}
+                  <span className="text-base font-medium text-ink-500">
+                    {plan.period}
+                  </span>
+                </p>
+                <ul className="mt-6 flex-1 space-y-2 text-sm text-ink-700">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-2">
+                      <span className="text-blue-600">✓</span> {feature}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-8">
+                  <SubscribeButton
+                    priceId={plan.priceId}
+                    label="S'abonner"
+                    variant={plan.highlighted ? "primary" : "outline"}
+                  />
+                </div>
+              </div>
+            ))}
+
+            <div className="flex flex-col rounded-2xl border border-beige-200 bg-beige-50 p-8">
+              <h3 className="text-lg font-semibold text-ink-900">
+                Entreprise
+              </h3>
+              <p className="mt-1 text-sm text-ink-500">
+                Volume important, accompagnement dédié.
+              </p>
+              <p className="mt-6 text-4xl font-extrabold text-ink-900">
+                Sur devis
+              </p>
+              <ul className="mt-6 flex-1 space-y-2 text-sm text-ink-700">
+                <li className="flex items-center gap-2">
+                  <span className="text-blue-600">✓</span> Volume illimité
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-blue-600">✓</span> Accompagnement dédié
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-blue-600">✓</span> Contrat sur mesure
+                </li>
+              </ul>
+              <div className="mt-8">
+                <Link
+                  href="/contact-entreprise"
+                  className="block w-full rounded-full border border-beige-300 bg-white px-6 py-3 text-center text-sm font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600"
+                >
+                  Nous contacter
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
