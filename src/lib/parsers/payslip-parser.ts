@@ -1,15 +1,5 @@
 import type { PaidLeaveInfo, PayslipData } from "@/types/payslip";
 
-/**
- * Extrait les données structurées d'une fiche de paie à partir du texte brut
- * obtenu après extraction PDF (pdf-parse) ou OCR.
- *
- * v1 : extraction par heuristiques/regex sur les libellés français les plus
- * courants (brut, net à payer, période, cotisations). À affiner au fur et à
- * mesure des vrais formats de bulletins rencontrés (logiciels de paie
- * différents = mises en page différentes).
- */
-
 const MONTHS_FR: Record<string, string> = {
   janvier: "01",
   février: "02",
@@ -30,9 +20,9 @@ const MONTHS_FR: Record<string, string> = {
 
 function normalizeAmount(raw: string): number {
   const cleaned = raw
-    .replace(/\s| /g, "")
+    .replace(/\s| /g, "")
     .replace(/€/g, "")
-    .replace(/\.(?=\d{3}(?:,|$))/g, "") // sépare les milliers "1.234,56"
+    .replace(/\.(?=\d{3}(?:,|$))/g, "")
     .replace(",", ".");
   const value = parseFloat(cleaned);
   return Number.isFinite(value) ? value : 0;
@@ -41,7 +31,7 @@ function normalizeAmount(raw: string): number {
 function findAmountNear(text: string, labelPattern: RegExp): number | null {
   const match = text.match(labelPattern);
   if (!match) return null;
-  const amountMatch = match[0].match(/(\d[\d\s. ]*,\d{2})|(\d+[.,]\d{2})/);
+  const amountMatch = match[0].match(/(\d[\d\s . ]*,\d{2})|(\d+[.,]\d{2})/);
   if (!amountMatch) return null;
   return normalizeAmount(amountMatch[0]);
 }
@@ -75,7 +65,7 @@ function extractContributions(text: string): { label: string; amount: number }[]
     ) {
       continue;
     }
-    const amountMatch = line.match(/(\d[\d\s. ]*,\d{2})|(\d+[.,]\d{2})/);
+    const amountMatch = line.match(/(\d[\d\s . ]*,\d{2})|(\d+[.,]\d{2})/);
     if (!amountMatch) continue;
 
     const label = line.slice(0, amountMatch.index ?? 0).trim().replace(/\s{2,}/g, " ");
@@ -84,15 +74,9 @@ function extractContributions(text: string): { label: string; amount: number }[]
     contributions.push({ label, amount: normalizeAmount(amountMatch[0]) });
   }
 
-  return contributions.slice(0, 30); // garde-fou anti faux positifs sur texte mal extrait
+  return contributions.slice(0, 30);
 }
 
-/**
- * Champs complémentaires (v1, best-effort) : convention collective, poste,
- * ancienneté, congés payés. Formats très variables d'un logiciel de paie à
- * l'autre — à affiner avec de vrais bulletins. Les règles de contrôle qui
- * s'appuieront sur ces champs seront paramétrées plus tard.
- */
 function extractCollectiveAgreement(text: string): string | null {
   const match = text.match(/convention\s+collective(?:\s+applicable)?\s*[:\-]?\s*([^\n]{3,90})/i);
   return match ? match[1].trim().replace(/\s{2,}/g, " ") : null;
@@ -117,42 +101,17 @@ function findDaysNear(text: string, labelPattern: RegExp): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
-/**
- * Net imposable — extrait séparément du net à payer lorsque la fiche
- * l'indique explicitement. Sert de base à un contrôle facultatif et
- * paramétrable (taux de CSG/CRDS non déductible saisi par le client), jamais
- * à un calcul basé sur un taux légal présumé.
- */
 function extractNetTaxable(text: string): number | null {
-  return findAmountNear(
-    text,
-    /net\s+imposable[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i
-  );
+  return findAmountNear(text, /net\s+imposable[^\n\d]{0,40}(\d[\d\s . ]*,\d{2}|\d+[.,]\d{2})/i);
 }
 
-/**
- * Détection (purement textuelle, sans calcul) d'une mention d'arrêt de
- * travail, d'indemnités journalières de sécurité sociale (IJSS) ou de
- * subrogation. Le calcul de ces indemnités suit des règles spécifiques
- * (historique de salaire, CPAM, éventuel maintien conventionnel) qui ne
- * sont pas vérifiées automatiquement ici — on se contente de signaler la
- * présence de la mention pour inviter à une vérification manuelle.
- */
 function detectArretOuIjss(text: string): boolean {
-  return /\bijss\b|indemnit[ée]s?\s+journali[èe]res?|subrogation|arr[êe]t\s+(?:de\s+travail|maladie)/i.test(
-    text
-  );
+  return /\bijss\b|indemnit[ée]s?\s+journali[èe]res?|subrogation|arr[êe]t\s+(?:de\s+travail|maladie)/i.test(text);
 }
 
 function extractPaidLeave(text: string): PaidLeaveInfo {
-  const acquired = findDaysNear(
-    text,
-    /cong[ée]s?\s+pay[ée]s?[^\n\d]{0,40}acquis[^\n\d]{0,15}\d+(?:[.,]\d+)?/i
-  );
-  const taken = findDaysNear(
-    text,
-    /cong[ée]s?\s+pay[ée]s?[^\n\d]{0,60}pris[^\n\d]{0,15}\d+(?:[.,]\d+)?/i
-  );
+  const acquired = findDaysNear(text, /cong[ée]s?\s+pay[ée]s?[^\n\d]{0,40}acquis[^\n\d]{0,15}\d+(?:[.,]\d+)?/i);
+  const taken = findDaysNear(text, /cong[ée]s?\s+pay[ée]s?[^\n\d]{0,60}pris[^\n\d]{0,15}\d+(?:[.,]\d+)?/i);
   const balance = findDaysNear(
     text,
     /(?:solde[^\n\d]{0,30}cong[ée]s?\s+pay[ée]s?|cong[ée]s?\s+pay[ée]s?[^\n\d]{0,60}solde)[^\n\d]{0,15}\d+(?:[.,]\d+)?/i
@@ -164,14 +123,14 @@ export function parsePayslip(rawContent: string): PayslipData {
   const text = rawContent.replace(/\u0000/g, "");
 
   const grossPay =
-    findAmountNear(text, /salaire\s+brut[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
-    findAmountNear(text, /brut\s*(?:mensuel)?[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /salaire\s+brut[^\n\d]{0,40}(\d[\d\s . ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /brut\s*(?:mensuel)?[^\n\d]{0,40}(\d[\d\s . ]*,\d{2}|\d+[.,]\d{2})/i) ??
     0;
 
   const netPay =
-    findAmountNear(text, /net\s*(?:à|a)\s*payer[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
-    findAmountNear(text, /net\s+pay[ée][^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
-    findAmountNear(text, /net\s+imposable[^\n\d]{0,40}(\d[\d\s. ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /net\s*(?:à|a)\s*payer[^\n\d]{0,40}(\d[\d\s . ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /net\s+pay[ée][^\n\d]{0,40}(\d[\d\s . ]*,\d{2}|\d+[.,]\d{2})/i) ??
+    findAmountNear(text, /net\s+imposable[^\n\d]{0,40}(\d[\d\s . ]*,\d{2}|\d+[.,]\d{2})/i) ??
     0;
 
   const employeeNameMatch = text.match(/(?:salarié|nom\s*(?:et\s*pr[ée]nom)?|employ[ée])\s*[:\-]?\s*([A-ZÀ-Ü][\wÀ-ÿ'\- ]{2,40})/i);
