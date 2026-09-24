@@ -7,6 +7,22 @@ import { LogoMark } from "@/components/ui/logo";
 /** Délai avant affichage : une navigation instantanée ne fait pas clignoter le loader. */
 const SHOW_DELAY_MS = 120;
 
+const SHOW_EVENT = "payaudit:loader-show";
+const HIDE_EVENT = "payaudit:loader-hide";
+
+/**
+ * Affiche le loader pour une navigation qui ne passe pas par un lien :
+ * envoi de formulaire, redirection après connexion, OAuth…
+ */
+export function showNavigationLoader() {
+  window.dispatchEvent(new Event(SHOW_EVENT));
+}
+
+/** Masque le loader (ex. : la connexion a échoué, on reste sur la page). */
+export function hideNavigationLoader() {
+  window.dispatchEvent(new Event(HIDE_EVENT));
+}
+
 /**
  * Loader centré affiché pendant les changements de page. Next.js ne signale
  * pas le début d'une navigation : il apparaît au clic sur un lien interne et
@@ -37,8 +53,28 @@ export function NavigationLoader() {
       showTimer.current = setTimeout(() => setVisible(true), SHOW_DELAY_MS);
     }
 
+    function onShow() {
+      if (showTimer.current) clearTimeout(showTimer.current);
+      showTimer.current = null;
+      setVisible(true);
+    }
+    function onHide() {
+      if (showTimer.current) clearTimeout(showTimer.current);
+      showTimer.current = null;
+      setVisible(false);
+    }
+
     document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
+    window.addEventListener(SHOW_EVENT, onShow);
+    window.addEventListener(HIDE_EVENT, onHide);
+    // Retour arrière depuis une page quittée par redirection : pas de loader figé.
+    window.addEventListener("pageshow", onHide);
+    return () => {
+      document.removeEventListener("click", onClick, true);
+      window.removeEventListener(SHOW_EVENT, onShow);
+      window.removeEventListener(HIDE_EVENT, onHide);
+      window.removeEventListener("pageshow", onHide);
+    };
   }, []);
 
   // La nouvelle page est affichée : on masque le loader.

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleIcon } from "./google-icon";
+import { hideNavigationLoader, showNavigationLoader } from "@/components/ui/navigation-loader";
 
 type AccountType = "entreprise" | "cabinet";
 
@@ -17,14 +18,20 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
   async function handleGoogle() {
     setError(null);
+    showNavigationLoader();
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) setError(error.message);
+    const { error } = await supabase.auth
+      .signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      .catch(() => ({ error: { message: "Connexion Google impossible pour le moment, réessayez." } }));
+    if (error) {
+      hideNavigationLoader();
+      setError(error.message);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -50,14 +57,17 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         setMessage("Vérifiez votre boîte mail pour confirmer votre compte.");
       }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      showNavigationLoader();
+      const { error } = await supabase.auth
+        .signInWithPassword({ email, password })
+        .catch(() => ({ error: { message: "Connexion impossible, vérifiez votre réseau et réessayez." } }));
       if (error) {
+        hideNavigationLoader();
         setError(error.message);
       } else {
+        // Le loader reste affiché jusqu'au chargement du tableau de bord.
         window.location.href = "/app/dashboard";
+        return;
       }
     }
 
