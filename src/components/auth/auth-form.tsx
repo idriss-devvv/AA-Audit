@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleIcon } from "./google-icon";
 import { hideNavigationLoader, showNavigationLoader } from "@/components/ui/navigation-loader";
+import { EmailCodeStep } from "./email-code-step";
 
 type AccountType = "entreprise" | "cabinet";
 
@@ -15,6 +16,9 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  // Étape de saisie du code reçu par e-mail (après inscription, ou connexion
+  // d'un compte dont l'adresse n'a pas encore été confirmée).
+  const [awaitingCode, setAwaitingCode] = useState(false);
 
   async function handleGoogle() {
     setError(null);
@@ -59,7 +63,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       if (error) {
         setError(error.message);
       } else {
-        setMessage("Vérifiez votre boîte mail pour confirmer votre compte.");
+        setAwaitingCode(true);
       }
     } else {
       showNavigationLoader();
@@ -68,7 +72,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         .catch(() => ({ error: { message: "Connexion impossible, vérifiez votre réseau et réessayez." } }));
       if (error) {
         hideNavigationLoader();
-        setError(error.message);
+        if (/email not confirmed/i.test(error.message)) {
+          // Compte créé mais adresse jamais confirmée : on renvoie un code.
+          await supabase.auth
+            .resend({ type: "signup", email, options: { emailRedirectTo: `${window.location.origin}/auth/callback` } })
+            .catch(() => null);
+          setAwaitingCode(true);
+        } else {
+          setError(error.message);
+        }
       } else {
         // Le loader reste affiché jusqu'au chargement du tableau de bord.
         window.location.href = "/app/dashboard";
@@ -77,6 +89,18 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     }
 
     setLoading(false);
+  }
+
+  if (awaitingCode) {
+    return (
+      <EmailCodeStep
+        email={email}
+        onBack={() => {
+          setAwaitingCode(false);
+          setLoading(false);
+        }}
+      />
+    );
   }
 
   return (
