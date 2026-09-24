@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { SITE_URL, SITE_NAME } from "@/lib/site";
+import { Suspense } from "react";
+import { NavigationProgress } from "@/components/ui/navigation-progress";
 
 const sans = Inter({
   subsets: ["latin"],
@@ -130,7 +132,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body className="bg-beige-50 font-sans text-ink-900 antialiased">{children}</body>
+      <body className="bg-beige-50 font-sans text-ink-900 antialiased">
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
+        {children}
+      </body>
     </html>
   );
 }
