@@ -43,6 +43,11 @@ function findAmountNear(text: string, labelPattern: RegExp): number | null {
 }
 
 function extractPeriod(text: string): string {
+  const periodRange = text.match(/p[ée]riode[^\n\d]{0,20}\d{1,2}[\/.\-](\d{1,2})[\/.\-](\d{4})/i);
+  if (periodRange) {
+    return `${periodRange[2]}-${periodRange[1].padStart(2, "0")}`;
+  }
+
   const monthNames = Object.keys(MONTHS_FR).join("|");
   const monthYear = text.match(new RegExp(`(${monthNames})\\s+(\\d{4})`, "i"));
   if (monthYear) {
@@ -50,7 +55,9 @@ function extractPeriod(text: string): string {
     return `${monthYear[2]}-${month}`;
   }
 
-  const numeric = text.match(/\b(0[1-9]|1[0-2])[\/\-](\d{4})\b/);
+  // « mm/aaaa » isolé uniquement : dans « 02/05/2022 » (date d'entrée), le
+  // « 05/2022 » ne doit pas être pris pour la période de paie.
+  const numeric = text.match(/(?<![\d\/\-])(0[1-9]|1[0-2])[\/\-](\d{4})\b/);
   if (numeric) {
     return `${numeric[2]}-${numeric[1]}`;
   }

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { extractText, getDocumentProxy } from "unpdf";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
+import { extractPdfLines } from "@/lib/parsers/pdf-text";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
 import { getCompanyPaySettings, listCollectiveAgreements, toRuleContext } from "@/lib/pay-settings";
 import { detectCollectiveAgreement } from "@/lib/collective-agreement-detection";
@@ -72,8 +72,7 @@ export async function POST(req: NextRequest) {
 
   if (file.type === "application/pdf") {
     try {
-      const pdf = await getDocumentProxy(new Uint8Array(buffer));
-      const { text } = await extractText(pdf, { mergePages: true });
+      const text = await extractPdfLines(new Uint8Array(buffer));
       extracted = parsePayslip(text);
       // Identification automatique de la convention collective (IDCC imprimé
       // sur le bulletin, sinon rapprochement du libellé avec le registre).

@@ -27,6 +27,18 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-24
 
+### Lecture des PDF ligne par ligne (correctif)
+- `extractText` (unpdf, `mergePages`) remplaçait tous les retours à la ligne
+  par des espaces : la lecture ligne à ligne des cotisations était inopérante
+  sur les vrais PDF. Nouvelle extraction `src/lib/parsers/pdf-text.ts` qui
+  reconstitue les lignes visuelles (position des fragments) et rattache les
+  libellés sur deux lignes à leurs montants.
+- Période de paie : « Période du jj/mm/aaaa » lue en priorité ; une date
+  complète (date d'entrée) n'est plus prise pour la période.
+- Validé sur 3 bulletins PDF fictifs 2026 : conforme (0 anomalie), taux de
+  vieillesse plafonnée erroné (anomalie bloquante), solde de congés
+  incohérent (anomalie mineure).
+
 ### Contrôles légaux issus de la base « Règles de contrôle » (Notion)
 - 6 nouvelles règles (`src/lib/rules/catalog/controles-legaux.ts`) :
   cohérence du net à payer (brut − cotisations, puis − prélèvement à la
