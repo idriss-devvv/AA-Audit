@@ -1,4 +1,5 @@
 import type { AnomalyRule } from "../types";
+import { findConventionGrid } from "../referentiels/grilles-conventionnelles";
 
 function normalizeLabel(label: string): string {
   return label
@@ -58,6 +59,8 @@ export const baremesParametrablesRules: AnomalyRule[] = [
     category: "baremes",
     description: "Compare le salaire brut au salaire minimum conventionnel paramétré",
     check: (payslip, context) => {
+      // Repli manuel : uniquement si la convention détectée n'a pas de grille intégrée.
+      if (findConventionGrid(payslip.collectiveAgreementIdcc)) return null;
       const minimum = context.salaireMinimumConventionnel;
       if (!minimum || minimum <= 0 || payslip.grossPay <= 0) return null;
       if (payslip.grossPay < minimum) {

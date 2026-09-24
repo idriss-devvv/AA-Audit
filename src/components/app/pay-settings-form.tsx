@@ -72,6 +72,11 @@ export function PaySettingsForm({
             onChange={(e) => setSalaireMinimum(e.target.value)}
             className="input"
           />
+          <p className="text-xs text-ink-400">
+            Utilisé seulement si la convention détectée n&apos;a pas de grille intégrée
+            (Bâtiment, Transports routiers, Experts-comptables, Enseignement privé). Pour les
+            autres, le minimum est lu automatiquement dans la grille conventionnelle.
+          </p>
         </div>
       </div>
 

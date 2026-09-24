@@ -27,6 +27,23 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-24
 
+### Grilles de salaires minimaux conventionnels + SMIC
+- Référentiel `src/lib/rules/referentiels/grilles-conventionnelles.ts` : 11
+  grilles relevées sur Légifrance (dernier avenant « salaires » étendu de
+  chaque branche) — Syntec, Métallurgie, Commerce de gros, HCR, Restauration
+  rapide, Commerce alimentaire, Services de l'automobile, Immobilier,
+  Propreté, Banque, Boulangerie. Chaque grille est datée et sourcée ; le
+  minimum le plus bas est retenu quand plusieurs s'appliquent à un niveau.
+- Lecture de la classification sur la fiche (coefficient, niveau/échelon,
+  classe d'emploi…) et du salaire de base (montant, heures).
+- Nouvelle règle `baremes.minimum-conventionnel` : rémunération comparée au
+  plus élevé du minimum de la grille (proratisé au temps de travail) et du
+  SMIC (11,88 € → 12,02 € au 01/01/2026 → 12,31 € au 01/06/2026).
+- Non intégrées (grilles régionales, par activité ou texte ambigu) :
+  Bâtiment (1596, 1597, 2609), Transports routiers (16),
+  Experts-comptables (787), Enseignement privé (3211) — le champ manuel
+  « Salaire minimum conventionnel » reste leur solution de repli.
+
 ### Lecture des PDF ligne par ligne (correctif)
 - `extractText` (unpdf, `mergePages`) remplaçait tous les retours à la ligne
   par des espaces : la lecture ligne à ligne des cotisations était inopérante

@@ -13,12 +13,32 @@
  *   (inchangés entre 2025 et 2026)
  * - Taux Agirc-Arrco 2026 : reglementation.agirc-arrco.fr (répartition
  *   standard 60 % employeur / 40 % salarié, identique en 2025)
+ * - SMIC : 11,88 € au 01/11/2024, 12,02 € au 01/01/2026 (décret n° 2025-1228
+ *   du 17 décembre 2025), 12,31 € au 01/06/2026 (arrêté du 22 mai 2026)
  */
 
 export const PMSS_BY_YEAR: Record<number, number> = {
   2025: 3925,
   2026: 4005,
 };
+
+/** SMIC horaire brut, par date d'entrée en vigueur (ordre chronologique). */
+export const SMIC_HOURLY: { from: string; rate: number }[] = [
+  { from: "2024-11-01", rate: 11.88 },
+  { from: "2026-01-01", rate: 12.02 },
+  { from: "2026-06-01", rate: 12.31 },
+];
+
+/** Durée mensuelle légale à temps plein (35 h × 52 / 12). */
+export const LEGAL_MONTHLY_HOURS = 151.67;
+
+/** SMIC horaire applicable à une période « AAAA-MM », ou null si non couverte. */
+export function smicHourlyFor(period: string | null | undefined): number | null {
+  if (!period || !/^\d{4}-\d{2}/.test(period)) return null;
+  const start = `${period.slice(0, 7)}-01`;
+  const applicable = SMIC_HOURLY.filter((s) => s.from <= start);
+  return applicable.length > 0 ? applicable[applicable.length - 1].rate : null;
+}
 
 export const LEGAL_SOURCES = {
   pmss: "Arrêtés annuels fixant le plafond de la sécurité sociale (Journal officiel)",
@@ -27,6 +47,7 @@ export const LEGAL_SOURCES = {
   heuresSup: "Code du travail, articles L3121-33 et L3121-36",
   mentions: "Code du travail, article R3243-1",
   conges: "Code du travail, article L3141-3",
+  smic: "SMIC — décret n° 2025-1228 du 17 décembre 2025 et arrêté du 22 mai 2026",
 } as const;
 
 export type ContributionRateReference = {

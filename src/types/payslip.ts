@@ -57,6 +57,11 @@ export interface PayslipData {
   contributionLines?: ContributionLine[];
   overtime?: OvertimeLine[];
   baseHourlyRate?: number | null;
+  /** Montant et nombre d'heures de la ligne « Salaire de base ». */
+  baseSalary?: number | null;
+  baseHours?: number | null;
+  /** Classification conventionnelle lue sur la fiche (niveau, coefficient, position…). */
+  classification?: string | null;
   totalEmployeeContributions?: number | null;
   netBeforeTax?: number | null;
   incomeTaxWithheld?: number | null;

@@ -207,13 +207,20 @@ function extractContributionLines(lines: string[]): ContributionLine[] {
   return result.slice(0, 40);
 }
 
-function extractBaseHourlyRate(lines: string[]): number | null {
+function extractBaseSalary(lines: string[]): { quantity: number; unit: number; amount: number } | null {
   for (const line of lines) {
     if (!/salaire\s+de\s+base|taux\s+horaire/i.test(line)) continue;
     const triple = findQuantityTriple(decimalsInLine(line));
-    if (triple) return triple.unit;
+    if (triple) return triple;
   }
   return null;
+}
+
+function extractClassification(text: string): string | null {
+  const explicit = text.match(/classification\s*[:\-]?\s*([^\n]{2,80})/i);
+  if (explicit) return explicit[1].trim();
+  const implicit = text.match(/(?:coefficient|niveau|position|classe\s+d['’]emploi|[ée]chelon)\s*[:\-]?\s*[^\n]{1,60}/i);
+  return implicit ? implicit[0].trim() : null;
 }
 
 function extractOvertime(lines: string[], baseHourlyRate: number | null): OvertimeLine[] {
@@ -316,7 +323,8 @@ export function parsePayslip(rawContent: string): PayslipData {
     findAmountNear(text, /net\s+imposable[^\n\d]{0,40}(\d[\d\s . ]*,\d{2}|\d+[.,]\d{2})/i) ??
     0;
 
-  const baseHourlyRate = extractBaseHourlyRate(lines);
+  const baseSalaryLine = extractBaseSalary(lines);
+  const baseHourlyRate = baseSalaryLine?.unit ?? null;
 
   const employeeNameMatch = text.match(/(?:salarié|nom\s*(?:et\s*pr[ée]nom)?|employ[ée])\s*[:\-]?\s*([A-ZÀ-Ü][\wÀ-ÿ'\- ]{2,40})/i);
 
@@ -336,6 +344,9 @@ export function parsePayslip(rawContent: string): PayslipData {
     contributionLines: extractContributionLines(lines),
     overtime: extractOvertime(lines, baseHourlyRate),
     baseHourlyRate,
+    baseSalary: baseSalaryLine?.amount ?? null,
+    baseHours: baseSalaryLine?.quantity ?? null,
+    classification: extractClassification(text),
     totalEmployeeContributions: firstDecimalOnMatchingLine(lines, /total\s+(?:des\s+)?cotisations/i),
     netBeforeTax: firstDecimalOnMatchingLine(lines, /net\s+(?:(?:à|a)\s+payer\s+)?avant\s+imp[ôo]t/i),
     incomeTaxWithheld: lastDecimalOnMatchingLine(
