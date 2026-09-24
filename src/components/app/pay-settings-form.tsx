@@ -67,11 +67,11 @@ export function PaySettingsForm({
   return (
     <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-ink-700">Convention collective applicable</label>
+        <label className="field-label">Convention collective applicable</label>
         <select
           value={selectValue}
           onChange={(e) => setSelectValue(e.target.value)}
-          className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+          className="input"
         >
           <option value="">Non renseignée</option>
           {Object.entries(bySector).map(([sector, items]) => (
@@ -91,7 +91,7 @@ export function PaySettingsForm({
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
             placeholder="Nom de la convention collective"
-            className="mt-1 rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-sm text-ink-900 outline-none focus:border-blue-400"
+            className="input mt-1"
           />
         )}
         <p className="text-xs text-ink-500">
@@ -103,7 +103,7 @@ export function PaySettingsForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-ink-700">
+          <label className="field-label">
             Taux de CSG/CRDS non déductible (%)
           </label>
           <input
@@ -113,11 +113,11 @@ export function PaySettingsForm({
             placeholder="Non renseigné"
             value={csgCrds}
             onChange={(e) => setCsgCrds(e.target.value)}
-            className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+            className="input"
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-ink-700">
+          <label className="field-label">
             Salaire minimum conventionnel (€)
           </label>
           <input
@@ -127,7 +127,7 @@ export function PaySettingsForm({
             placeholder="Non renseigné"
             value={salaireMinimum}
             onChange={(e) => setSalaireMinimum(e.target.value)}
-            className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+            className="input"
           />
         </div>
       </div>
@@ -139,7 +139,7 @@ export function PaySettingsForm({
         <button
           type="submit"
           disabled={loading}
-          className="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-beige-50 transition hover:bg-blue-700 disabled:opacity-60"
+          className="btn-primary px-5 py-2.5"
         >
           {loading ? "Enregistrement…" : "Enregistrer"}
         </button>

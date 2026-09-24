@@ -65,35 +65,35 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-6 rounded-2xl border border-beige-200 bg-white p-8 shadow-soft">
+    <div className="card mx-auto flex w-full max-w-md flex-col gap-6 rounded-3xl p-7 shadow-lift sm:p-9">
       <button
         type="button"
         onClick={handleGoogle}
-        className="flex items-center justify-center gap-3 rounded-full border border-beige-300 bg-white px-6 py-3 text-sm font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600"
+        className="btn-secondary gap-3"
       >
         <GoogleIcon />
         Continuer avec Google
       </button>
 
-      <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-ink-300">
-        <span className="h-px flex-1 bg-beige-200" />
+      <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-ink-400">
+        <span className="h-px flex-1 bg-ink-200/70" />
         ou
-        <span className="h-px flex-1 bg-beige-200" />
+        <span className="h-px flex-1 bg-ink-200/70" />
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {mode === "signup" && (
           <>
             <div className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium text-ink-700">Vous êtes</span>
-              <div className="grid grid-cols-2 gap-2">
+              <span className="field-label">Vous êtes</span>
+              <div className="grid grid-cols-2 gap-1 rounded-xl bg-beige-100 p-1 ring-1 ring-inset ring-ink-200/60">
                 <button
                   type="button"
                   onClick={() => setAccountType("entreprise")}
-                  className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                     accountType === "entreprise"
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-beige-200 bg-beige-50 text-ink-700 hover:border-blue-300"
+                      ? "bg-white text-ink-900 shadow-soft ring-1 ring-ink-200/70"
+                      : "text-ink-500 hover:text-ink-900"
                   }`}
                 >
                   Une entreprise
@@ -101,10 +101,10 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 <button
                   type="button"
                   onClick={() => setAccountType("cabinet")}
-                  className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                     accountType === "cabinet"
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-beige-200 bg-beige-50 text-ink-700 hover:border-blue-300"
+                      ? "bg-white text-ink-900 shadow-soft ring-1 ring-ink-200/70"
+                      : "text-ink-500 hover:text-ink-900"
                   }`}
                 >
                   Un cabinet comptable
@@ -119,7 +119,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-ink-700">
+              <label className="field-label">
                 {accountType === "cabinet" ? "Nom du cabinet" : "Nom de l'entreprise"}
               </label>
               <input
@@ -127,25 +127,25 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 required
-                className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+                className="input"
               />
             </div>
           </>
         )}
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-ink-700">Email</label>
+          <label className="field-label">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+            className="input"
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-ink-700">
+          <label className="field-label">
             Mot de passe
           </label>
           <input
@@ -154,7 +154,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
-            className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+            className="input"
           />
         </div>
 
@@ -164,7 +164,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-beige-50 transition hover:bg-blue-700 disabled:opacity-60"
+          className="btn-primary mt-2"
         >
           {loading
             ? "Veuillez patienter…"

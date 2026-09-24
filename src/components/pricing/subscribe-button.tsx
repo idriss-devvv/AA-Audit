@@ -9,7 +9,7 @@ export function SubscribeButton({
 }: {
   priceId: string;
   label?: string;
-  variant?: "primary" | "outline";
+  variant?: "primary" | "outline" | "inverse";
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,11 +38,12 @@ export function SubscribeButton({
     }
   }
 
-  const base = "w-full rounded-full px-6 py-3 text-sm font-semibold transition";
   const styles =
     variant === "primary"
-      ? "bg-blue-600 text-beige-50 hover:bg-blue-700"
-      : "border border-beige-300 bg-white text-ink-900 hover:border-blue-400 hover:text-blue-600";
+      ? "btn-primary w-full"
+      : variant === "inverse"
+        ? "btn w-full bg-beige-50 px-6 py-3 text-blue-800 hover:bg-white active:scale-[0.98]"
+        : "btn-secondary w-full";
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -50,7 +51,7 @@ export function SubscribeButton({
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className={`${base} ${styles} disabled:opacity-60`}
+        className={styles}
       >
         {loading ? "Redirection…" : label}
       </button>

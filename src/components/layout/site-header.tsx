@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 const navLinks = [
   { href: "/#fonctionnalites", label: "Fonctionnalités" },
@@ -9,40 +10,32 @@ const navLinks = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-beige-200 bg-beige-50/80 backdrop-blur">
-      <div className="container-page flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-beige-50">
-            PA
-          </span>
-          <span className="text-lg font-bold tracking-tight text-ink-900">
-            PayAudit
-          </span>
+    <header className="sticky top-0 z-40 border-b border-ink-200/60 bg-beige-50/75 backdrop-blur-xl backdrop-saturate-150">
+      <div className="container-page flex h-16 items-center justify-between gap-4">
+        <Link href="/" aria-label="PayAudit — accueil" className="shrink-0">
+          <Logo className="[&>span:last-child]:hidden min-[420px]:[&>span:last-child]:inline" />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-1 rounded-full border border-ink-200/70 bg-white/60 p-1 shadow-[0_1px_2px_rgba(23,25,29,0.04)] md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-ink-700 transition hover:text-blue-600"
+              className="rounded-full px-4 py-1.5 text-[13px] font-medium text-ink-600 transition hover:bg-beige-100 hover:text-ink-900"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Link
             href="/connexion"
-            className="rounded-full border border-beige-300 bg-white px-5 py-2 text-sm font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600"
+            className="whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold text-ink-700 transition hover:text-ink-900 sm:px-4"
           >
             Se connecter
           </Link>
-          <Link
-            href="/inscription"
-            className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-beige-50 shadow-soft transition hover:bg-blue-700"
-          >
+          <Link href="/inscription" className="btn-dark whitespace-nowrap px-4 py-2 text-[13px] sm:px-5">
             S&apos;inscrire
           </Link>
         </div>

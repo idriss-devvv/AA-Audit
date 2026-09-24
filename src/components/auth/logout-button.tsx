@@ -13,7 +13,7 @@ export function LogoutButton() {
     <button
       type="button"
       onClick={handleLogout}
-      className="rounded-full border border-beige-300 bg-white px-4 py-1.5 text-xs font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600"
+      className="btn-secondary px-3.5 py-1.5 text-xs"
     >
       Se déconnecter
     </button>

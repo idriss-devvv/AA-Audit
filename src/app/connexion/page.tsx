@@ -5,10 +5,13 @@ import { AuthForm } from "@/components/auth/auth-form";
 export default function ConnexionPage() {
   return (
     <MarketingShell>
-      <section className="container-page py-20">
+      <section className="relative overflow-hidden">
+        <div aria-hidden className="bg-grid mask-radial pointer-events-none absolute inset-0" />
+        <div aria-hidden className="pointer-events-none absolute -top-40 left-1/2 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="container-page relative py-20 md:py-24">
         <div className="mx-auto max-w-md text-center">
-          <h1 className="text-3xl font-extrabold text-ink-900">Connexion</h1>
-          <p className="mt-2 text-ink-500">Accédez à votre espace PayAudit.</p>
+          <h1 className="heading-display text-5xl">Connexion</h1>
+          <p className="mt-4 text-ink-500">Accédez à votre espace PayAudit.</p>
         </div>
 
         <div className="mt-10">
@@ -19,11 +22,12 @@ export default function ConnexionPage() {
           Pas encore de compte ?{" "}
           <Link
             href="/inscription"
-            className="font-semibold text-blue-600 hover:underline"
+            className="font-semibold text-blue-600 underline-offset-4 hover:underline"
           >
             Créer un compte
           </Link>
         </p>
+      </div>
       </section>
     </MarketingShell>
   );

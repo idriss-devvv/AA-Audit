@@ -41,7 +41,7 @@ export function AddClientForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-end">
       <div className="flex flex-1 flex-col gap-1.5">
-        <label htmlFor="client-name" className="text-sm font-medium text-ink-700">
+        <label htmlFor="client-name" className="field-label">
           Nom de l&apos;entreprise cliente
         </label>
         <input
@@ -51,13 +51,13 @@ export function AddClientForm() {
           onChange={(e) => setName(e.target.value)}
           placeholder="Ex : Boulangerie Martin"
           required
-          className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+          className="input"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-beige-50 transition hover:bg-blue-700 disabled:opacity-60"
+        className="btn-primary py-2.5"
       >
         {loading ? "Ajout…" : "Ajouter le client"}
       </button>

@@ -45,7 +45,7 @@ export function CompanySwitcher({
         value={activeCompanyId}
         onChange={handleChange}
         disabled={switching}
-        className="rounded-lg border border-beige-200 bg-white px-3 py-1.5 text-sm font-medium text-ink-900 outline-none focus:border-blue-400 disabled:opacity-60"
+        className="input w-auto rounded-full py-1.5 pl-3.5 pr-8 font-medium"
       >
         <option value={ownCompanyId}>{ownCompanyName} (cabinet)</option>
         {clients.map((client) => (

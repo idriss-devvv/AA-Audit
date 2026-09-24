@@ -55,7 +55,7 @@ export function ContributionRatesManager({ rates }: { rates: ContributionRateIte
           {rates.map((r) => (
             <li
               key={r.id}
-              className="flex items-center justify-between rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-sm"
+              className="flex items-center justify-between rounded-xl border border-ink-200/70 bg-beige-50 px-4 py-2.5 text-sm"
             >
               <span className="font-medium text-ink-900">{r.label}</span>
               <div className="flex items-center gap-3">
@@ -64,7 +64,7 @@ export function ContributionRatesManager({ rates }: { rates: ContributionRateIte
                   type="button"
                   onClick={() => handleDelete(r.id)}
                   disabled={deletingId === r.id}
-                  className="text-xs font-semibold text-red-600 hover:underline disabled:opacity-60"
+                  className="text-xs font-semibold text-ink-400 transition hover:text-rose-600 disabled:opacity-60"
                 >
                   Supprimer
                 </button>
@@ -76,18 +76,18 @@ export function ContributionRatesManager({ rates }: { rates: ContributionRateIte
 
       <form onSubmit={handleAdd} className="mt-4 flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-ink-700">Libellé de la cotisation</label>
+          <label className="field-label text-xs">Libellé de la cotisation</label>
           <input
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             placeholder="Ex: Accident du travail"
             required
-            className="w-56 rounded-lg border border-beige-200 bg-beige-50 px-3 py-2 text-sm text-ink-900 outline-none focus:border-blue-400"
+            className="input w-56 px-3 py-2"
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-ink-700">Taux attendu (% du brut)</label>
+          <label className="field-label text-xs">Taux attendu (% du brut)</label>
           <input
             type="number"
             step="0.01"
@@ -96,13 +96,13 @@ export function ContributionRatesManager({ rates }: { rates: ContributionRateIte
             onChange={(e) => setRate(e.target.value)}
             placeholder="Ex: 1.20"
             required
-            className="w-32 rounded-lg border border-beige-200 bg-beige-50 px-3 py-2 text-sm text-ink-900 outline-none focus:border-blue-400"
+            className="input w-32 px-3 py-2"
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="rounded-full border border-beige-300 bg-white px-4 py-2 text-sm font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600 disabled:opacity-60"
+          className="btn-secondary px-4 py-2"
         >
           {loading ? "Ajout…" : "Ajouter"}
         </button>

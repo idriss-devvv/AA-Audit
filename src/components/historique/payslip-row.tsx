@@ -38,7 +38,7 @@ function ChevronIcon({ open }: { open: boolean }) {
 function DetailItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">{label}</p>
+      <p className="card-title">{label}</p>
       <p className="mt-0.5 text-sm text-ink-900">{value}</p>
     </div>
   );
@@ -59,39 +59,39 @@ export function PayslipRow({ payslip }: { payslip: PayslipRowData }) {
 
   return (
     <>
-      <tr className={open ? "bg-beige-50" : undefined}>
+      <tr className={`transition-colors hover:bg-beige-50/70 ${open ? "bg-beige-50" : ""}`}>
         <td className="px-3 py-4">
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={open ? "Masquer les détails" : "Voir plus de détails"}
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-beige-300 bg-white text-ink-500 transition hover:border-blue-400 hover:text-blue-600"
+            className="flex h-7 w-7 items-center justify-center rounded-lg border border-ink-200 bg-white text-ink-400 transition hover:border-ink-300 hover:text-ink-900"
           >
             <ChevronIcon open={open} />
           </button>
         </td>
-        <td className="px-6 py-4 font-medium text-ink-900">{payslip.fileName}</td>
+        <td className="max-w-[16rem] truncate px-6 py-4 font-medium text-ink-900">{payslip.fileName}</td>
         <td className="px-6 py-4 text-ink-700">{payslip.periodLabel}</td>
-        <td className="px-6 py-4 text-ink-700">{payslip.grossLabel}</td>
-        <td className="px-6 py-4 text-ink-700">{payslip.netLabel}</td>
+        <td className="whitespace-nowrap px-6 py-4 tabular-nums text-ink-700">{payslip.grossLabel}</td>
+        <td className="whitespace-nowrap px-6 py-4 tabular-nums text-ink-700">{payslip.netLabel}</td>
         <td className="px-6 py-4 text-ink-700">
           {payslip.anomaliesCount > 0 ? (
-            <span className="font-semibold text-red-600">{payslip.anomaliesCount}</span>
+            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-rose-50 px-2 text-xs font-semibold text-rose-700 ring-1 ring-inset ring-rose-200">{payslip.anomaliesCount}</span>
           ) : (
             "0"
           )}
         </td>
         <td className="px-6 py-4">
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${payslip.statusInfo.className}`}>
+          <span className={`badge ${payslip.statusInfo.className}`}>
             {payslip.statusInfo.label}
           </span>
         </td>
-        <td className="px-6 py-4 text-ink-500">{payslip.dateLabel}</td>
+        <td className="whitespace-nowrap px-6 py-4 tabular-nums text-ink-500">{payslip.dateLabel}</td>
         <td className="px-6 py-4">
           <Link
             href={`/app/historique/${payslip.id}`}
-            className="text-sm font-medium text-blue-600 hover:underline"
+            className="inline-flex items-center gap-1 whitespace-nowrap text-sm font-semibold text-blue-600 transition hover:text-blue-800"
           >
             Rapport
           </Link>
@@ -107,7 +107,7 @@ export function PayslipRow({ payslip }: { payslip: PayslipRowData }) {
                 erreur).
               </p>
             ) : (
-              <div className="rounded-xl border border-beige-200 bg-white p-5 shadow-soft">
+              <div className="rounded-2xl border border-ink-200/70 bg-white p-6 shadow-soft">
                 <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
                   Détails de la fiche
                 </p>
@@ -136,8 +136,8 @@ export function PayslipRow({ payslip }: { payslip: PayslipRowData }) {
                   />
                 </div>
 
-                <div className="mt-5 border-t border-beige-100 pt-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+                <div className="mt-5 border-t border-ink-100 pt-4">
+                  <p className="card-title">
                     Cotisations détectées
                   </p>
                   {extracted.contributions.length === 0 ? (

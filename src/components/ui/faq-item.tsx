@@ -6,17 +6,17 @@ export function FaqItem({ question, answer }: { question: string; answer: string
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-2xl border border-beige-200 bg-white transition hover:border-blue-300">
+    <div className="rounded-2xl border border-ink-200/70 bg-white transition duration-300 hover:border-ink-300 hover:shadow-soft">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
       >
-        <span className="font-semibold text-ink-900">{question}</span>
+        <span className="text-[15px] font-semibold tracking-tight text-ink-900">{question}</span>
         <span
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-beige-300 text-ink-500 transition-transform duration-300 ${
-            open ? "rotate-45 border-blue-400 text-blue-600" : ""
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-ink-200 text-ink-500 transition duration-300 ${
+            open ? "rotate-45 border-blue-600 bg-blue-600 text-beige-50" : ""
           }`}
         >
           <svg
@@ -37,7 +37,7 @@ export function FaqItem({ question, answer }: { question: string; answer: string
         style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
       >
         <div className="overflow-hidden">
-          <p className="px-6 pb-5 text-sm leading-relaxed text-ink-500">{answer}</p>
+          <p className="px-6 pb-6 text-sm leading-relaxed text-ink-500">{answer}</p>
         </div>
       </div>
     </div>

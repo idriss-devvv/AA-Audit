@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 function IconShield() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
       <path d="m9 12 2 2 4-4" />
     </svg>
@@ -22,21 +22,21 @@ function IconShield() {
 }
 function IconBolt() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" />
     </svg>
   );
 }
 function IconChat() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
     </svg>
   );
 }
 function IconGrid() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <rect x="3" y="3" width="7" height="7" rx="1.5" />
       <rect x="14" y="3" width="7" height="7" rx="1.5" />
       <rect x="3" y="14" width="7" height="7" rx="1.5" />
@@ -46,7 +46,7 @@ function IconGrid() {
 }
 function IconBook() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
       <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
     </svg>
@@ -54,7 +54,7 @@ function IconBook() {
 }
 function IconSun() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
       <circle cx="12" cy="12" r="4" />
       <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
     </svg>
@@ -62,7 +62,7 @@ function IconSun() {
 }
 function IconBuilding() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7">
       <rect x="4" y="2" width="16" height="20" rx="1" />
       <path d="M9 6h1M14 6h1M9 10h1M14 10h1M9 14h1M14 14h1M9 22v-4h6v4" />
     </svg>
@@ -70,7 +70,7 @@ function IconBuilding() {
 }
 function IconUsers() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7">
       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
       <circle cx="9" cy="7" r="4" />
       <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
@@ -79,7 +79,7 @@ function IconUsers() {
 }
 function IconBriefcase() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7">
       <rect x="2" y="7" width="20" height="14" rx="2" />
       <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
     </svg>
@@ -236,6 +236,92 @@ const faqStructuredData = {
   })),
 };
 
+function HeroPreview() {
+  const lines = [
+    { label: "Salaire de base", value: "2 850,00 €" },
+    { label: "Sécurité sociale plafonnée", value: "197,51 €" },
+    { label: "Accident du travail", value: "59,85 €", flagged: true },
+    { label: "Retraite complémentaire T1", value: "113,43 €" },
+    { label: "CSG/CRDS non déductible", value: "81,34 €" },
+  ];
+  return (
+    <div aria-hidden className="relative mx-auto mt-16 w-full max-w-4xl animate-fade-in-up [animation-delay:380ms] md:mt-20">
+      <div className="absolute -inset-x-10 -bottom-10 top-10 rounded-[2.5rem] bg-blue-200/40 blur-3xl" />
+      <div className="relative overflow-hidden rounded-3xl border border-ink-200/80 bg-white/90 shadow-lift backdrop-blur">
+        <div className="flex items-center gap-2 border-b border-ink-100 bg-beige-50/80 px-5 py-3">
+          <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
+          <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
+          <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
+          <span className="ml-3 truncate rounded-md bg-white px-3 py-1 text-[11px] font-medium text-ink-400 ring-1 ring-ink-100">
+            PayAudit — Historique
+          </span>
+        </div>
+        <div className="grid gap-0 text-left md:grid-cols-[1.35fr_1fr]">
+          <div className="relative overflow-hidden border-b border-ink-100 p-6 md:border-b-0 md:border-r">
+            <div className="flex items-center justify-between">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400">Bulletin · Mars</p>
+              <span className="badge bg-blue-50 text-blue-600 ring-blue-100">
+                <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-blue-500" />
+                Analyse
+              </span>
+            </div>
+            <ul className="mt-5 space-y-1.5">
+              {lines.map((line) => (
+                <li
+                  key={line.label}
+                  className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-[13px] ${
+                    line.flagged ? "bg-amber-50 text-ink-900 ring-1 ring-inset ring-amber-200" : "text-ink-600"
+                  }`}
+                >
+                  <span className="truncate">{line.label}</span>
+                  <span className="shrink-0 font-medium tabular-nums text-ink-900">{line.value}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4 flex items-center justify-between border-t border-dashed border-ink-200 px-3 pt-4 text-[13px]">
+              <span className="font-semibold text-ink-900">Net à payer</span>
+              <span className="font-display text-2xl text-ink-900">2 219,87 €</span>
+            </div>
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 animate-scan bg-gradient-to-b from-transparent via-blue-100/50 to-transparent" />
+          </div>
+          <div className="bg-beige-50/60 p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400">Anomalies</p>
+            <div className="mt-5 space-y-3">
+              <div className="rounded-xl border border-amber-200 bg-white p-4 shadow-soft">
+                <span className="badge bg-amber-50 text-amber-700 ring-amber-200">Avertissement</span>
+                <p className="mt-2.5 text-[13px] font-medium leading-snug text-ink-900">
+                  Taux AT/MP constaté 2,10 % — attendu 1,20 %
+                </p>
+                <p className="mt-1 text-xs text-ink-400">Écart : +25,65 €</p>
+              </div>
+              <div className="rounded-xl border border-ink-200/70 bg-white p-4">
+                <span className="badge bg-emerald-50 text-emerald-700 ring-emerald-200">Conforme</span>
+                <p className="mt-2.5 text-[13px] font-medium leading-snug text-ink-900">Cohérence brut / net vérifiée</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Check({ className = "text-blue-500" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className={`mt-0.5 h-4 w-4 shrink-0 ${className}`} aria-hidden>
+      <path d="m5 10.5 3 3 7-7" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden>
+      <path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function Home() {
   return (
     <MarketingShell>
@@ -247,61 +333,62 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
+        <div aria-hidden className="bg-grid mask-radial pointer-events-none absolute inset-0" />
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 animate-float-slow rounded-full bg-blue-100 opacity-60 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-16 top-10 h-72 w-72 animate-float rounded-full bg-beige-300/50 opacity-70 blur-3xl"
+          className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-gradient-to-b from-blue-100/70 via-beige-100/60 to-transparent blur-3xl"
         />
 
-        <div className="container-page relative flex flex-col items-center gap-6 py-24 text-center md:py-32">
-          <span className="animate-fade-in-up rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
+        <div className="container-page relative flex flex-col items-center pb-24 pt-20 text-center md:pb-32 md:pt-28">
+          <span className="inline-flex animate-fade-in-up items-center gap-2 rounded-full border border-ink-200/80 bg-white/70 px-4 py-1.5 text-xs font-medium text-ink-600 shadow-[0_1px_2px_rgba(23,25,29,0.04)] backdrop-blur">
+            <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-blue-500" />
             Contrôle de paie automatisé
           </span>
-          <h1 className="max-w-3xl animate-fade-in-up text-4xl font-extrabold tracking-tight text-ink-900 [animation-delay:80ms] md:text-6xl">
+          <h1 className="heading-display mt-8 max-w-4xl animate-fade-in-up text-[2.9rem] [animation-delay:80ms] sm:text-6xl md:text-[5.25rem]">
             Vérifiez chaque fiche de paie,{" "}
-            <span className="text-blue-600">sans rien laisser passer</span>
+            <em className="italic text-blue-600">sans rien laisser passer</em>
           </h1>
-          <p className="max-w-xl animate-fade-in-up text-lg text-ink-500 [animation-delay:160ms]">
+          <p className="mt-7 max-w-xl animate-fade-in-up text-base leading-relaxed text-ink-500 [animation-delay:160ms] md:text-lg">
             PayAudit détecte automatiquement les anomalies et erreurs sur vos
             fiches de paie : cotisations, plafonds, heures, primes, convention
             collective et congés payés.
           </p>
-          <div className="flex animate-fade-in-up flex-col gap-3 [animation-delay:240ms] sm:flex-row">
-            <Link
-              href="/app/dashboard"
-              className="rounded-full bg-blue-600 px-7 py-3 text-sm font-semibold text-beige-50 shadow-soft transition hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-lg active:translate-y-0"
-            >
+          <div className="mt-10 flex w-full animate-fade-in-up flex-col gap-3 [animation-delay:240ms] sm:w-auto sm:flex-row">
+            <Link href="/app/dashboard" className="btn-primary group px-7">
               Essayer PayAudit
+              <ArrowRight />
             </Link>
-            <Link
-              href="/contact"
-              className="rounded-full border border-beige-300 bg-white px-7 py-3 text-sm font-semibold text-ink-900 transition hover:-translate-y-0.5 hover:border-blue-400 hover:text-blue-600 active:translate-y-0"
-            >
+            <Link href="/contact" className="btn-secondary px-7">
               Demander une démo
             </Link>
           </div>
 
-          <div className="mt-6 flex animate-fade-in-up flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs font-medium text-ink-500 [animation-delay:320ms]">
-            <span className="flex items-center gap-1.5">
+          <div className="mt-8 flex animate-fade-in-up flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-ink-500 [animation-delay:320ms]">
+            <span className="flex items-center gap-1.5 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:text-blue-500">
               <IconShield /> Fichiers chiffrés
             </span>
+            <span aria-hidden className="hidden h-3 w-px bg-ink-200 sm:block" />
             <span className="flex items-center gap-1.5">Conforme RGPD</span>
+            <span aria-hidden className="hidden h-3 w-px bg-ink-200 sm:block" />
             <span className="flex items-center gap-1.5">Aucune carte requise pour tester</span>
           </div>
+
+          <HeroPreview />
         </div>
       </section>
 
       {/* Pourquoi contrôler ses fiches de paie */}
-      <section className="border-t border-beige-200 bg-white py-24">
-        <div className="container-page grid gap-12 md:grid-cols-2 md:items-center">
+      <section className="border-t border-ink-200/60 bg-white py-24 md:py-32">
+        <div className="container-page grid gap-14 md:grid-cols-[1.1fr_1fr] md:items-center">
           <Reveal>
-            <h2 className="text-3xl font-bold text-ink-900">
+            <span className="eyebrow">
+              <span className="h-px w-6 bg-blue-500" />
+              Enjeux
+            </span>
+            <h2 className="heading-display mt-5 text-4xl md:text-5xl">
               Pourquoi contrôler vos fiches de paie ?
             </h2>
-            <p className="mt-4 text-ink-500">
+            <p className="mt-6 leading-relaxed text-ink-500">
               Le bulletin de salaire cumule des dizaines de paramètres — taux de
               cotisations, plafonds de sécurité sociale, primes, heures
               supplémentaires, congés payés — qui évoluent régulièrement.
@@ -309,27 +396,27 @@ export default function Home() {
               répéter chaque mois, pour un ou plusieurs salariés, sans être
               détectée.
             </p>
-            <p className="mt-4 text-ink-500">
+            <p className="mt-4 leading-relaxed text-ink-500">
               PayAudit automatise cette vérification pour repérer les écarts
               avant qu&apos;ils ne deviennent un vrai problème : redressement
               URSSAF, litige prud&apos;homal ou simple perte de confiance des
               salariés.
             </p>
           </Reveal>
-          <div className="grid gap-4">
+          <div className="overflow-hidden rounded-3xl border border-ink-200/70 bg-beige-50">
             {[
               { title: "Erreurs de cotisations", desc: "Taux erronés, plafonds mal appliqués, lignes manquantes." },
               { title: "Incohérences brut / net", desc: "Écarts inexpliqués entre le salaire brut et le net à payer." },
               { title: "Congés payés mal suivis", desc: "Soldes de congés incohérents d'un mois sur l'autre." },
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 100}>
-                <div className="flex items-start gap-4 rounded-2xl border border-beige-200 bg-beige-50 p-5">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-beige-50">
-                    !
+                <div className={`flex items-start gap-5 p-6 md:p-7 ${i > 0 ? "border-t border-ink-200/70" : ""}`}>
+                  <span className="font-display text-3xl italic leading-none text-blue-500">
+                    0{i + 1}
                   </span>
                   <div>
                     <p className="font-semibold text-ink-900">{item.title}</p>
-                    <p className="mt-1 text-sm text-ink-500">{item.desc}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-ink-500">{item.desc}</p>
                   </div>
                 </div>
               </Reveal>
@@ -339,29 +426,77 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section id="fonctionnalites" className="border-t border-beige-200 bg-beige-100 py-24">
+      <section id="fonctionnalites" className="border-t border-ink-200/60 bg-beige-100/70 py-24 md:py-32">
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold text-ink-900">
+            <span className="eyebrow">
+              <span className="h-px w-6 bg-blue-500" />
+              Fonctionnalités
+              <span className="h-px w-6 bg-blue-500" />
+            </span>
+            <h2 className="heading-display mt-5 text-4xl md:text-5xl">
               Une vérification pensée pour la fiabilité
             </h2>
-            <p className="mt-3 text-ink-500">
+            <p className="mt-5 text-ink-500">
               Bien plus qu&apos;un contrôle du brut et du net : PayAudit analyse
               chaque bulletin dans son ensemble.
             </p>
           </Reveal>
-          <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-16 overflow-hidden rounded-3xl border border-ink-200/70 bg-white shadow-soft">
+          <div className="-mb-px -mr-px grid md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
-              <Reveal key={feature.title} delay={(i % 3) * 90}>
-                <div className="group h-full rounded-2xl border border-beige-200 bg-white p-8 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-beige-50">
+              <Reveal key={feature.title} delay={(i % 3) * 90} className="h-full border-b border-r border-ink-200/70">
+                <div className="group h-full p-8 transition duration-300 hover:bg-beige-50 md:p-9">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-ink-200/70 bg-beige-50 text-blue-600 transition duration-300 group-hover:border-blue-600 group-hover:bg-blue-600 group-hover:text-beige-50 [&_svg]:h-5 [&_svg]:w-5">
                     <feature.icon />
                   </div>
-                  <h3 className="mt-5 text-lg font-semibold text-ink-900">
+                  <h3 className="mt-6 text-[17px] font-semibold tracking-tight text-ink-900">
                     {feature.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-ink-500">
+                  <p className="mt-2.5 text-sm leading-relaxed text-ink-500">
                     {feature.description}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="comment-ca-marche" className="relative overflow-hidden bg-ink-900 py-24 text-beige-50 md:py-32">
+        <div aria-hidden className="bg-grid-light mask-radial pointer-events-none absolute inset-0" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-40 -top-40 h-[420px] w-[420px] rounded-full bg-blue-500/25 blur-3xl"
+        />
+        <div className="container-page relative">
+          <Reveal className="max-w-2xl">
+            <span className="eyebrow text-ink-400">
+              <span className="h-px w-6 bg-blue-300" />
+              Méthode
+            </span>
+            <h2 className="heading-display mt-5 text-4xl text-beige-50 md:text-5xl">
+              Comment ça marche
+            </h2>
+            <p className="mt-5 max-w-lg text-ink-300">
+              Trois étapes suffisent pour passer d&apos;un PDF de paie à une
+              analyse complète.
+            </p>
+          </Reveal>
+          <div className="mt-16 grid gap-6 md:grid-cols-3">
+            {steps.map((step, i) => (
+              <Reveal key={step.number} delay={i * 120} className="h-full">
+                <div className="relative h-full rounded-2xl border border-white/10 bg-white/[0.04] p-8 shadow-inner-top backdrop-blur transition duration-300 hover:border-white/20 hover:bg-white/[0.07]">
+                  <span className="font-display text-5xl italic leading-none text-beige-300">
+                    {step.number}
+                  </span>
+                  <h3 className="mt-8 text-lg font-semibold tracking-tight text-beige-50">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-ink-300">
+                    {step.description}
                   </p>
                 </div>
               </Reveal>
@@ -370,61 +505,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="comment-ca-marche" className="py-24">
-        <div className="container-page">
-          <Reveal className="text-center">
-            <h2 className="text-3xl font-bold text-ink-900">
-              Comment ça marche
-            </h2>
-            <p className="mx-auto mt-3 max-w-lg text-ink-500">
-              Trois étapes suffisent pour passer d&apos;un PDF de paie à une
-              analyse complète.
-            </p>
-          </Reveal>
-          <div className="relative mt-14 grid gap-10 md:grid-cols-3">
-            <div
-              aria-hidden
-              className="absolute left-0 right-0 top-6 hidden h-px bg-beige-300 md:block"
-            />
-            {steps.map((step, i) => (
-              <Reveal key={step.number} delay={i * 120} className="relative bg-beige-50 md:bg-transparent">
-                <span className="relative z-10 inline-flex text-4xl font-extrabold text-beige-300">
-                  {step.number}
-                </span>
-                <h3 className="mt-3 text-lg font-semibold text-ink-900">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-500">
-                  {step.description}
-                </p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Pour qui */}
-      <section className="border-t border-beige-200 bg-white py-24">
+      <section className="bg-beige-50 py-24 md:py-32">
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold text-ink-900">Conçu pour tous les profils</h2>
-            <p className="mt-3 text-ink-500">
+            <span className="eyebrow">
+              <span className="h-px w-6 bg-blue-500" />
+              Pour qui
+              <span className="h-px w-6 bg-blue-500" />
+            </span>
+            <h2 className="heading-display mt-5 text-4xl md:text-5xl">Conçu pour tous les profils</h2>
+            <p className="mt-5 text-ink-500">
               Que vous gériez la paie d&apos;une seule entreprise ou de
               plusieurs clients, PayAudit s&apos;adapte à votre usage.
             </p>
           </Reveal>
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
+          <div className="mt-16 grid gap-6 md:grid-cols-3">
             {audiences.map((audience, i) => (
-              <Reveal key={audience.title} delay={i * 100}>
-                <div className="h-full rounded-2xl border border-beige-200 bg-beige-50 p-8 text-center transition hover:border-blue-300">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-beige-50">
+              <Reveal key={audience.title} delay={i * 100} className="h-full">
+                <div className="group h-full rounded-3xl border border-ink-200/70 bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-beige-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] [&_svg]:h-6 [&_svg]:w-6">
                     <audience.icon />
                   </div>
-                  <h3 className="mt-5 text-lg font-semibold text-ink-900">
+                  <h3 className="mt-7 font-display text-[1.7rem] leading-tight text-ink-900">
                     {audience.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-500">
+                  <p className="mt-3 text-sm leading-relaxed text-ink-500">
                     {audience.description}
                   </p>
                 </div>
@@ -435,90 +541,100 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section id="tarifs" className="border-t border-beige-200 bg-beige-100 py-24">
+      <section id="tarifs" className="border-t border-ink-200/60 bg-white py-24 md:py-32">
         <div className="container-page">
-          <Reveal className="text-center">
-            <h2 className="text-3xl font-bold text-ink-900">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <span className="eyebrow">
+              <span className="h-px w-6 bg-blue-500" />
+              Tarifs
+              <span className="h-px w-6 bg-blue-500" />
+            </span>
+            <h2 className="heading-display mt-5 text-4xl md:text-5xl">
               Des tarifs simples et transparents
             </h2>
-            <p className="mx-auto mt-3 max-w-lg text-ink-500">
+            <p className="mx-auto mt-5 max-w-lg text-ink-500">
               Choisissez la formule adaptée à votre volume de fiches de paie.
               Sans engagement.
             </p>
           </Reveal>
 
-          <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-16 grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
             {plans.map((plan, i) => (
-              <Reveal key={plan.name} delay={i * 100}>
+              <Reveal key={plan.name} delay={i * 100} className="h-full">
                 <div
-                  className={`flex h-full flex-col rounded-2xl border p-8 transition hover:-translate-y-1 ${
+                  className={`relative flex h-full flex-col overflow-hidden rounded-3xl p-8 transition duration-300 hover:-translate-y-1 ${
                     plan.highlighted
-                      ? "border-blue-600 bg-blue-50 shadow-soft"
-                      : "border-beige-200 bg-white"
+                      ? "bg-blue-800 text-beige-50 shadow-lift"
+                      : "border border-ink-200/70 bg-beige-50"
                   }`}
                 >
                   {plan.highlighted && (
-                    <span className="mb-3 w-fit rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-beige-50">
-                      Le plus populaire
-                    </span>
+                    <>
+                      <div aria-hidden className="bg-grid-light mask-fade-b pointer-events-none absolute inset-0" />
+                      <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-blue-400/30 blur-3xl" />
+                    </>
                   )}
-                  <h3 className="text-lg font-semibold text-ink-900">
-                    {plan.name}
-                  </h3>
-                  <p className="mt-1 text-sm text-ink-500">
-                    {plan.description}
-                  </p>
-                  <p className="mt-6 text-4xl font-extrabold text-ink-900">
+                  <div className="relative flex items-center justify-between gap-3">
+                    <h3 className={`text-sm font-semibold uppercase tracking-[0.14em] ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
+                      {plan.name}
+                    </h3>
+                    {plan.highlighted && (
+                      <span className="rounded-full bg-beige-50/10 px-3 py-1 text-[11px] font-semibold text-beige-100 ring-1 ring-inset ring-beige-50/20">
+                        Le plus populaire
+                      </span>
+                    )}
+                  </div>
+                  <p className={`relative mt-6 font-display text-6xl leading-none ${plan.highlighted ? "text-beige-50" : "text-ink-900"}`}>
                     {plan.price}
-                    <span className="text-base font-medium text-ink-500">
+                    <span className={`ml-1 font-sans text-sm font-medium ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
                       {plan.period}
                     </span>
                   </p>
-                  <ul className="mt-6 flex-1 space-y-2 text-sm text-ink-700">
+                  <p className={`relative mt-4 text-sm ${plan.highlighted ? "text-blue-100" : "text-ink-500"}`}>
+                    {plan.description}
+                  </p>
+                  <ul className={`relative mt-8 flex-1 space-y-3 border-t pt-6 text-sm ${plan.highlighted ? "border-white/15 text-beige-100" : "border-ink-200/70 text-ink-700"}`}>
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2">
-                        <span className="text-blue-600">✓</span> {feature}
+                      <li key={feature} className="flex items-start gap-2.5">
+                        <Check className={plan.highlighted ? "text-blue-300" : "text-blue-500"} /> {feature}
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-8">
+                  <div className="relative mt-8">
                     <SubscribeButton
                       priceId={plan.priceId}
                       label="S'abonner"
-                      variant={plan.highlighted ? "primary" : "outline"}
+                      variant={plan.highlighted ? "inverse" : "outline"}
                     />
                   </div>
                 </div>
               </Reveal>
             ))}
 
-            <Reveal delay={200}>
-              <div className="flex h-full flex-col rounded-2xl border border-beige-200 bg-white p-8 transition hover:-translate-y-1">
-                <h3 className="text-lg font-semibold text-ink-900">
+            <Reveal delay={200} className="h-full">
+              <div className="flex h-full flex-col rounded-3xl border border-ink-200/70 bg-beige-50 p-8 transition duration-300 hover:-translate-y-1">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-ink-500">
                   Entreprise
                 </h3>
-                <p className="mt-1 text-sm text-ink-500">
-                  Volume important, accompagnement dédié.
-                </p>
-                <p className="mt-6 text-4xl font-extrabold text-ink-900">
+                <p className="mt-6 font-display text-5xl leading-none text-ink-900">
                   Sur devis
                 </p>
-                <ul className="mt-6 flex-1 space-y-2 text-sm text-ink-700">
-                  <li className="flex items-center gap-2">
-                    <span className="text-blue-600">✓</span> Volume illimité
+                <p className="mt-4 text-sm text-ink-500">
+                  Volume important, accompagnement dédié.
+                </p>
+                <ul className="mt-8 flex-1 space-y-3 border-t border-ink-200/70 pt-6 text-sm text-ink-700">
+                  <li className="flex items-start gap-2.5">
+                    <Check /> Volume illimité
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-blue-600">✓</span> Accompagnement dédié
+                  <li className="flex items-start gap-2.5">
+                    <Check /> Accompagnement dédié
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-blue-600">✓</span> Contrat sur mesure
+                  <li className="flex items-start gap-2.5">
+                    <Check /> Contrat sur mesure
                   </li>
                 </ul>
                 <div className="mt-8">
-                  <Link
-                    href="/contact-entreprise"
-                    className="block w-full rounded-full border border-beige-300 bg-white px-6 py-3 text-center text-sm font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600"
-                  >
+                  <Link href="/contact-entreprise" className="btn-secondary w-full">
                     Nous contacter
                   </Link>
                 </div>
@@ -529,15 +645,19 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="border-t border-beige-200 bg-white py-24">
-        <div className="container-page">
-          <Reveal className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold text-ink-900">Questions fréquentes</h2>
-            <p className="mt-3 text-ink-500">
+      <section id="faq" className="border-t border-ink-200/60 bg-beige-50 py-24 md:py-32">
+        <div className="container-page grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+            <span className="eyebrow">
+              <span className="h-px w-6 bg-blue-500" />
+              FAQ
+            </span>
+            <h2 className="heading-display mt-5 text-4xl md:text-5xl">Questions fréquentes</h2>
+            <p className="mt-5 max-w-sm text-ink-500">
               Tout ce qu&apos;il faut savoir avant de contrôler vos premières fiches de paie.
             </p>
           </Reveal>
-          <div className="mx-auto mt-12 flex max-w-3xl flex-col gap-4">
+          <div className="flex flex-col gap-3">
             {faqs.map((faq, i) => (
               <Reveal key={faq.question} delay={(i % 4) * 70}>
                 <FaqItem question={faq.question} answer={faq.answer} />
@@ -548,34 +668,40 @@ export default function Home() {
       </section>
 
       {/* CTA banner */}
-      <section className="relative overflow-hidden border-t border-beige-200 bg-blue-600 py-20">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 animate-pulse-soft rounded-full bg-blue-500/40 blur-3xl"
-        />
-        <Reveal className="container-page relative flex flex-col items-center gap-6 text-center">
-          <h2 className="text-3xl font-bold text-beige-50">
-            Prêt à sécuriser vos fiches de paie ?
-          </h2>
-          <p className="max-w-md text-blue-100">
-            Importez votre première fiche de paie dès aujourd&apos;hui et
-            découvrez les anomalies en quelques secondes.
-          </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/app/dashboard"
-              className="rounded-full bg-beige-50 px-7 py-3 text-sm font-semibold text-blue-600 transition hover:-translate-y-0.5 hover:bg-white"
-            >
-              Essayer PayAudit
-            </Link>
-            <Link
-              href="/contact"
-              className="rounded-full border border-white/40 px-7 py-3 text-sm font-semibold text-beige-50 transition hover:-translate-y-0.5 hover:bg-white/10"
-            >
-              Contactez-nous
-            </Link>
-          </div>
-        </Reveal>
+      <section className="bg-beige-50 pb-24 md:pb-32">
+        <div className="container-page">
+          <Reveal className="relative overflow-hidden rounded-[2rem] bg-blue-700 px-6 py-20 text-center md:px-16 md:py-24">
+            <div aria-hidden className="bg-grid-light mask-radial pointer-events-none absolute inset-0" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -bottom-32 left-1/2 h-72 w-[640px] -translate-x-1/2 animate-pulse-soft rounded-full bg-blue-400/40 blur-3xl"
+            />
+            <div className="relative flex flex-col items-center gap-6">
+              <h2 className="heading-display max-w-2xl text-4xl text-beige-50 md:text-6xl">
+                Prêt à sécuriser vos fiches de paie ?
+              </h2>
+              <p className="max-w-md text-blue-100">
+                Importez votre première fiche de paie dès aujourd&apos;hui et
+                découvrez les anomalies en quelques secondes.
+              </p>
+              <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                <Link
+                  href="/app/dashboard"
+                  className="btn group bg-beige-50 px-7 py-3 text-blue-700 hover:bg-white active:scale-[0.98]"
+                >
+                  Essayer PayAudit
+                  <ArrowRight />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="btn border border-white/25 px-7 py-3 text-beige-50 hover:bg-white/10 active:scale-[0.98]"
+                >
+                  Contactez-nous
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </section>
     </MarketingShell>
   );

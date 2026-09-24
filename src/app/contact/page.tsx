@@ -3,12 +3,15 @@ import { MarketingShell } from "@/components/layout/marketing-shell";
 export default function ContactPage() {
   return (
     <MarketingShell>
-      <section className="container-page py-20">
+      <section className="relative overflow-hidden">
+        <div aria-hidden className="bg-grid mask-radial pointer-events-none absolute inset-0" />
+        <div aria-hidden className="pointer-events-none absolute -top-40 left-1/2 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="container-page relative py-20 md:py-24">
         <div className="mx-auto max-w-xl text-center">
-          <h1 className="text-4xl font-extrabold text-ink-900">
+          <h1 className="heading-display text-5xl md:text-6xl">
             Parlons de votre paie
           </h1>
-          <p className="mt-3 text-ink-500">
+          <p className="mt-5 text-ink-500">
             Une question, une démo, un partenariat ? Écrivez-nous, nous
             revenons vers vous rapidement.
           </p>
@@ -17,10 +20,10 @@ export default function ContactPage() {
         <form
           action="/api/contact"
           method="POST"
-          className="mx-auto mt-12 flex max-w-xl flex-col gap-5 rounded-2xl border border-beige-200 bg-white p-8 shadow-soft"
+          className="card mx-auto mt-12 flex max-w-xl flex-col gap-5 rounded-3xl p-7 shadow-lift sm:p-9"
         >
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="name" className="text-sm font-medium text-ink-700">
+            <label htmlFor="name" className="field-label">
               Nom
             </label>
             <input
@@ -28,12 +31,12 @@ export default function ContactPage() {
               name="name"
               type="text"
               required
-              className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+              className="input"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="email" className="text-sm font-medium text-ink-700">
+            <label htmlFor="email" className="field-label">
               Email
             </label>
             <input
@@ -41,12 +44,12 @@ export default function ContactPage() {
               name="email"
               type="email"
               required
-              className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+              className="input"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="message" className="text-sm font-medium text-ink-700">
+            <label htmlFor="message" className="field-label">
               Message
             </label>
             <textarea
@@ -54,17 +57,18 @@ export default function ContactPage() {
               name="message"
               rows={5}
               required
-              className="rounded-lg border border-beige-200 bg-beige-50 px-4 py-2.5 text-ink-900 outline-none focus:border-blue-400"
+              className="input"
             />
           </div>
 
           <button
             type="submit"
-            className="mt-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-beige-50 transition hover:bg-blue-700"
+            className="btn-primary mt-2"
           >
             Envoyer le message
           </button>
         </form>
+      </div>
       </section>
     </MarketingShell>
   );

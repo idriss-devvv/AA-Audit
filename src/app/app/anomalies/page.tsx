@@ -2,10 +2,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
 
-const SEVERITY_LABELS: Record<string, { label: string; className: string }> = {
-  critical: { label: "Critique", className: "border-red-300 bg-red-50 text-red-700" },
-  warning: { label: "Avertissement", className: "border-amber-300 bg-amber-50 text-amber-700" },
-  info: { label: "Info", className: "border-blue-300 bg-blue-50 text-blue-700" },
+const SEVERITY_LABELS: Record<string, { label: string; className: string; accentClassName: string }> = {
+  critical: { label: "Critique", className: "bg-rose-50 text-rose-700 ring-rose-200", accentClassName: "bg-rose-500" },
+  warning: { label: "Avertissement", className: "bg-amber-50 text-amber-700 ring-amber-200", accentClassName: "bg-amber-400" },
+  info: { label: "Info", className: "bg-blue-50 text-blue-700 ring-blue-200", accentClassName: "bg-blue-400" },
 };
 
 type AnomalyRow = {
@@ -31,11 +31,11 @@ export default async function AnomaliesPage() {
   const anomalies = (data as unknown as AnomalyRow[] | null) ?? [];
 
   return (
-    <div className="p-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-ink-900">Anomalies</h1>
-          <p className="mt-1 text-sm text-ink-500">
+          <h1 className="heading-display text-4xl md:text-[2.75rem]">Anomalies</h1>
+          <p className="mt-3 max-w-2xl text-sm text-ink-500">
             Liste des anomalies détectées sur l&apos;ensemble de vos fiches de
             paie, triées par date.
           </p>
@@ -43,7 +43,7 @@ export default async function AnomaliesPage() {
         {anomalies.length > 0 && (
           <a
             href="/api/export/anomalies"
-            className="shrink-0 rounded-full border border-beige-300 bg-white px-4 py-2 text-sm font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600"
+            className="btn-secondary shrink-0 px-4 py-2"
           >
             Exporter en Excel
           </a>
@@ -51,7 +51,7 @@ export default async function AnomaliesPage() {
       </div>
 
       {anomalies.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-dashed border-beige-300 bg-beige-100 p-10 text-center">
+        <div className="mt-10 rounded-2xl border border-dashed border-ink-200 bg-beige-100/50 p-10 text-center">
           <p className="text-sm text-ink-500">
             Aucune anomalie détectée pour le moment. Elles apparaîtront ici dès
             qu&apos;une fiche de paie contrôlée présentera un écart.
@@ -66,25 +66,26 @@ export default async function AnomaliesPage() {
             return (
               <div
                 key={anomaly.id}
-                className={`rounded-2xl border p-5 shadow-soft ${severityInfo.className}`}
+                className="card relative overflow-hidden p-5 pl-6 transition duration-200 hover:shadow-lift"
               >
+                <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${severityInfo.accentClassName}`} />
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                    <span className={`badge ${severityInfo.className}`}>
                       {severityInfo.label}
                     </span>
                     {categoryLabel && (
-                      <span className="rounded-full bg-white/40 px-3 py-1 text-xs font-medium">
+                      <span className="badge bg-beige-100 font-medium text-ink-600 ring-ink-200/70">
                         {categoryLabel}
                       </span>
                     )}
                   </div>
-                  <span className="text-xs text-ink-500">
+                  <span className="text-xs tabular-nums text-ink-400">
                     {new Date(anomaly.detected_at).toLocaleDateString("fr-FR")}
                   </span>
                 </div>
-                <p className="mt-3 text-sm font-medium text-ink-900">{anomaly.message}</p>
-                <p className="mt-1 text-xs text-ink-500">
+                <p className="mt-3 text-[15px] font-medium leading-snug text-ink-900">{anomaly.message}</p>
+                <p className="mt-1.5 text-xs text-ink-400">
                   {anomaly.payslip?.original_filename || "Fiche de paie"}
                   {anomaly.payslip?.period ? ` · ${anomaly.payslip.period}` : ""}
                 </p>

@@ -5,7 +5,7 @@ export function PrintReportButton() {
     <button
       type="button"
       onClick={() => window.print()}
-      className="print:hidden rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-beige-50 transition hover:bg-blue-700"
+      className="btn-primary px-5 py-2.5 print:hidden"
     >
       Imprimer / Exporter en PDF
     </button>

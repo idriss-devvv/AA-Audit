@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 const legalLinks = [
   { href: "/mentions-legales", label: "Mentions légales" },
@@ -7,54 +8,49 @@ const legalLinks = [
   { href: "/cookies", label: "Politique de cookies" },
 ];
 
+const productLinks = [
+  { href: "/#fonctionnalites", label: "Fonctionnalités" },
+  { href: "/#faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
+  { href: "/app/dashboard", label: "Dashboard" },
+];
+
 export function SiteFooter() {
   return (
-    <footer className="border-t border-beige-200 bg-beige-100">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-3">
+    <footer className="relative overflow-hidden bg-ink-900 text-ink-300">
+      <div aria-hidden className="bg-grid-light mask-fade-b pointer-events-none absolute inset-0 opacity-60" />
+      <div className="container-page relative grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <span className="text-lg font-bold text-ink-900">PayAudit</span>
-          <p className="mt-3 max-w-xs text-sm text-ink-500">
+          <Logo tone="light" />
+          <p className="mt-5 max-w-xs text-sm leading-relaxed text-ink-400">
             La vérification automatique des fiches de paie : anomalies,
             erreurs de cotisations et écarts détectés en quelques secondes.
           </p>
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">
             Produit
           </h3>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li>
-              <Link href="/#fonctionnalites" className="text-ink-700 hover:text-blue-600">
-                Fonctionnalités
-              </Link>
-            </li>
-            <li>
-              <Link href="/#faq" className="text-ink-700 hover:text-blue-600">
-                FAQ
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="text-ink-700 hover:text-blue-600">
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link href="/app/dashboard" className="text-ink-700 hover:text-blue-600">
-                Dashboard
-              </Link>
-            </li>
+          <ul className="mt-5 space-y-3 text-sm">
+            {productLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="text-ink-300 transition hover:text-beige-50">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">
             Légal
           </h3>
-          <ul className="mt-4 space-y-2 text-sm">
+          <ul className="mt-5 space-y-3 text-sm">
             {legalLinks.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="text-ink-700 hover:text-blue-600">
+                <Link href={link.href} className="text-ink-300 transition hover:text-beige-50">
                   {link.label}
                 </Link>
               </li>
@@ -63,8 +59,8 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-t border-beige-200 py-6">
-        <p className="container-page text-xs text-ink-500">
+      <div className="relative border-t border-white/10">
+        <p className="container-page py-6 text-xs text-ink-500">
           © {new Date().getFullYear()} PayAudit. Tous droits réservés.
         </p>
       </div>

@@ -45,7 +45,7 @@ export function ChangePasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <label htmlFor="new-password" className="text-xs font-medium text-ink-500">
+        <label htmlFor="new-password" className="field-label text-xs">
           Nouveau mot de passe
         </label>
         <input
@@ -55,12 +55,12 @@ export function ChangePasswordForm() {
           onChange={(e) => setPassword(e.target.value)}
           minLength={8}
           required
-          className="rounded-lg border border-beige-300 bg-white px-3 py-2 text-sm text-ink-900 outline-none focus:border-blue-400"
+          className="input px-3 py-2"
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="confirm-password" className="text-xs font-medium text-ink-500">
+        <label htmlFor="confirm-password" className="field-label text-xs">
           Confirmer le mot de passe
         </label>
         <input
@@ -70,7 +70,7 @@ export function ChangePasswordForm() {
           onChange={(e) => setConfirmation(e.target.value)}
           minLength={8}
           required
-          className="rounded-lg border border-beige-300 bg-white px-3 py-2 text-sm text-ink-900 outline-none focus:border-blue-400"
+          className="input px-3 py-2"
         />
       </div>
 
@@ -78,7 +78,7 @@ export function ChangePasswordForm() {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="rounded-full bg-blue-600 px-5 py-2 text-xs font-semibold text-beige-50 transition hover:bg-blue-700 disabled:opacity-60"
+          className="btn-primary btn-sm"
         >
           {status === "loading" ? "Mise à jour…" : "Modifier le mot de passe"}
         </button>

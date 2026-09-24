@@ -25,6 +25,21 @@ sert de socle de départ pour ce dépôt.
 
 ---
 
+## 2026-09-24
+
+### Refonte du design (UI uniquement)
+- Nouvelle palette harmonisée gris graphite / beige sable / bleu encre
+  (tokens `ink`, `beige`, `blue` dans `tailwind.config.ts`).
+- Nouvelle typographie : Instrument Serif (titres) + Inter (interface),
+  en remplacement de Plus Jakarta Sans.
+- Classes utilitaires partagées dans `globals.css` (`btn-*`, `input`, `card`,
+  `badge`, `eyebrow`, trames de fond) et composant `Logo`.
+- Landing page, header, footer, pages d'authentification, contact et pages
+  légales redessinés ; shell de l'application avec barre latérale iconée et
+  navigation mobile ; tableau de bord, historique, anomalies, rapport,
+  paramètres et clients restylés.
+- Aucun changement fonctionnel (textes, routes, logique et données inchangés).
+
 ## 2026-09-23
 
 ### 00:39 UTC — Registre des conventions collectives prioritaires

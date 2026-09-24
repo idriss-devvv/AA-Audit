@@ -14,7 +14,7 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: "linear-gradient(135deg, #FBF8F3 0%, #EAE0CC 100%)",
+          background: "linear-gradient(135deg, #FAF8F4 0%, #E7E0D2 100%)",
           fontFamily: "sans-serif",
         }}
       >
@@ -27,15 +27,15 @@ export default function OpengraphImage() {
               width: 56,
               height: 56,
               borderRadius: 14,
-              background: "#1F3A5F",
-              color: "#FBF8F3",
+              background: "#1F3F6E",
+              color: "#FAF8F4",
               fontSize: 24,
               fontWeight: 800,
             }}
           >
             PA
           </div>
-          <div style={{ fontSize: 30, fontWeight: 800, color: "#262420" }}>PayAudit</div>
+          <div style={{ fontSize: 30, fontWeight: 800, color: "#17191D" }}>PayAudit</div>
         </div>
         <div
           style={{
@@ -43,13 +43,13 @@ export default function OpengraphImage() {
             fontSize: 54,
             fontWeight: 800,
             lineHeight: 1.15,
-            color: "#262420",
+            color: "#17191D",
             maxWidth: 950,
           }}
         >
           Vérifiez chaque fiche de paie, sans rien laisser passer
         </div>
-        <div style={{ marginTop: 28, fontSize: 26, color: "#6B6459", maxWidth: 850 }}>
+        <div style={{ marginTop: 28, fontSize: 26, color: "#6A6E76", maxWidth: 850 }}>
           Détection automatique des anomalies, erreurs de cotisations et écarts sur vos bulletins
           de salaire.
         </div>

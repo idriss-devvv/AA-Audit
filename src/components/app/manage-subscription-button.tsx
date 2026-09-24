@@ -32,7 +32,7 @@ export function ManageSubscriptionButton() {
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className="rounded-full border border-beige-300 bg-white px-5 py-2 text-xs font-semibold text-ink-900 transition hover:border-blue-400 hover:text-blue-600 disabled:opacity-60"
+        className="btn-secondary btn-sm"
       >
         {loading ? "Ouverture…" : "Gérer mon abonnement"}
       </button>

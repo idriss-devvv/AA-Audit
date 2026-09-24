@@ -3,12 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --background: #fbf8f3;
-  --foreground: #262420;
+  --background: #faf8f4;
+  --foreground: #17191d;
 }
 
 * {
   scroll-behavior: smooth;
+}
+
+html {
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -16,8 +20,103 @@ body {
   background: var(--background);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  font-feature-settings: "cv11", "ss01";
 }
 
-.container-page {
-  @apply mx-auto w-full max-w-6xl px-6;
+::selection {
+  background: #dce5f1;
+  color: #10223e;
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-6;
+  }
+
+  /* Titres éditoriaux (serif) */
+  .heading-display {
+    @apply font-display font-normal tracking-tight text-ink-900;
+    line-height: 1.02;
+  }
+
+  /* Petit sur-titre en capitales */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500;
+  }
+
+  /* Boutons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-beige-50 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply btn bg-blue-600 px-6 py-3 text-beige-50 shadow-soft hover:bg-blue-700 active:scale-[0.98];
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 8px 20px -10px rgba(16, 34, 62, 0.55);
+  }
+  .btn-dark {
+    @apply btn bg-ink-900 px-6 py-3 text-beige-50 hover:bg-ink-800 active:scale-[0.98];
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  .btn-secondary {
+    @apply btn border border-ink-200 bg-white px-6 py-3 text-ink-900 hover:border-ink-300 hover:bg-beige-50 active:scale-[0.98];
+  }
+  .btn-sm {
+    @apply px-4 py-2 text-xs;
+  }
+
+  /* Champs de formulaire */
+  .field-label {
+    @apply text-[13px] font-medium text-ink-700;
+  }
+  .input {
+    @apply w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm text-ink-900 shadow-[0_1px_1px_rgba(23,25,29,0.03)] outline-none transition placeholder:text-ink-300 hover:border-ink-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 disabled:opacity-60;
+  }
+
+  /* Cartes */
+  .card {
+    @apply rounded-2xl border border-ink-200/70 bg-white shadow-soft;
+  }
+  .card-title {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500;
+  }
+
+  /* Pastilles de statut */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset;
+  }
+
+  /* Trame de fond discrète */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(23, 25, 29, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(23, 25, 29, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .bg-grid-light {
+    background-image:
+      linear-gradient(to right, rgba(250, 248, 244, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(250, 248, 244, 0.07) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent);
+    mask-image: linear-gradient(to bottom, black 40%, transparent);
+  }
+  .mask-radial {
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 72%);
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 72%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

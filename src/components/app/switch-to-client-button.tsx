@@ -29,7 +29,7 @@ export function SwitchToClientButton({ companyId }: { companyId: string }) {
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-100 disabled:opacity-60"
+      className="btn border border-blue-100 bg-blue-50 px-4 py-1.5 text-xs text-blue-600 hover:border-blue-200 hover:bg-blue-100"
     >
       {loading ? "Ouverture…" : "Consulter ce client"}
     </button>

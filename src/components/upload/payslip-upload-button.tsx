@@ -20,7 +20,7 @@ function UploadIcon() {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-6 w-6"
+      className="h-5 w-5"
     >
       <path d="M12 16V4" />
       <path d="M6 10l6-6 6 6" />
@@ -86,13 +86,13 @@ export function PayslipUploadButton() {
 
       <label
         htmlFor="payslip-upload-input"
-        className="flex cursor-pointer items-center gap-3 rounded-full bg-blue-600 px-10 py-5 text-lg font-bold text-beige-50 shadow-soft transition hover:bg-blue-700 active:scale-[0.98]"
+        className="btn-primary cursor-pointer gap-3 px-8 py-4 text-[15px]"
       >
         <UploadIcon />
         Importer ma fiche de paie
       </label>
 
-      <p className="text-xs text-ink-500">
+      <p className="text-xs text-ink-400">
         PDF, JPG ou PNG — 10&nbsp;Mo max, traitement sécurisé
       </p>
 

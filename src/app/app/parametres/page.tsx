@@ -14,11 +14,11 @@ const PLAN_LABELS: Record<string, string> = {
 };
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
-  active: { label: "Actif", className: "bg-green-100 text-green-700" },
-  trialing: { label: "Essai en cours", className: "bg-blue-100 text-blue-700" },
-  inactive: { label: "Inactif", className: "bg-beige-200 text-ink-700" },
-  canceled: { label: "Résilié", className: "bg-red-100 text-red-700" },
-  past_due: { label: "Paiement en retard", className: "bg-amber-100 text-amber-700" },
+  active: { label: "Actif", className: "bg-emerald-50 text-emerald-700 ring-emerald-200" },
+  trialing: { label: "Essai en cours", className: "bg-blue-50 text-blue-700 ring-blue-200" },
+  inactive: { label: "Inactif", className: "bg-beige-100 text-ink-600 ring-ink-200" },
+  canceled: { label: "Résilié", className: "bg-rose-50 text-rose-700 ring-rose-200" },
+  past_due: { label: "Paiement en retard", className: "bg-amber-50 text-amber-700 ring-amber-200" },
 };
 
 export default async function ParametresPage() {
@@ -62,14 +62,14 @@ export default async function ParametresPage() {
   const statusInfo = STATUS_LABELS[status] ?? STATUS_LABELS.inactive;
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold text-ink-900">Paramètres</h1>
-      <p className="mt-1 text-sm text-ink-500">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
+      <h1 className="heading-display text-4xl md:text-[2.75rem]">Paramètres</h1>
+      <p className="mt-3 max-w-2xl text-sm text-ink-500">
         Gérez les informations de votre compte et de votre entreprise.
       </p>
 
-      <div className="mt-8 max-w-xl rounded-2xl border border-beige-200 bg-white p-6 shadow-soft">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
+      <div className="mt-8 card max-w-2xl p-6 sm:p-7">
+        <h2 className="card-title">
           Compte
         </h2>
         <dl className="mt-4 flex flex-col gap-3 text-sm">
@@ -98,8 +98,8 @@ export default async function ParametresPage() {
         </dl>
       </div>
 
-      <div className="mt-6 max-w-2xl rounded-2xl border border-beige-200 bg-white p-6 shadow-soft">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
+      <div className="mt-6 card max-w-2xl p-6 sm:p-7">
+        <h2 className="card-title">
           Barèmes de contrôle
         </h2>
         <p className="mt-1 text-xs text-ink-500">
@@ -123,8 +123,8 @@ export default async function ParametresPage() {
           initialCollectiveAgreementCustomName={paySettings.collectiveAgreementCustomName}
         />
 
-        <div className="mt-6 border-t border-beige-100 pt-5">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+        <div className="mt-6 border-t border-ink-100 pt-5">
+          <h3 className="card-title">
             Taux de cotisations attendus (% du brut)
           </h3>
           <p className="mt-1 text-xs text-ink-500">
@@ -135,8 +135,8 @@ export default async function ParametresPage() {
         </div>
       </div>
 
-      <div className="mt-6 max-w-xl rounded-2xl border border-beige-200 bg-white p-6 shadow-soft">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
+      <div className="mt-6 card max-w-2xl p-6 sm:p-7">
+        <h2 className="card-title">
           Sécurité
         </h2>
         <p className="mt-1 text-xs text-ink-500">
@@ -145,16 +145,16 @@ export default async function ParametresPage() {
         <ChangePasswordForm />
       </div>
 
-      <div className="mt-6 max-w-xl rounded-2xl border border-beige-200 bg-white p-6 shadow-soft">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
+      <div className="mt-6 card max-w-2xl p-6 sm:p-7">
+        <h2 className="card-title">
           Abonnement
         </h2>
         <div className="mt-4 flex items-center justify-between">
           <div>
             <p className="text-sm text-ink-500">Plan actuel</p>
-            <p className="text-lg font-bold text-ink-900">{planLabel}</p>
+            <p className="mt-1 font-display text-3xl leading-none text-ink-900">{planLabel}</p>
           </div>
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusInfo.className}`}>
+          <span className={`badge ${statusInfo.className}`}>
             {statusInfo.label}
           </span>
         </div>
@@ -163,7 +163,7 @@ export default async function ParametresPage() {
         </div>
       </div>
 
-      <div className="mt-6 max-w-xl rounded-2xl border border-dashed border-beige-300 bg-beige-100 p-6 text-center">
+      <div className="mt-6 max-w-2xl rounded-2xl border border-dashed border-ink-200 bg-beige-100/50 p-6 text-center">
         <p className="text-sm text-ink-500">
           Gestion des utilisateurs et des notifications à venir.
         </p>

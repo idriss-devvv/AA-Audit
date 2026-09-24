@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
 import { PrintReportButton } from "@/components/app/print-report-button";
+import { Logo } from "@/components/ui/logo";
 import type { PayslipData } from "@/types/payslip";
 
 export const dynamic = "force-dynamic";
@@ -11,10 +12,10 @@ const MONTHS = [
   "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
 ];
 
-const SEVERITY_LABELS: Record<string, { label: string; className: string }> = {
-  critical: { label: "Critique", className: "border-red-300 bg-red-50 text-red-700" },
-  warning: { label: "Avertissement", className: "border-amber-300 bg-amber-50 text-amber-700" },
-  info: { label: "Info", className: "border-blue-300 bg-blue-50 text-blue-700" },
+const SEVERITY_LABELS: Record<string, { label: string; className: string; accentClassName: string }> = {
+  critical: { label: "Critique", className: "bg-rose-50 text-rose-700 ring-rose-200", accentClassName: "bg-rose-500" },
+  warning: { label: "Avertissement", className: "bg-amber-50 text-amber-700 ring-amber-200", accentClassName: "bg-amber-400" },
+  info: { label: "Info", className: "bg-blue-50 text-blue-700 ring-blue-200", accentClassName: "bg-blue-400" },
 };
 
 function formatPeriod(period: string | null) {
@@ -96,105 +97,100 @@ export default async function RapportControlePage({
   return (
     <div className="mx-auto max-w-3xl p-8 print:max-w-none print:p-0">
       <div className="flex items-center justify-between print:hidden">
-        <a href="/app/historique" className="text-sm text-blue-600 hover:underline">
+        <a href="/app/historique" className="text-sm font-medium text-ink-500 transition hover:text-ink-900">
           ← Retour à l&apos;historique
         </a>
         <PrintReportButton />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-beige-200 bg-white p-8 shadow-soft print:mt-0 print:rounded-none print:border-0 print:shadow-none">
-        <div className="flex items-start justify-between border-b border-beige-200 pb-5">
+      <div className="card mt-6 rounded-3xl p-6 sm:p-10 print:mt-0 print:rounded-none print:border-0 print:shadow-none">
+        <div className="flex flex-col-reverse items-start justify-between gap-3 border-b border-ink-200/70 pb-6 sm:flex-row">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-600 text-xs font-bold text-beige-50">
-                PA
-              </span>
-              <span className="text-sm font-semibold text-ink-900">PayAudit</span>
-            </div>
-            <h1 className="mt-3 text-xl font-bold text-ink-900">
+            <Logo size="sm" />
+            <h1 className="heading-display mt-6 text-3xl md:text-4xl">
               Rapport de contrôle — Fiche de paie
             </h1>
-            <p className="mt-1 text-sm text-ink-500">
+            <p className="mt-2 text-sm text-ink-500">
               {payslip.company?.name || "Entreprise"} · {formatPeriod(payslip.period)}
             </p>
           </div>
           <p className="shrink-0 text-xs text-ink-400">Généré le {generatedAt}</p>
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Fichier source
             </p>
-            <p className="mt-0.5 text-sm text-ink-900">
+            <p className="mt-1 text-sm text-ink-900">
               {payslip.original_filename || "Fiche de paie"}
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Salarié
             </p>
-            <p className="mt-0.5 text-sm text-ink-900">
+            <p className="mt-1 text-sm text-ink-900">
               {extracted?.employeeName || "Non détecté"}
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Poste
             </p>
-            <p className="mt-0.5 text-sm text-ink-900">{extracted?.position || "Non détecté"}</p>
+            <p className="mt-1 text-sm text-ink-900">{extracted?.position || "Non détecté"}</p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Convention collective
             </p>
-            <p className="mt-0.5 text-sm text-ink-900">
+            <p className="mt-1 text-sm text-ink-900">
               {extracted?.collectiveAgreement || "Non détectée"}
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Date d&apos;entrée
             </p>
-            <p className="mt-0.5 text-sm text-ink-900">
+            <p className="mt-1 text-sm text-ink-900">
               {extracted?.seniorityDate || "Non détectée"}
             </p>
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 rounded-xl bg-beige-50 p-5 sm:grid-cols-3">
+        <div className="mt-8 grid gap-4 rounded-2xl border border-ink-200/70 bg-beige-50 p-6 sm:grid-cols-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Salaire brut
             </p>
-            <p className="mt-0.5 text-lg font-bold text-ink-900">
+            <p className="mt-2 font-display text-3xl leading-none tabular-nums text-ink-900">
               {formatAmount(payslip.gross_pay)}
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Salaire net
             </p>
-            <p className="mt-0.5 text-lg font-bold text-ink-900">
+            <p className="mt-2 font-display text-3xl leading-none tabular-nums text-ink-900">
               {formatAmount(payslip.net_pay)}
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Anomalies détectées
             </p>
-            <p className="mt-0.5 text-lg font-bold text-ink-900">{anomalies.length}</p>
+            <p className="mt-2 font-display text-3xl leading-none tabular-nums text-ink-900">{anomalies.length}</p>
           </div>
         </div>
 
         {extracted && extracted.contributions.length > 0 && (
           <div className="mt-6">
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Cotisations détectées
             </p>
             <ul className="mt-2 grid gap-x-6 gap-y-1 text-sm text-ink-700 sm:grid-cols-2">
               {extracted.contributions.map((c, i) => (
-                <li key={i} className="flex items-center justify-between gap-4 border-b border-dashed border-beige-200 py-1">
+                <li key={i} className="flex items-center justify-between gap-4 border-b border-dashed border-ink-200/70 py-1">
                   <span className="truncate">{c.label}</span>
                   <span className="font-medium text-ink-900">{formatAmount(c.amount)}</span>
                 </li>
@@ -205,7 +201,7 @@ export default async function RapportControlePage({
 
         {extracted && (
           <div className="mt-6">
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <p className="card-title">
               Congés payés
             </p>
             <div className="mt-2 grid gap-4 sm:grid-cols-3">
@@ -222,9 +218,9 @@ export default async function RapportControlePage({
           </div>
         )}
 
-        <div className="mt-8 border-t border-beige-200 pt-6">
+        <div className="mt-8 border-t border-ink-200/70 pt-6">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-ink-900">
+            <p className="font-display text-2xl text-ink-900">
               Détail des anomalies ({anomalies.length})
             </p>
             {anomalies.length > 0 && (
@@ -249,14 +245,15 @@ export default async function RapportControlePage({
                 return (
                   <div
                     key={anomaly.id}
-                    className={`rounded-xl border p-4 print:break-inside-avoid ${severityInfo.className}`}
+                    className="relative overflow-hidden rounded-xl border border-ink-200/70 bg-white p-4 pl-5 print:break-inside-avoid"
                   >
+                    <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${severityInfo.accentClassName}`} />
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-full bg-white/70 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide">
+                      <span className={`badge ${severityInfo.className}`}>
                         {severityInfo.label}
                       </span>
                       {category && (
-                        <span className="rounded-full bg-white/40 px-2.5 py-0.5 text-xs font-medium">
+                        <span className="badge bg-beige-100 font-medium text-ink-600 ring-ink-200/70">
                           {CATEGORY_LABELS[category]}
                         </span>
                       )}
@@ -269,7 +266,7 @@ export default async function RapportControlePage({
           )}
         </div>
 
-        <div className="mt-8 rounded-xl border border-dashed border-beige-300 bg-beige-50 p-4">
+        <div className="mt-8 rounded-xl border border-dashed border-ink-200 bg-beige-50 p-4">
           <p className="text-xs text-ink-500">
             Ce rapport est généré automatiquement à partir de règles de
             contrôle structurelles et de cohérence. Il ne constitue pas un

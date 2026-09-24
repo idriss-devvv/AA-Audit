@@ -8,49 +8,62 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Beige — fond neutre et chaleureux
+        // Beige — sable doux, fonds et surfaces chaleureuses
         beige: {
-          50: "#FBF8F3",
-          100: "#F5EEE3",
-          200: "#EAE0CC",
-          300: "#D8C7A1",
-          400: "#C3AC7C",
+          50: "#FAF8F4",
+          100: "#F3EFE7",
+          200: "#E7E0D2",
+          300: "#D5C9B3",
+          400: "#B9A787",
+          500: "#9A8665",
         },
-        // Bleu — marque, actions, éléments de confiance
+        // Bleu — encre profonde : marque, actions, éléments de confiance
         blue: {
-          50: "#EAF1F8",
-          100: "#D3E3F2",
-          400: "#5B84B1",
-          500: "#2F5D8C",
-          600: "#1F3A5F",
-          700: "#152A45",
+          50: "#EEF2F8",
+          100: "#DCE5F1",
+          200: "#BACBE3",
+          300: "#8DA7CC",
+          400: "#5B7FB2",
+          500: "#35598F",
+          600: "#1F3F6E",
+          700: "#172F54",
+          800: "#10223E",
+          900: "#0B1729",
         },
-        // Texte — brun-noir chaud plutôt que noir pur, plus doux avec le beige
+        // Gris — graphite neutre pour le texte et les structures
         ink: {
-          900: "#262420",
-          700: "#3F3B34",
-          500: "#6B6459",
-          300: "#A69E8F",
+          900: "#17191D",
+          800: "#25282E",
+          700: "#3B3F46",
+          600: "#51555D",
+          500: "#6A6E76",
+          400: "#8B8E95",
+          300: "#B3B5BA",
+          200: "#D6D7DA",
+          100: "#ECECEE",
         },
       },
       fontFamily: {
-        sans: [
-          "var(--font-jakarta)",
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
-        ],
+        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "ui-serif", "Georgia", "serif"],
       },
       borderRadius: {
-        xl: "1rem",
-        "2xl": "1.5rem",
+        xl: "0.875rem",
+        "2xl": "1.25rem",
+        "3xl": "1.75rem",
       },
       boxShadow: {
-        soft: "0 4px 24px -4px rgba(31, 58, 95, 0.08)",
+        soft: "0 1px 2px rgba(23, 25, 29, 0.04), 0 8px 24px -12px rgba(23, 25, 29, 0.10)",
+        lift: "0 1px 2px rgba(23, 25, 29, 0.05), 0 24px 48px -20px rgba(16, 34, 62, 0.25)",
+        ring: "0 0 0 1px rgba(23, 25, 29, 0.06)",
+        "inner-top": "inset 0 1px 0 rgba(255, 255, 255, 0.12)",
+      },
+      letterSpacing: {
+        tightest: "-0.035em",
       },
       keyframes: {
         "fade-in-up": {
-          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "0%": { opacity: "0", transform: "translateY(16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
@@ -58,8 +71,8 @@ const config: Config = {
           "100%": { opacity: "1" },
         },
         float: {
-          "0%, 100%": { transform: "translateY(0) translateX(0)" },
-          "50%": { transform: "translateY(-18px) translateX(10px)" },
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-8px)" },
         },
         "float-slow": {
           "0%, 100%": { transform: "translateY(0) translateX(0) scale(1)" },
@@ -69,6 +82,10 @@ const config: Config = {
           "0%, 100%": { opacity: "0.6" },
           "50%": { opacity: "1" },
         },
+        scan: {
+          "0%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(400%)" },
+        },
         marquee: {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
@@ -77,9 +94,10 @@ const config: Config = {
       animation: {
         "fade-in-up": "fade-in-up 0.7s cubic-bezier(0.22,1,0.36,1) both",
         "fade-in": "fade-in 0.8s ease-out both",
-        float: "float 7s ease-in-out infinite",
+        float: "float 6s ease-in-out infinite",
         "float-slow": "float-slow 11s ease-in-out infinite",
         "pulse-soft": "pulse-soft 3.5s ease-in-out infinite",
+        scan: "scan 3.6s cubic-bezier(0.45,0,0.55,1) infinite",
         marquee: "marquee 28s linear infinite",
       },
     },
