@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
-import { getCompanyPaySettings, toRuleContext } from "@/lib/pay-settings";
+import { getCompanyPaySettings, listCollectiveAgreements, toRuleContext } from "@/lib/pay-settings";
+import { detectCollectiveAgreement } from "@/lib/collective-agreement-detection";
 import type { PayslipData } from "@/types/payslip";
 
 export const runtime = "nodejs";
@@ -74,6 +75,17 @@ export async function POST(req: NextRequest) {
       const pdf = await getDocumentProxy(new Uint8Array(buffer));
       const { text } = await extractText(pdf, { mergePages: true });
       extracted = parsePayslip(text);
+      // Identification automatique de la convention collective (IDCC imprimé
+      // sur le bulletin, sinon rapprochement du libellé avec le registre).
+      const agreement = detectCollectiveAgreement(
+        extracted.collectiveAgreementIdcc,
+        extracted.collectiveAgreement,
+        await listCollectiveAgreements()
+      );
+      if (agreement) {
+        extracted.collectiveAgreementIdcc = agreement.idcc;
+        extracted.collectiveAgreementName = agreement.name;
+      }
       status = "processed";
     } catch (err) {
       status = "error";
@@ -138,7 +150,7 @@ export async function POST(req: NextRequest) {
   let anomaliesCount = 0;
   if (extracted) {
     const paySettings = await getCompanyPaySettings(targetCompanyId);
-    const anomalies = runAnomalyRules(extracted, await toRuleContext(paySettings));
+    const anomalies = runAnomalyRules(extracted, toRuleContext(paySettings));
     anomaliesCount = anomalies.length;
 
     if (anomalies.length > 0) {

@@ -9,7 +9,10 @@ export type RuleCategory =
   | "qualite-donnees"
   | "plausibilite"
   | "baremes"
-  | "arrets-travail";
+  | "arrets-travail"
+  | "heures-sup"
+  | "plafonds"
+  | "mentions-obligatoires";
 
 export const CATEGORY_LABELS: Record<RuleCategory, string> = {
   coherence: "Cohérence des montants",
@@ -19,6 +22,9 @@ export const CATEGORY_LABELS: Record<RuleCategory, string> = {
   plausibilite: "Plausibilité",
   baremes: "Barèmes paramétrés",
   "arrets-travail": "Arrêts de travail",
+  "heures-sup": "Heures supplémentaires",
+  plafonds: "Plafond de la Sécurité sociale",
+  "mentions-obligatoires": "Mentions obligatoires",
 };
 
 export type RuleFinding = {
@@ -35,7 +41,6 @@ export type RuleContext = {
   contributionRates?: ContributionRateSetting[];
   csgCrdsNonDeductiblePercent?: number | null;
   salaireMinimumConventionnel?: number | null;
-  configuredCollectiveAgreementName?: string | null;
 };
 
 export type AnomalyRule = {

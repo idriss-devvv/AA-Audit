@@ -27,6 +27,25 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-24
 
+### Contrôles légaux issus de la base « Règles de contrôle » (Notion)
+- 6 nouvelles règles (`src/lib/rules/catalog/controles-legaux.ts`) :
+  cohérence du net à payer (brut − cotisations, puis − prélèvement à la
+  source), majoration des heures supplémentaires (minimum légal 10 %, 25 %/50 %
+  par défaut), taux de cotisations salariales URSSAF / Agirc-Arrco, plafond
+  mensuel de la Sécurité sociale, mentions obligatoires (R3243-1), cohérence
+  du solde de congés payés.
+- Référentiel légal sourcé (`src/lib/rules/referentiels/legal.ts`) : PMSS
+  2025 (3 925 €) et 2026 (4 005 €), taux salariaux 2025-2026 ; une période non
+  couverte désactive le contrôle au lieu de réutiliser une autre année.
+- Extraction enrichie : lignes base × taux = montant, heures supplémentaires,
+  total des cotisations, net avant impôt, prélèvement à la source, mentions
+  obligatoires, numéro IDCC. Correction : le montant d'une cotisation n'est
+  plus confondu avec sa base, et le net à payer n'est plus confondu avec le
+  net avant impôt.
+- Convention collective détectée automatiquement sur chaque fiche (IDCC ou
+  libellé rapproché du registre) ; suppression de la sélection manuelle dans
+  Paramètres et de la règle qui comparait avec cette sélection.
+
 ### Refonte du design (UI uniquement)
 - Nouvelle palette harmonisée gris graphite / beige sable / bleu encre
   (tokens `ink`, `beige`, `blue` dans `tailwind.config.ts`).

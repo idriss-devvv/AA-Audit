@@ -82,18 +82,4 @@ export const baremesParametrablesRules: AnomalyRule[] = [
       return null;
     },
   },
-  {
-    id: "baremes.convention-collective-incoherente",
-    category: "baremes",
-    description: "Compare la convention collective mentionnée sur la fiche à celle paramétrée pour l'entreprise (contrôle de cohérence, sans jugement sur la validité de l'une ou l'autre)",
-    check: (payslip, context) => {
-      const configured = context.configuredCollectiveAgreementName;
-      const detected = payslip.collectiveAgreement;
-      if (!configured || !detected) return null;
-      if (!labelsMatch(detected, configured)) {
-        return { severity: "info", message: `Convention collective détectée sur la fiche (« ${detected} ») différente de celle paramétrée pour cette entreprise (« ${configured} ») — à vérifier (rapprochement automatique approximatif, faux positifs possibles selon la formulation).` };
-      }
-      return null;
-    },
-  },
 ];

@@ -145,7 +145,8 @@ export default async function RapportControlePage({
               Convention collective
             </p>
             <p className="mt-1 text-sm text-ink-900">
-              {extracted?.collectiveAgreement || "Non détectée"}
+              {extracted?.collectiveAgreementName || extracted?.collectiveAgreement || "Non détectée"}
+              {extracted?.collectiveAgreementIdcc ? ` · IDCC ${extracted.collectiveAgreementIdcc}` : ""}
             </p>
           </div>
           <div>

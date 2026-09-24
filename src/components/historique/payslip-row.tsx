@@ -44,6 +44,14 @@ function DetailItem({ label, value }: { label: string; value: string }) {
   );
 }
 
+function formatAgreement(extracted: PayslipData): string {
+  const name = extracted.collectiveAgreementName || extracted.collectiveAgreement;
+  if (!name && !extracted.collectiveAgreementIdcc) return "Non détectée";
+  return [name, extracted.collectiveAgreementIdcc ? `IDCC ${extracted.collectiveAgreementIdcc}` : null]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 function formatDays(value: number | null): string {
   if (value === null || value === undefined) return "Non détecté";
   return `${value.toLocaleString("fr-FR")} j`;
@@ -116,7 +124,7 @@ export function PayslipRow({ payslip }: { payslip: PayslipRowData }) {
                   <DetailItem label="Poste" value={extracted.position || "Non détecté"} />
                   <DetailItem
                     label="Convention collective"
-                    value={extracted.collectiveAgreement || "Non détectée"}
+                    value={formatAgreement(extracted)}
                   />
                   <DetailItem
                     label="Date d'entrée"

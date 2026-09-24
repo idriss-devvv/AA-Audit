@@ -8,6 +8,7 @@ import { qualiteDonneesRules } from "./catalog/qualite-donnees";
 import { plausibiliteRules } from "./catalog/plausibilite";
 import { arretsTravailRules } from "./catalog/arrets-travail";
 import { baremesParametrablesRules } from "./catalog/baremes-parametrables";
+import { controlesLegauxRules } from "./catalog/controles-legaux";
 
 export type { AnomalyRule, RuleCategory, RuleFinding, RuleContext, ContributionRateSetting } from "./types";
 export { CATEGORY_LABELS, categoryFromRuleId } from "./types";
@@ -30,6 +31,7 @@ export const RULES: AnomalyRule[] = [
   ...plausibiliteRules,
   ...arretsTravailRules,
   ...baremesParametrablesRules,
+  ...controlesLegauxRules,
 ];
 
 export function runAnomalyRules(payslip: PayslipData, context: RuleContext = {}): Anomaly[] {

@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
-import { getCompanyPaySettings, listCollectiveAgreements } from "@/lib/pay-settings";
+import { getCompanyPaySettings } from "@/lib/pay-settings";
 import { ChangePasswordForm } from "@/components/auth/change-password-form";
 import { ManageSubscriptionButton } from "@/components/app/manage-subscription-button";
 import { PaySettingsForm } from "@/components/app/pay-settings-form";
@@ -42,19 +42,9 @@ export default async function ParametresPage() {
   const { isCabinet, ownCompanyName, clients, activeCompanyId, activeCompanyName } =
     await getActiveCompanyContext();
 
-  const [paySettings, agreements] = await Promise.all([
-    activeCompanyId
-      ? getCompanyPaySettings(activeCompanyId)
-      : Promise.resolve({
-          csgCrdsNonDeductiblePercent: null,
-          salaireMinimumConventionnel: null,
-          contributionRates: [],
-          collectiveAgreementIdcc: null,
-          collectiveAgreementCustomName: null,
-        }),
-    listCollectiveAgreements(),
-  ]);
-  const agreementsLastVerified = agreements[0]?.verified_at ?? null;
+  const paySettings = activeCompanyId
+    ? await getCompanyPaySettings(activeCompanyId)
+    : { csgCrdsNonDeductiblePercent: null, salaireMinimumConventionnel: null, contributionRates: [] };
 
   const plan = subscription?.plan ?? "free";
   const status = subscription?.status ?? "inactive";
@@ -108,19 +98,13 @@ export default async function ParametresPage() {
           et les taux réellement applicables. Tant qu&apos;un champ est vide, le contrôle
           correspondant reste inactif.
         </p>
-        {agreementsLastVerified && (
-          <p className="mt-2 text-xs text-ink-400">
-            Liste des conventions collectives vérifiée le{" "}
-            {new Date(agreementsLastVerified).toLocaleDateString("fr-FR")} (source : DARES / base
-            KALI) — à recontrôler périodiquement, non exhaustive.
-          </p>
-        )}
+        <p className="mt-2 text-xs text-ink-400">
+          La convention collective est identifiée automatiquement sur chaque fiche importée
+          (numéro IDCC ou libellé imprimé sur le bulletin) — aucune sélection n&apos;est nécessaire.
+        </p>
         <PaySettingsForm
           initialCsgCrds={paySettings.csgCrdsNonDeductiblePercent}
           initialSalaireMinimum={paySettings.salaireMinimumConventionnel}
-          agreements={agreements}
-          initialCollectiveAgreementIdcc={paySettings.collectiveAgreementIdcc}
-          initialCollectiveAgreementCustomName={paySettings.collectiveAgreementCustomName}
         />
 
         <div className="mt-6 border-t border-ink-100 pt-5">

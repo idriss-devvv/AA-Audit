@@ -25,10 +25,10 @@ export const qualiteDonneesRules: AnomalyRule[] = [
     category: "qualite-donnees",
     description: "La convention collective doit être identifiée pour activer les contrôles conventionnels",
     check: (payslip) => {
-      if (!payslip.collectiveAgreement) {
+      if (!payslip.collectiveAgreement && !payslip.collectiveAgreementIdcc) {
         return {
           severity: "info",
-          message: "Convention collective non détectée sur cette fiche — les contrôles spécifiques à une convention ne pourront pas s'appliquer tant qu'elle n'est pas renseignée.",
+          message: "Convention collective non détectée sur cette fiche (ni libellé, ni numéro IDCC) — les contrôles spécifiques à une convention ne peuvent pas s'appliquer.",
         };
       }
       return null;
