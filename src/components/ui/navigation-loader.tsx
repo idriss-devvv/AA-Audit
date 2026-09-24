@@ -11,11 +11,12 @@ const SHOW_EVENT = "payaudit:loader-show";
 const HIDE_EVENT = "payaudit:loader-hide";
 
 /**
- * Affiche le loader pour une navigation qui ne passe pas par un lien :
- * envoi de formulaire, redirection après connexion, OAuth…
+ * Affiche le loader pour une action qui ne passe pas par un lien : envoi de
+ * formulaire, redirection après connexion, OAuth, import de fichier…
+ * Le message optionnel s'affiche sous l'anneau (ex. « Analyse en cours… »).
  */
-export function showNavigationLoader() {
-  window.dispatchEvent(new Event(SHOW_EVENT));
+export function showNavigationLoader(message?: string) {
+  window.dispatchEvent(new CustomEvent<string | undefined>(SHOW_EVENT, { detail: message }));
 }
 
 /** Masque le loader (ex. : la connexion a échoué, on reste sur la page). */
@@ -33,6 +34,7 @@ export function NavigationLoader() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [visible, setVisible] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
   const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -50,12 +52,14 @@ export function NavigationLoader() {
       if (url.pathname.startsWith("/api/")) return;
 
       if (showTimer.current) clearTimeout(showTimer.current);
+      setMessage(null);
       showTimer.current = setTimeout(() => setVisible(true), SHOW_DELAY_MS);
     }
 
-    function onShow() {
+    function onShow(event: Event) {
       if (showTimer.current) clearTimeout(showTimer.current);
       showTimer.current = null;
+      setMessage((event as CustomEvent<string | undefined>).detail ?? null);
       setVisible(true);
     }
     function onHide() {
@@ -93,12 +97,20 @@ export function NavigationLoader() {
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
-      <div className="relative flex h-16 w-16 items-center justify-center">
-        <span className="absolute inset-0 rounded-full border-[3px] border-ink-200/70" />
-        <span className="absolute inset-0 animate-spin rounded-full border-[3px] border-transparent border-t-blue-600 [animation-duration:0.8s]" />
-        <LogoMark className="h-7 w-7" />
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative flex h-16 w-16 items-center justify-center">
+          <span className="absolute inset-0 rounded-full border-[3px] border-ink-200/70" />
+          <span className="absolute inset-0 animate-spin rounded-full border-[3px] border-transparent border-t-blue-600 [animation-duration:0.8s]" />
+          <LogoMark className="h-7 w-7" />
+        </div>
+        {message ? (
+          <p className="rounded-full bg-white/80 px-4 py-1.5 text-sm font-medium text-ink-700 shadow-soft ring-1 ring-ink-200/70">
+            {message}
+          </p>
+        ) : (
+          <span className="sr-only">{visible ? "Chargement de la page…" : ""}</span>
+        )}
       </div>
-      <span className="sr-only">{visible ? "Chargement de la page…" : ""}</span>
     </div>
   );
 }

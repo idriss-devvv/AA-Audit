@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { hideNavigationLoader, showNavigationLoader } from "@/components/ui/navigation-loader";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
 
@@ -45,6 +46,7 @@ export function PayslipUploadButton() {
     setErrorMessage(null);
     setResult(null);
     setStatus("uploading");
+    showNavigationLoader("Analyse de la fiche de paie…");
 
     const formData = new FormData();
     formData.append("file", file);
@@ -69,6 +71,7 @@ export function PayslipUploadButton() {
       setErrorMessage("Une erreur est survenue, réessayez.");
       setStatus("error");
     } finally {
+      hideNavigationLoader();
       if (inputRef.current) inputRef.current.value = "";
     }
   }

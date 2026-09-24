@@ -43,14 +43,19 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     const supabase = createClient();
 
     if (mode === "signup") {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: { company_name: companyName, account_type: accountType },
-        },
-      });
+      showNavigationLoader("Création de votre compte…");
+      const { error } = await supabase.auth
+        .signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: { company_name: companyName, account_type: accountType },
+          },
+        })
+        .catch(() => ({ error: { message: "Inscription impossible, vérifiez votre réseau et réessayez." } }));
+      // On reste sur la page (message de confirmation ou d'erreur) : loader masqué.
+      hideNavigationLoader();
       if (error) {
         setError(error.message);
       } else {
