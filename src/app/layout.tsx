@@ -3,7 +3,7 @@ import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { SITE_URL, SITE_NAME } from "@/lib/site";
 import { Suspense } from "react";
-import { NavigationProgress } from "@/components/ui/navigation-progress";
+import { NavigationLoader } from "@/components/ui/navigation-loader";
 
 const sans = Inter({
   subsets: ["latin"],
@@ -134,7 +134,7 @@ export default function RootLayout({
       </head>
       <body className="bg-beige-50 font-sans text-ink-900 antialiased">
         <Suspense fallback={null}>
-          <NavigationProgress />
+          <NavigationLoader />
         </Suspense>
         {children}
       </body>
