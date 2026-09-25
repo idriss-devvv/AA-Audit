@@ -1,4 +1,4 @@
-# PayAudit — SaaS de contrôle des fiches de paie
+# A&A Audit — SaaS de contrôle des fiches de paie
 
 SaaS qui vérifie et contrôle les fiches de paie pour détecter les anomalies et les erreurs (cotisations, taux, plafonds, cumuls, conventions collectives, etc.).
 
@@ -9,7 +9,7 @@ SaaS qui vérifie et contrôle les fiches de paie pour détecter les anomalies e
 - **Authentification + base de données** : Supabase (Postgres + Auth, email/mot de passe et Google)
 - **Paiement** : Stripe Checkout (abonnements)
 - **Déploiement** : Vercel
-- **Suivi** : GitHub (repo à créer) + Notion (espace "PayAudit — Espace de Pilotage MVP")
+- **Suivi** : GitHub (repo à créer) + Notion (espace « PayAudit — Espace de pilotage MVP », nom historique)
 
 ## Configuration requise avant mise en ligne complète
 
@@ -64,4 +64,4 @@ docs/
 4. Provisionner une base PostgreSQL (Vercel Postgres, Supabase ou Neon) et renseigner `DATABASE_URL` dans `.env`.
 5. Implémenter le parsing des fiches de paie (`src/lib/parsers`) et les premières règles de contrôle (`src/lib/rules`).
 
-Le détail des tâches réalisées est suivi dans la page Notion **"Tache Accompli"** de l'espace **PayAudit — Espace de Pilotage MVP**.
+Le détail des tâches réalisées est suivi dans la page Notion **« Journal des réalisations »** de l'espace **PayAudit — Espace de pilotage MVP** (nom historique).

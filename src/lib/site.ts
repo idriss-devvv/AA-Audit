@@ -7,4 +7,4 @@
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://payaudit-seven.vercel.app";
 
-export const SITE_NAME = "PayAudit";
+export const SITE_NAME = "A&A Audit";

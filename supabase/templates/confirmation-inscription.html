@@ -4,19 +4,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
-    <title>Confirmez votre adresse e-mail — PayAudit</title>
+    <title>Confirmez votre adresse e-mail — A&amp;A Audit</title>
   </head>
   <!--
     Modèle Supabase « Confirm signup » (Authentication → Email Templates).
     Variables Supabase utilisées :
-      {{ .Token }}           code à 6 chiffres saisi dans PayAudit
+      {{ .Token }}           code à 6 chiffres saisi dans A&amp;A Audit
       {{ .ConfirmationURL }} lien de secours (confirme l'adresse en un clic)
       {{ .Email }}           adresse du nouvel utilisateur
     HTML « e-mail » : tableaux et styles en ligne pour Gmail, Outlook, Apple Mail.
   -->
   <body style="margin:0; padding:0; background-color:#FAF8F4;">
     <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
-      Votre code de confirmation PayAudit : {{ .Token }}
+      Votre code de confirmation A&amp;A Audit : {{ .Token }}
     </div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FAF8F4;">
       <tr>
@@ -31,7 +31,7 @@
                       &#10003;
                     </td>
                     <td style="padding-left:10px; font-family:Georgia, 'Times New Roman', serif; font-size:22px; color:#17191D;">
-                      PayAudit
+                      A&amp;A Audit
                     </td>
                   </tr>
                 </table>
@@ -45,7 +45,7 @@
                   Confirmez votre adresse e-mail
                 </h1>
                 <p style="margin:0 0 28px 0; font-family:Arial, Helvetica, sans-serif; font-size:15px; line-height:1.6; color:#6A6E76;">
-                  Bienvenue sur PayAudit. Pour activer votre compte, saisissez le code ci-dessous sur la page d'inscription.
+                  Bienvenue sur A&amp;A Audit. Pour activer votre compte, saisissez le code ci-dessous sur la page d'inscription.
                 </p>
 
                 <!-- Code -->
@@ -90,8 +90,8 @@
             <!-- Pied -->
             <tr>
               <td style="padding:24px 8px 0 8px; font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:1.6; color:#8B8E95;">
-                E-mail envoyé à {{ .Email }} suite à la création d'un compte PayAudit.<br />
-                PayAudit — contrôle automatique des fiches de paie.
+                E-mail envoyé à {{ .Email }} suite à la création d'un compte A&amp;A Audit.<br />
+                A&amp;A Audit — contrôle automatique des fiches de paie.
               </td>
             </tr>
           </table>

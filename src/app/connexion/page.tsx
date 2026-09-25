@@ -11,7 +11,7 @@ export default function ConnexionPage() {
         <div className="container-page relative py-20 md:py-24">
         <div className="mx-auto max-w-md text-center">
           <h1 className="heading-display text-5xl">Connexion</h1>
-          <p className="mt-4 text-ink-500">Accédez à votre espace PayAudit.</p>
+          <p className="mt-4 text-ink-500">Accédez à votre espace A&A Audit.</p>
         </div>
 
         <div className="mt-10">

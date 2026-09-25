@@ -16,12 +16,13 @@ export default function Icon() {
           background: "#1F3F6E",
           borderRadius: 7,
           color: "#FAF8F4",
-          fontSize: 17,
+          fontSize: 11,
           fontWeight: 800,
           fontFamily: "sans-serif",
+          letterSpacing: -0.3,
         }}
       >
-        PA
+        A&amp;A
       </div>
     ),
     { ...size }

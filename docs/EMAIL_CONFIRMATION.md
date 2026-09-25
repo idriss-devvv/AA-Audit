@@ -27,7 +27,7 @@ Authentication → Sign In / Providers → **Email** :
 ## 2. Installer le modèle d'e-mail
 
 Authentication → **Email Templates** → **Confirm signup** :
-- **Subject** : `Votre code de confirmation PayAudit : {{ .Token }}`
+- **Subject** : `Votre code de confirmation A&A Audit : {{ .Token }}`
 - **Message body** : coller le contenu de
   [`supabase/templates/confirmation-inscription.html`](../supabase/templates/confirmation-inscription.html),
   puis enregistrer.
@@ -51,7 +51,7 @@ Avant d'ouvrir les inscriptions, brancher un fournisseur SMTP :
 
 Project Settings → Authentication → **SMTP Settings** → « Enable custom SMTP »,
 avec les identifiants d'un fournisseur (Resend, Brevo, Postmark, Amazon SES…).
-Expéditeur conseillé : `PayAudit <no-reply@votre-domaine.fr>`, sur un domaine
+Expéditeur conseillé : `A&A Audit <no-reply@votre-domaine.fr>`, sur un domaine
 dont les enregistrements SPF/DKIM sont configurés (sinon les e-mails
 risquent de finir en indésirables).
 

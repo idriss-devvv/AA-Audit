@@ -64,7 +64,7 @@ export async function GET() {
   const rows = (data as unknown as AnomalyExportRow[] | null) ?? [];
 
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "PayAudit";
+  workbook.creator = "A&A Audit";
   workbook.created = new Date();
 
   const sheet = workbook.addWorksheet("Anomalies");

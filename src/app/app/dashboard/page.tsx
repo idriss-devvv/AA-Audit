@@ -234,7 +234,7 @@ export default async function DashboardPage() {
           Importer une fiche de paie
         </h2>
         <p className="relative max-w-md text-sm text-ink-500">
-          Déposez un fichier PDF ou une photo de fiche de paie : PayAudit la
+          Déposez un fichier PDF ou une photo de fiche de paie : A&A Audit la
           réceptionne immédiatement et prépare l&apos;analyse d&apos;anomalies.
         </p>
         <div className="relative mt-2">

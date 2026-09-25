@@ -29,13 +29,13 @@ export default function OpengraphImage() {
               borderRadius: 14,
               background: "#1F3F6E",
               color: "#FAF8F4",
-              fontSize: 24,
+              fontSize: 18,
               fontWeight: 800,
             }}
           >
-            PA
+            A&amp;A
           </div>
-          <div style={{ fontSize: 30, fontWeight: 800, color: "#17191D" }}>PayAudit</div>
+          <div style={{ fontSize: 30, fontWeight: 800, color: "#17191D" }}>A&A Audit</div>
         </div>
         <div
           style={{

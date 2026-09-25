@@ -25,6 +25,17 @@ sert de socle de départ pour ce dépôt.
 
 ---
 
+## 2026-09-26
+
+### Changement de nom : PayAudit devient A&A Audit
+- Nom remplacé dans tout le site : logo, textes, titres de pages et
+  métadonnées SEO (`SITE_NAME`), icône d'onglet et image de partage,
+  pages légales, e-mail de confirmation, exports Excel, documentation.
+- Titre de la page d'accueil désormais préfixé par le nom de la marque.
+- Inchangés (identifiants techniques non visibles) : dépôt GitHub
+  `PayAudit`, projet Vercel `payaudit` et ses adresses, nom du paquet npm.
+  Les entrées plus anciennes de ce fichier gardent l'ancien nom.
+
 ## 2026-09-24
 
 ### Grilles de salaires minimaux conventionnels + SMIC

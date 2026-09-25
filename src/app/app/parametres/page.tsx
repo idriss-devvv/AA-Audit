@@ -159,7 +159,7 @@ async function BaremesTab({ companyId, companyName }: { companyId: string | null
       <section className="rounded-2xl border border-blue-100 bg-blue-50/60 p-6 sm:p-7">
         <h2 className="card-title text-blue-700">Contrôlé automatiquement</h2>
         <p className="mt-1 text-xs text-ink-500">
-          Ces valeurs sont intégrées à PayAudit à partir des sources officielles : rien à saisir.
+          Ces valeurs sont intégrées à A&A Audit à partir des sources officielles : rien à saisir.
         </p>
         <ul className="mt-4 grid gap-2 text-sm text-ink-700">
           {AUTOMATIC_CONTROLS.map((item) => (

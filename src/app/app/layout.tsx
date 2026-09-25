@@ -32,7 +32,7 @@ export default async function AppLayout({
       {/* Barre latérale (desktop) */}
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-ink-200/60 bg-beige-100/60 print:hidden md:flex">
         <div className="flex h-16 items-center px-5">
-          <Link href="/app/dashboard" aria-label="PayAudit — tableau de bord">
+          <Link href="/app/dashboard" aria-label="A&A Audit — tableau de bord">
             <Logo size="sm" />
           </Link>
         </div>
@@ -55,7 +55,7 @@ export default async function AppLayout({
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 border-b border-ink-200/60 bg-beige-50/80 backdrop-blur-xl print:hidden">
           <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-10">
-            <Link href="/app/dashboard" className="md:hidden" aria-label="PayAudit — tableau de bord">
+            <Link href="/app/dashboard" className="md:hidden" aria-label="A&A Audit — tableau de bord">
               <Logo size="sm" />
             </Link>
             <div className="hidden md:block" />

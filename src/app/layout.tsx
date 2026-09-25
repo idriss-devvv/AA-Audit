@@ -19,9 +19,9 @@ const display = Instrument_Serif({
   display: "swap",
 });
 
-const title = "PayAudit — Contrôle et détection d'anomalies sur vos fiches de paie";
+const title = "A&A Audit — Contrôle et détection d'anomalies sur vos fiches de paie";
 const description =
-  "PayAudit analyse automatiquement vos fiches de paie et détecte les anomalies : erreurs de cotisations, écarts brut/net, convention collective, congés payés et primes. Gagnez du temps et sécurisez votre paie.";
+  "A&A Audit analyse automatiquement vos fiches de paie et détecte les anomalies : erreurs de cotisations, écarts brut/net, convention collective, congés payés et primes. Gagnez du temps et sécurisez votre paie.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

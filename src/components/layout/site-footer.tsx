@@ -61,7 +61,7 @@ export function SiteFooter() {
 
       <div className="relative border-t border-white/10">
         <p className="container-page py-6 text-xs text-ink-500">
-          © {new Date().getFullYear()} PayAudit. Tous droits réservés.
+          © {new Date().getFullYear()} A&A Audit. Tous droits réservés.
         </p>
       </div>
     </footer>

@@ -7,14 +7,14 @@ export default function CguPage() {
       updatedAt="À compléter"
     >
       <p>
-        Les présentes CGU encadrent l&apos;utilisation du service PayAudit.
+        Les présentes CGU encadrent l&apos;utilisation du service A&A Audit.
         Ce contenu est un gabarit à faire relire et valider par un
         professionnel du droit avant publication.
       </p>
 
       <h2>1. Objet</h2>
       <p>
-        PayAudit est un service en ligne permettant de contrôler des fiches
+        A&A Audit est un service en ligne permettant de contrôler des fiches
         de paie afin d&apos;y détecter des anomalies et erreurs potentielles.
       </p>
 
@@ -27,7 +27,7 @@ export default function CguPage() {
 
       <h2>3. Responsabilité</h2>
       <p>
-        Les résultats fournis par PayAudit constituent une aide à la
+        Les résultats fournis par A&A Audit constituent une aide à la
         détection d&apos;anomalies et ne remplacent pas une expertise
         comptable ou juridique.
       </p>

@@ -28,7 +28,7 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-ink-200/60 bg-beige-50/75 backdrop-blur-xl backdrop-saturate-150">
       <div className="container-page flex h-16 items-center justify-between gap-4">
-        <Link href="/" aria-label="PayAudit — accueil" className="shrink-0">
+        <Link href="/" aria-label="A&A Audit — accueil" className="shrink-0">
           <Logo className="[&>span:last-child]:hidden min-[420px]:[&>span:last-child]:inline" />
         </Link>
 

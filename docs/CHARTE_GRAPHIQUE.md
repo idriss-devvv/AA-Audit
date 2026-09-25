@@ -1,4 +1,4 @@
-# Charte graphique — PayAudit
+# Charte graphique — A&A Audit
 
 Direction artistique : moderne, épurée, chaleureuse. Palette beige/bleu
 pour installer la confiance (bleu) sans la froideur d'un SaaS classique

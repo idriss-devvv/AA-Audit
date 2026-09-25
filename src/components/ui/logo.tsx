@@ -1,5 +1,5 @@
 /**
- * Logotype PayAudit : monogramme (bulletin + coche) et nom en typographie
+ * Logotype A&A Audit : monogramme (bulletin + coche) et nom en typographie
  * éditoriale. Purement présentationnel.
  */
 export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
@@ -44,7 +44,7 @@ export function Logo({
           tone === "light" ? "text-beige-50" : "text-ink-900"
         }`}
       >
-        PayAudit
+        A&A Audit
       </span>
     </span>
   );

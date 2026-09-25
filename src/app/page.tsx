@@ -6,9 +6,9 @@ import { Reveal } from "@/components/ui/reveal";
 import { FaqItem } from "@/components/ui/faq-item";
 
 export const metadata: Metadata = {
-  title: "Contrôle automatique de fiches de paie",
+  title: { absolute: "A&A Audit — Contrôle automatique de fiches de paie" },
   description:
-    "PayAudit détecte automatiquement les anomalies sur vos fiches de paie : cotisations, brut/net, convention collective, congés payés et primes. Essayez gratuitement.",
+    "A&A Audit détecte automatiquement les anomalies sur vos fiches de paie : cotisations, brut/net, convention collective, congés payés et primes. Essayez gratuitement.",
   alternates: { canonical: "/" },
 };
 
@@ -109,7 +109,7 @@ const features = [
     icon: IconBook,
     title: "Convention collective",
     description:
-      "PayAudit repère la convention collective applicable sur chaque bulletin pour préparer des contrôles adaptés à votre secteur d'activité.",
+      "A&A Audit repère la convention collective applicable sur chaque bulletin pour préparer des contrôles adaptés à votre secteur d'activité.",
   },
   {
     icon: IconSun,
@@ -195,9 +195,9 @@ const plans = [
 
 const faqs = [
   {
-    question: "Comment PayAudit détecte-t-il les anomalies sur une fiche de paie ?",
+    question: "Comment A&A Audit détecte-t-il les anomalies sur une fiche de paie ?",
     answer:
-      "PayAudit extrait automatiquement les données clés de chaque bulletin (salaire brut, net à payer, cotisations, congés payés, convention collective...) puis les compare à un moteur de règles de contrôle. Tout écart anormal — cotisation manquante, incohérence brut/net, solde de congés suspect — est signalé avec une explication claire.",
+      "A&A Audit extrait automatiquement les données clés de chaque bulletin (salaire brut, net à payer, cotisations, congés payés, convention collective...) puis les compare à un moteur de règles de contrôle. Tout écart anormal — cotisation manquante, incohérence brut/net, solde de congés suspect — est signalé avec une explication claire.",
   },
   {
     question: "Quels formats de fiches de paie sont acceptés ?",
@@ -207,7 +207,7 @@ const faqs = [
   {
     question: "Les règles de contrôle sont-elles personnalisables ?",
     answer:
-      "Oui. Au-delà des vérifications standards (brut, net, cotisations), PayAudit extrait déjà la convention collective, le poste, l'ancienneté et les congés payés de chaque fiche. Des règles de contrôle avancées s'appuyant sur ces champs seront prochainement paramétrables selon votre secteur d'activité.",
+      "Oui. Au-delà des vérifications standards (brut, net, cotisations), A&A Audit extrait déjà la convention collective, le poste, l'ancienneté et les congés payés de chaque fiche. Des règles de contrôle avancées s'appuyant sur ces champs seront prochainement paramétrables selon votre secteur d'activité.",
   },
   {
     question: "Mes fiches de paie sont-elles stockées en sécurité ?",
@@ -215,12 +215,12 @@ const faqs = [
       "Chaque fichier importé est chiffré et cloisonné par compte utilisateur : personne d'autre que vous n'y a accès. Les données ne sont jamais revendues ni partagées avec des tiers.",
   },
   {
-    question: "Puis-je essayer PayAudit avant de m'abonner ?",
+    question: "Puis-je essayer A&A Audit avant de m'abonner ?",
     answer:
       "Oui, vous pouvez créer un compte et importer une fiche de paie dès maintenant pour voir l'analyse en action, avant de choisir la formule adaptée à votre volume mensuel.",
   },
   {
-    question: "PayAudit convient-il à un cabinet comptable gérant plusieurs clients ?",
+    question: "A&A Audit convient-il à un cabinet comptable gérant plusieurs clients ?",
     answer:
       "Tout à fait. La formule Pro permet plusieurs utilisateurs et un volume de fiches plus important, pensée pour les cabinets et PME multi-entités. Pour un volume plus conséquent, une offre Entreprise sur mesure est disponible.",
   },
@@ -253,7 +253,7 @@ function HeroPreview() {
           <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
           <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
           <span className="ml-3 truncate rounded-md bg-white px-3 py-1 text-[11px] font-medium text-ink-400 ring-1 ring-ink-100">
-            PayAudit — Historique
+            A&A Audit — Historique
           </span>
         </div>
         <div className="grid gap-0 text-left md:grid-cols-[1.35fr_1fr]">
@@ -349,13 +349,13 @@ export default function Home() {
             <em className="italic text-blue-600">sans rien laisser passer</em>
           </h1>
           <p className="mt-7 max-w-xl animate-fade-in-up text-base leading-relaxed text-ink-500 [animation-delay:160ms] md:text-lg">
-            PayAudit détecte automatiquement les anomalies et erreurs sur vos
+            A&A Audit détecte automatiquement les anomalies et erreurs sur vos
             fiches de paie : cotisations, plafonds, heures, primes, convention
             collective et congés payés.
           </p>
           <div className="mt-10 flex w-full animate-fade-in-up flex-col gap-3 [animation-delay:240ms] sm:w-auto sm:flex-row">
             <Link href="/app/dashboard" className="btn-primary group px-7">
-              Essayer PayAudit
+              Essayer A&A Audit
               <ArrowRight />
             </Link>
             <Link href="/contact" className="btn-secondary px-7">
@@ -397,7 +397,7 @@ export default function Home() {
               détectée.
             </p>
             <p className="mt-4 leading-relaxed text-ink-500">
-              PayAudit automatise cette vérification pour repérer les écarts
+              A&A Audit automatise cette vérification pour repérer les écarts
               avant qu&apos;ils ne deviennent un vrai problème : redressement
               URSSAF, litige prud&apos;homal ou simple perte de confiance des
               salariés.
@@ -438,7 +438,7 @@ export default function Home() {
               Une vérification pensée pour la fiabilité
             </h2>
             <p className="mt-5 text-ink-500">
-              Bien plus qu&apos;un contrôle du brut et du net : PayAudit analyse
+              Bien plus qu&apos;un contrôle du brut et du net : A&A Audit analyse
               chaque bulletin dans son ensemble.
             </p>
           </Reveal>
@@ -517,7 +517,7 @@ export default function Home() {
             <h2 className="heading-display mt-5 text-4xl md:text-5xl">Conçu pour tous les profils</h2>
             <p className="mt-5 text-ink-500">
               Que vous gériez la paie d&apos;une seule entreprise ou de
-              plusieurs clients, PayAudit s&apos;adapte à votre usage.
+              plusieurs clients, A&A Audit s&apos;adapte à votre usage.
             </p>
           </Reveal>
           <div className="mt-16 grid gap-6 md:grid-cols-3">
@@ -689,7 +689,7 @@ export default function Home() {
                   href="/app/dashboard"
                   className="btn group bg-beige-50 px-7 py-3 text-blue-700 hover:bg-white active:scale-[0.98]"
                 >
-                  Essayer PayAudit
+                  Essayer A&A Audit
                   <ArrowRight />
                 </Link>
                 <Link

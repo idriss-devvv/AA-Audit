@@ -7,7 +7,7 @@ export default function PolitiqueConfidentialitePage() {
       updatedAt="À compléter"
     >
       <p>
-        PayAudit traite des données à caractère personnel et des données de
+        A&A Audit traite des données à caractère personnel et des données de
         paie dans le cadre de son service de contrôle des fiches de paie.
         Ce gabarit doit être complété selon le traitement réel des données
         (RGPD) avant mise en ligne.
