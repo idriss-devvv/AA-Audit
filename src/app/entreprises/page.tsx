@@ -4,32 +4,38 @@ import { AudiencePage, type AudiencePageContent } from "@/components/marketing/a
 const content: AudiencePageContent = {
   path: "/entreprises",
   eyebrow: "Entreprises",
-  title: "Contrôle des fiches de paie pour les entreprises",
+  title: "Contrôle des fiches de paie",
+  titleAccent: "pour les entreprises",
+  visual: "entreprise",
   answer:
     "A&A Audit contrôle automatiquement les bulletins de vos salariés : cotisations, minimums conventionnels, SMIC, heures supplémentaires et mentions obligatoires. Une erreur de paramétrage est repérée dès le premier bulletin, avant de se répéter chaque mois.",
   questionsTitle: "Ce que le contrôle vous évite",
   questions: [
     {
+      icon: "repeat",
       title: "Une erreur de paramétrage répétée chaque mois",
       text: "Un taux mal saisi dans le logiciel de paie se reproduit sur tous les bulletins : il est signalé dès la première fiche contrôlée.",
     },
     {
+      icon: "scale",
       title: "Un salaire sous le minimum conventionnel",
       text: "La classification de chaque salarié est comparée à la grille de sa convention collective et au SMIC en vigueur.",
     },
     {
+      icon: "percent",
       title: "Des cotisations au mauvais taux",
       text: "Les taux salariaux Urssaf et Agirc-Arrco sont vérifiés, ainsi que vos propres taux (accident du travail, mutuelle, prévoyance).",
     },
     {
+      icon: "list",
       title: "Un bulletin incomplet",
       text: "Les mentions obligatoires du Code du travail sont recherchées sur chaque fiche.",
     },
   ],
   steps: [
-    { title: "Paramétrez votre entreprise", text: "Renseignez vos taux propres (accident du travail, mutuelle…) : le reste est automatique." },
-    { title: "Importez les bulletins", text: "Déposez les PDF générés par votre logiciel de paie." },
-    { title: "Exploitez les résultats", text: "Anomalies triées par gravité, rapport imprimable par fiche et exports Excel." },
+    { icon: "percent", title: "Paramétrez votre entreprise", text: "Renseignez vos taux propres (accident du travail, mutuelle…) : le reste est automatique." },
+    { icon: "document", title: "Importez les bulletins", text: "Déposez les PDF générés par votre logiciel de paie." },
+    { icon: "download", title: "Exploitez les résultats", text: "Anomalies triées par gravité, rapport imprimable par fiche et exports Excel." },
   ],
   faqs: [
     {

@@ -27,6 +27,16 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-26
 
+### Refonte des pages par public (UI / UX, animations)
+- Hero en deux colonnes avec une illustration animée propre à chaque public
+  (bulletin contrôlé, tableau de bord, liste de clients) et une note flottante.
+- Bandeau de chiffres clés animés (contrôles, conventions, PMSS, SMIC) — la
+  vraie valeur reste rendue côté serveur pour les moteurs et les IA.
+- Cartes avec icônes et apparition en cascade, frise « Comment ça marche »
+  reliée, appel à l'action en dégradé ; section « Ce que nous vérifions »
+  modernisée (icônes, grille 4 colonnes), partagée avec l'accueil.
+- Animations désactivées si l'utilisateur préfère un mouvement réduit.
+
 ### Landing page : conversion, confiance, SEO et GEO
 - Boutons « Essayer A&A Audit » vers `/inscription` (au lieu du tableau de
   bord, qui renvoyait les visiteurs sans compte vers la connexion).

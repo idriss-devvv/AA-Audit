@@ -4,32 +4,38 @@ import { AudiencePage, type AudiencePageContent } from "@/components/marketing/a
 const content: AudiencePageContent = {
   path: "/verifier-ma-fiche-de-paie",
   eyebrow: "Particuliers",
-  title: "Vérifier sa fiche de paie en ligne",
+  title: "Vérifier sa fiche de paie",
+  titleAccent: "en ligne",
+  visual: "particulier",
   answer:
     "Importez votre bulletin de salaire en PDF : A&A Audit contrôle en quelques secondes votre salaire minimum, vos cotisations, vos heures supplémentaires et vos congés payés, à partir des barèmes officiels en vigueur, et vous explique chaque écart en langage clair.",
   questionsTitle: "Les questions auxquelles vous obtenez une réponse",
   questions: [
     {
+      icon: "scale",
       title: "Suis-je payé au moins au minimum de ma convention ?",
       text: "Votre convention collective et votre classification sont lues sur le bulletin, puis comparées à la grille officielle et au SMIC.",
     },
     {
+      icon: "clock",
       title: "Mes heures supplémentaires sont-elles bien majorées ?",
       text: "La majoration appliquée est comparée aux taux légaux (25 %, 50 %) et au minimum de 10 % prévu en cas d'accord collectif.",
     },
     {
+      icon: "percent",
       title: "Mes cotisations sont-elles au bon taux ?",
       text: "Chaque ligne salariale (vieillesse, CSG/CRDS, retraite complémentaire) est comparée au barème de la période.",
     },
     {
+      icon: "calendar",
       title: "Mon solde de congés payés est-il juste ?",
       text: "Le solde affiché est comparé aux jours acquis et aux jours pris indiqués sur le bulletin.",
     },
   ],
   steps: [
-    { title: "Créez votre compte", text: "Choisissez « Particulier » à l'inscription : votre espace est créé à votre nom." },
-    { title: "Importez votre bulletin", text: "Déposez le PDF de votre fiche de paie, tel que fourni par votre employeur." },
-    { title: "Lisez le rapport", text: "Chaque anomalie est expliquée, avec le montant attendu et la source officielle." },
+    { icon: "users", title: "Créez votre compte", text: "Choisissez « Particulier » à l'inscription : votre espace est créé à votre nom." },
+    { icon: "document", title: "Importez votre bulletin", text: "Déposez le PDF de votre fiche de paie, tel que fourni par votre employeur." },
+    { icon: "search", title: "Lisez le rapport", text: "Chaque anomalie est expliquée, avec le montant attendu et la source officielle." },
   ],
   faqs: [
     {

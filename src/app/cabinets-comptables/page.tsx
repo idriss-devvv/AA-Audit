@@ -4,32 +4,38 @@ import { AudiencePage, type AudiencePageContent } from "@/components/marketing/a
 const content: AudiencePageContent = {
   path: "/cabinets-comptables",
   eyebrow: "Cabinets comptables",
-  title: "Logiciel de contrôle de paie pour cabinets comptables",
+  title: "Logiciel de contrôle de paie",
+  titleAccent: "pour cabinets comptables",
+  visual: "cabinet",
   answer:
     "A&A Audit permet à un cabinet de contrôler les bulletins de tous ses clients depuis un seul compte : convention collective détectée automatiquement, minimums conventionnels, SMIC, taux de cotisations et mentions obligatoires vérifiés, rapports de contrôle prêts à partager.",
   questionsTitle: "Pensé pour le travail en cabinet",
   questions: [
     {
+      icon: "users",
       title: "Tous vos clients dans un seul espace",
       text: "Ajoutez vos entreprises clientes et basculez de l'une à l'autre en un clic : fiches, anomalies et paramètres restent cloisonnés par client.",
     },
     {
+      icon: "search",
       title: "Chaque convention reconnue automatiquement",
       text: "Pas de sélection à faire client par client : l'IDCC ou le libellé imprimé sur le bulletin suffit.",
     },
     {
+      icon: "shield",
       title: "Des barèmes officiels, datés et sourcés",
       text: "Chaque contrôle indique la règle appliquée et sa source (Légifrance, Urssaf, Agirc-Arrco, Code du travail).",
     },
     {
+      icon: "download",
       title: "Des livrables pour vos clients",
       text: "Rapport de contrôle imprimable par bulletin et exports Excel de l'historique et des anomalies.",
     },
   ],
   steps: [
-    { title: "Créez votre compte cabinet", text: "Choisissez « Cabinet » à l'inscription, puis ajoutez vos clients." },
-    { title: "Importez les bulletins", text: "Sélectionnez le client concerné et déposez ses PDF de paie." },
-    { title: "Partagez les résultats", text: "Rapports par fiche et exports Excel à transmettre à vos clients." },
+    { icon: "users", title: "Créez votre compte cabinet", text: "Choisissez « Cabinet » à l'inscription, puis ajoutez vos clients." },
+    { icon: "document", title: "Importez les bulletins", text: "Sélectionnez le client concerné et déposez ses PDF de paie." },
+    { icon: "download", title: "Partagez les résultats", text: "Rapports par fiche et exports Excel à transmettre à vos clients." },
   ],
   faqs: [
     {
