@@ -39,8 +39,8 @@ Variables utilisées : `{{ .Token }}` (le code), `{{ .ConfirmationURL }}`
 
 Authentication → **URL Configuration** :
 - **Site URL** : l'adresse de production (aujourd'hui
-  `https://payaudit-pay18.vercel.app`, puis le nom de domaine définitif) ;
-- **Redirect URLs** : ajouter `https://payaudit-pay18.vercel.app/auth/callback`
+  `https://aa-audit.vercel.app`, puis le nom de domaine définitif) ;
+- **Redirect URLs** : ajouter `https://aa-audit.vercel.app/**`
   (et `http://localhost:3000/auth/callback` pour le développement).
 
 ## 4. Configurer un vrai service d'envoi (indispensable avant le lancement)
@@ -91,7 +91,7 @@ Authentication → **Email Templates** → **Reset Password** :
 Le lien de secours passe un paramètre (`/auth/callback?next=/reinitialiser-mot-de-passe`).
 Dans Authentication → **URL Configuration** → **Redirect URLs**, autoriser le
 domaine entier plutôt qu'une seule adresse :
-`https://payaudit-pay18.vercel.app/**` (et `http://localhost:3000/**` en
+`https://aa-audit.vercel.app/**` (et `http://localhost:3000/**` en
 développement).
 
 ## Tester
