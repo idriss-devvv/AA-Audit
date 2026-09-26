@@ -27,6 +27,21 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-26
 
+### Landing page : conversion, confiance, SEO et GEO
+- Boutons « Essayer A&A Audit » vers `/inscription` (au lieu du tableau de
+  bord, qui renvoyait les visiteurs sans compte vers la connexion).
+- Promesses alignées sur le produit : formule Pro (multi-clients, barèmes
+  propres), réassurance « Données stockées en France », FAQ mise à jour,
+  aperçu du hero sur un contrôle entièrement automatique.
+- Section « Ce que nous vérifions » : contrôles et sources officielles, chiffres
+  lus dans le référentiel légal du moteur (PMSS, SMIC, conventions).
+- Pages par public : `/verifier-ma-fiche-de-paie`, `/entreprises`,
+  `/cabinets-comptables` (réponse directe en tête, FAQ et fil d'Ariane en
+  données structurées).
+- SEO technique : sitemap sans ancres ni pages de compte, directive `host`
+  retirée, connexion / inscription en `noindex`, vérification Google Search
+  Console par variable d'environnement, Vercel Analytics (sans cookies).
+
 ### Changement de nom : PayAudit devient A&A Audit
 - Nom remplacé dans tout le site : logo, textes, titres de pages et
   métadonnées SEO (`SITE_NAME`), icône d'onglet et image de partage,

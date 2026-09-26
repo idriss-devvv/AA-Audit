@@ -4,6 +4,7 @@ import { MarketingShell } from "@/components/layout/marketing-shell";
 import { SubscribeButton } from "@/components/pricing/subscribe-button";
 import { Reveal } from "@/components/ui/reveal";
 import { FaqItem } from "@/components/ui/faq-item";
+import { ControlsSection } from "@/components/marketing/controls-section";
 
 export const metadata: Metadata = {
   title: { absolute: "A&A Audit — Contrôle automatique de fiches de paie" },
@@ -147,18 +148,21 @@ const audiences = [
   {
     icon: IconBuilding,
     title: "Cabinets comptables",
+    href: "/cabinets-comptables",
     description:
       "Contrôlez rapidement les bulletins de plusieurs clients et sécurisez votre responsabilité sur la conformité de la paie.",
   },
   {
     icon: IconUsers,
     title: "Services RH & PME",
+    href: "/entreprises",
     description:
       "Fiabilisez la paie en interne sans embaucher un expert dédié, et gagnez un temps précieux chaque fin de mois.",
   },
   {
     icon: IconBriefcase,
     title: "Indépendants & salariés",
+    href: "/verifier-ma-fiche-de-paie",
     description:
       "Vérifiez vous-même votre propre fiche de paie et identifiez un écart de cotisations ou de congés avant qu'il ne soit trop tard.",
   },
@@ -185,8 +189,8 @@ const plans = [
     description: "Pour les cabinets et PME avec plusieurs entités.",
     features: [
       "Jusqu'à 150 fiches de paie / mois",
-      "Règles personnalisées",
-      "5 utilisateurs",
+      "Gestion multi-clients pour les cabinets",
+      "Barèmes propres à chaque entreprise",
     ],
     priceId: "price_pro_150", // à remplacer par le vrai Price ID Stripe
     highlighted: true,
@@ -197,7 +201,7 @@ const faqs = [
   {
     question: "Comment A&A Audit détecte-t-il les anomalies sur une fiche de paie ?",
     answer:
-      "A&A Audit extrait automatiquement les données clés de chaque bulletin (salaire brut, net à payer, cotisations, congés payés, convention collective...) puis les compare à un moteur de règles de contrôle. Tout écart anormal — cotisation manquante, incohérence brut/net, solde de congés suspect — est signalé avec une explication claire.",
+      "A&A Audit lit chaque bulletin PDF (salaire, cotisations, heures, congés, convention collective, classification) puis applique ses contrôles : taux de cotisations Urssaf et Agirc-Arrco, PMSS, SMIC, salaires minimums conventionnels, heures supplémentaires, mentions obligatoires et net à payer. Chaque écart est expliqué avec la valeur attendue et sa source officielle.",
   },
   {
     question: "Quels formats de fiches de paie sont acceptés ?",
@@ -207,12 +211,12 @@ const faqs = [
   {
     question: "Les règles de contrôle sont-elles personnalisables ?",
     answer:
-      "Oui. Au-delà des vérifications standards (brut, net, cotisations), A&A Audit extrait déjà la convention collective, le poste, l'ancienneté et les congés payés de chaque fiche. Des règles de contrôle avancées s'appuyant sur ces champs seront prochainement paramétrables selon votre secteur d'activité.",
+      "Les valeurs légales (taux de cotisations, PMSS, SMIC, grilles de salaires conventionnelles) sont intégrées et mises à jour : rien à configurer. La convention collective est détectée automatiquement sur chaque bulletin. Seuls les taux propres à votre entreprise (accident du travail, mutuelle, prévoyance) se renseignent dans les paramètres.",
   },
   {
     question: "Mes fiches de paie sont-elles stockées en sécurité ?",
     answer:
-      "Chaque fichier importé est chiffré et cloisonné par compte utilisateur : personne d'autre que vous n'y a accès. Les données ne sont jamais revendues ni partagées avec des tiers.",
+      "Les fichiers sont stockés chez notre hébergeur en France (Paris), chiffrés au repos et cloisonnés par entreprise : seuls les comptes autorisés y ont accès. Les données ne sont jamais revendues ni partagées avec des tiers.",
   },
   {
     question: "Puis-je essayer A&A Audit avant de m'abonner ?",
@@ -222,7 +226,7 @@ const faqs = [
   {
     question: "A&A Audit convient-il à un cabinet comptable gérant plusieurs clients ?",
     answer:
-      "Tout à fait. La formule Pro permet plusieurs utilisateurs et un volume de fiches plus important, pensée pour les cabinets et PME multi-entités. Pour un volume plus conséquent, une offre Entreprise sur mesure est disponible.",
+      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Pro couvre un volume plus important, et une offre Entreprise sur devis existe pour les gros volumes.",
   },
 ];
 
@@ -239,10 +243,10 @@ const faqStructuredData = {
 function HeroPreview() {
   const lines = [
     { label: "Salaire de base", value: "2 850,00 €" },
-    { label: "Sécurité sociale plafonnée", value: "197,51 €" },
-    { label: "Accident du travail", value: "59,85 €", flagged: true },
-    { label: "Retraite complémentaire T1", value: "113,43 €" },
-    { label: "CSG/CRDS non déductible", value: "81,34 €" },
+    { label: "Sécurité sociale plafonnée", value: "185,25 €", flagged: true },
+    { label: "Sécurité sociale déplafonnée", value: "11,40 €" },
+    { label: "Retraite complémentaire T1", value: "114,29 €" },
+    { label: "CSG/CRDS non déductible", value: "81,20 €" },
   ];
   return (
     <div aria-hidden className="relative mx-auto mt-16 w-full max-w-4xl animate-fade-in-up [animation-delay:380ms] md:mt-20">
@@ -290,9 +294,9 @@ function HeroPreview() {
               <div className="rounded-xl border border-amber-200 bg-white p-4 shadow-soft">
                 <span className="badge bg-amber-50 text-amber-700 ring-amber-200">Avertissement</span>
                 <p className="mt-2.5 text-[13px] font-medium leading-snug text-ink-900">
-                  Taux AT/MP constaté 2,10 % — attendu 1,20 %
+                  Vieillesse plafonnée appliquée à 6,50 % — taux légal 6,90 %
                 </p>
-                <p className="mt-1 text-xs text-ink-400">Écart : +25,65 €</p>
+                <p className="mt-1 text-xs text-ink-400">Écart : −11,40 € retenus au salarié</p>
               </div>
               <div className="rounded-xl border border-ink-200/70 bg-white p-4">
                 <span className="badge bg-emerald-50 text-emerald-700 ring-emerald-200">Conforme</span>
@@ -354,7 +358,7 @@ export default function Home() {
             collective et congés payés.
           </p>
           <div className="mt-10 flex w-full animate-fade-in-up flex-col gap-3 [animation-delay:240ms] sm:w-auto sm:flex-row">
-            <Link href="/app/dashboard" className="btn-primary group px-7">
+            <Link href="/inscription" className="btn-primary group px-7">
               Essayer A&A Audit
               <ArrowRight />
             </Link>
@@ -368,7 +372,7 @@ export default function Home() {
               <IconShield /> Fichiers chiffrés
             </span>
             <span aria-hidden className="hidden h-3 w-px bg-ink-200 sm:block" />
-            <span className="flex items-center gap-1.5">Conforme RGPD</span>
+            <span className="flex items-center gap-1.5">Données stockées en France</span>
             <span aria-hidden className="hidden h-3 w-px bg-ink-200 sm:block" />
             <span className="flex items-center gap-1.5">Aucune carte requise pour tester</span>
           </div>
@@ -464,6 +468,8 @@ export default function Home() {
         </div>
       </section>
 
+      <ControlsSection />
+
       {/* How it works */}
       <section id="comment-ca-marche" className="relative overflow-hidden bg-ink-900 py-24 text-beige-50 md:py-32">
         <div aria-hidden className="bg-grid-light mask-radial pointer-events-none absolute inset-0" />
@@ -533,6 +539,12 @@ export default function Home() {
                   <p className="mt-3 text-sm leading-relaxed text-ink-500">
                     {audience.description}
                   </p>
+                  <Link
+                    href={audience.href}
+                    className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 transition hover:text-blue-800"
+                  >
+                    En savoir plus <span aria-hidden>→</span>
+                  </Link>
                 </div>
               </Reveal>
             ))}
@@ -686,7 +698,7 @@ export default function Home() {
               </p>
               <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                 <Link
-                  href="/app/dashboard"
+                  href="/inscription"
                   className="btn group bg-beige-50 px-7 py-3 text-blue-700 hover:bg-white active:scale-[0.98]"
                 >
                   Essayer A&A Audit

@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingShell } from "@/components/layout/marketing-shell";
 import { AuthForm } from "@/components/auth/auth-form";
+
+export const metadata: Metadata = {
+  title: "Créer un compte",
+  robots: { index: false },
+};
 
 export default function InscriptionPage() {
   return (

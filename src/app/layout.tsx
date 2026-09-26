@@ -3,6 +3,7 @@ import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { SITE_URL, SITE_NAME } from "@/lib/site";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { NavigationLoader } from "@/components/ui/navigation-loader";
 
 const sans = Inter({
@@ -61,6 +62,11 @@ export const metadata: Metadata = {
     title,
     description,
   },
+  // Google Search Console : jeton de vérification fourni par la variable
+  // d'environnement Vercel NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION.
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
   robots: {
     index: true,
     follow: true,
@@ -137,6 +143,8 @@ export default function RootLayout({
           <NavigationLoader />
         </Suspense>
         {children}
+        {/* Mesure d'audience Vercel, sans cookies (à activer dans Vercel → Analytics). */}
+        <Analytics />
       </body>
     </html>
   );

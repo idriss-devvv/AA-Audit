@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const navLinks = [
   { href: "/#fonctionnalites", label: "Fonctionnalités" },
+  { href: "/#controles", label: "Contrôles" },
   { href: "/#tarifs", label: "Tarifs" },
   { href: "/#faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },

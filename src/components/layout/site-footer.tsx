@@ -8,8 +8,15 @@ const legalLinks = [
   { href: "/cookies", label: "Politique de cookies" },
 ];
 
+const solutionLinks = [
+  { href: "/verifier-ma-fiche-de-paie", label: "Vérifier ma fiche de paie" },
+  { href: "/entreprises", label: "Entreprises" },
+  { href: "/cabinets-comptables", label: "Cabinets comptables" },
+];
+
 const productLinks = [
   { href: "/#fonctionnalites", label: "Fonctionnalités" },
+  { href: "/#controles", label: "Contrôles" },
   { href: "/#faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
   { href: "/app/dashboard", label: "Dashboard" },
@@ -19,13 +26,28 @@ export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden bg-ink-900 text-ink-300">
       <div aria-hidden className="bg-grid-light mask-fade-b pointer-events-none absolute inset-0 opacity-60" />
-      <div className="container-page relative grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="container-page relative grid gap-12 py-16 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <Logo tone="light" />
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-ink-400">
             La vérification automatique des fiches de paie : anomalies,
             erreurs de cotisations et écarts détectés en quelques secondes.
           </p>
+        </div>
+
+        <div>
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">
+            Solutions
+          </h3>
+          <ul className="mt-5 space-y-3 text-sm">
+            {solutionLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="text-ink-300 transition hover:text-beige-50">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div>
