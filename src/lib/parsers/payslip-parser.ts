@@ -326,7 +326,11 @@ export function parsePayslip(rawContent: string): PayslipData {
   const baseSalaryLine = extractBaseSalary(lines);
   const baseHourlyRate = baseSalaryLine?.unit ?? null;
 
-  const employeeNameMatch = text.match(/(?:salarié|nom\s*(?:et\s*pr[ée]nom)?|employ[ée])\s*[:\-]?\s*([A-ZÀ-Ü][\wÀ-ÿ'\- ]{2,40})/i);
+  // Libellé suivi de « : » obligatoire, et jamais « Employeur » : sinon un
+  // morceau du nom de l'employeur serait pris pour celui du salarié.
+  const employeeNameMatch = text.match(
+    /(?:^|[^A-Za-zÀ-ÿ])(?:[Ss]alari[ée]|[Nn]om(?:\s+et\s+pr[ée]nom)?|[Ee]mploy[ée](?!ur))[ \t]*:[ \t]*([A-ZÀ-Ü][A-Za-zÀ-ÿ'\-]*(?:[ \t]+[A-ZÀ-Üa-zà-ÿ][A-Za-zÀ-ÿ'\-]*){0,4})/
+  );
 
   return {
     employeeName: employeeNameMatch ? employeeNameMatch[1].trim() : "",

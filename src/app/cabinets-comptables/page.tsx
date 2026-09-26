@@ -41,7 +41,7 @@ const content: AudiencePageContent = {
     {
       question: "Combien de clients un cabinet peut-il gérer ?",
       answer:
-        "Autant que nécessaire : le nombre de fiches contrôlées par mois dépend de la formule choisie, et une offre sur devis existe pour les volumes importants.",
+        "Autant que nécessaire avec la formule Entreprise (500 € / mois) : sociétés et fiches de paie illimitées, avec un onglet Salariés dans chaque société.",
     },
     {
       question: "Les données des clients sont-elles séparées ?",

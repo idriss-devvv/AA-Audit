@@ -42,7 +42,7 @@ export function AddClientForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-end">
       <div className="flex flex-1 flex-col gap-1.5">
         <label htmlFor="client-name" className="field-label">
-          Nom de l&apos;entreprise cliente
+          Nom de la société
         </label>
         <input
           id="client-name"
@@ -59,7 +59,7 @@ export function AddClientForm() {
         disabled={loading}
         className="btn-primary py-2.5"
       >
-        {loading ? "Ajout…" : "Ajouter le client"}
+        {loading ? "Ajout…" : "Ajouter la société"}
       </button>
       {error && <p className="text-sm text-red-600 sm:basis-full">{error}</p>}
     </form>

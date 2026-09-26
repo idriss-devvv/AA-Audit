@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
+import { areResultsLocked } from "@/lib/account";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
 import {
   autoSizeColumns,
@@ -45,6 +46,14 @@ export async function GET() {
   }
 
   const { activeCompanyId, activeCompanyName } = await getActiveCompanyContext();
+
+  // Formule Free : le détail des anomalies est masqué, l'export aussi.
+  if (await areResultsLocked(activeCompanyId)) {
+    return NextResponse.json(
+      { error: "L'export des anomalies est disponible à partir de la formule Starter." },
+      { status: 403 }
+    );
+  }
 
   const { data, error } = await supabase
     .from("anomalies")

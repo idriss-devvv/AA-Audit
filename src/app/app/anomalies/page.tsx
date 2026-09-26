@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
+import { areResultsLocked } from "@/lib/account";
+import { LockedAnomaly } from "@/components/app/locked-anomaly";
+import { UpgradeNotice } from "@/components/app/upgrade-notice";
 
 const SEVERITY_LABELS: Record<string, { label: string; className: string; accentClassName: string }> = {
   critical: { label: "Critique", className: "bg-rose-50 text-rose-700 ring-rose-200", accentClassName: "bg-rose-500" },
@@ -29,6 +32,8 @@ export default async function AnomaliesPage() {
     .order("detected_at", { ascending: false });
 
   const anomalies = (data as unknown as AnomalyRow[] | null) ?? [];
+  // Formule Free : seule la première anomalie est montrée en clair.
+  const locked = await areResultsLocked(activeCompanyId);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
@@ -40,7 +45,7 @@ export default async function AnomaliesPage() {
             paie, triées par date.
           </p>
         </div>
-        {anomalies.length > 0 && (
+        {anomalies.length > 0 && !locked && (
           <a
             href="/api/export/anomalies"
             className="btn-secondary shrink-0 px-4 py-2"
@@ -59,8 +64,13 @@ export default async function AnomaliesPage() {
         </div>
       ) : (
         <div className="mt-8 flex flex-col gap-3">
-          {anomalies.map((anomaly) => {
+          {anomalies.map((anomaly, index) => {
             const severityInfo = SEVERITY_LABELS[anomaly.severity] ?? SEVERITY_LABELS.info;
+            if (locked && index > 0) {
+              return (
+                <LockedAnomaly key={anomaly.id} severityLabel={severityInfo.label} severityClassName={severityInfo.className} />
+              );
+            }
             const category = categoryFromRuleId(anomaly.rule_id);
             const categoryLabel = category ? CATEGORY_LABELS[category] : null;
             return (
@@ -92,6 +102,16 @@ export default async function AnomaliesPage() {
               </div>
             );
           })}
+          {locked && anomalies.length > 1 && (
+            <div className="mt-3">
+              <UpgradeNotice
+                compact
+                title={`${anomalies.length - 1} anomalie${anomalies.length > 2 ? "s" : ""} masquée${anomalies.length > 2 ? "s" : ""}`}
+                text="La formule Free montre la première anomalie. Choisissez une formule pour afficher le détail de toutes les anomalies, leurs montants et leurs sources."
+                requiredPlan="starter"
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -27,6 +27,27 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-26
 
+### Rôles, formules et back-office
+- Rôles : **admin** (accès complet, nomme les gestionnaires), **gestionnaire**
+  (back-office : comptes, formules, blocage des clients), **client**.
+- Formules : Free (1 fiche d'essai, anomalies masquées sauf la première),
+  Starter 30 € (30 fiches/mois), Pro 100 € (150 fiches/mois + onglet Salariés),
+  Entreprise 500 € (illimité + onglet Sociétés + Salariés dans chaque société).
+- Quotas appliqués par la base (trigger `enforce_payslip_quota`) et vérifiés à
+  l'import avec un message clair ; blocage d'un utilisateur = plus aucun accès
+  aux données (fonction `accessible_company_ids`).
+- Sécurité : un utilisateur ne peut plus modifier sa ligne de profil (rôle,
+  blocage) ; fonctions du back-office en security definer vérifiant le rôle.
+- Back-office `/app/admin` : chiffres clés, liste des comptes, changement de
+  formule, blocage, changement de rôle (admin).
+- Onglet Salariés (`/app/salaries`) : salariés reconnus par le nom lu sur le
+  bulletin, détail par salarié, ajout manuel ; lecture du nom du salarié
+  corrigée (ne capture plus « Employeur »).
+- Onglet Sociétés réservé à la formule Entreprise ; inscription sans choix de
+  type de compte (la formule se choisit au paiement) ; onglet Abonnement avec
+  jauge de consommation et les 4 formules ; grille tarifaire à 4 formules.
+- Migration : `supabase/migrations/20260926120000_roles_plans_quotas.sql`.
+
 ### Refonte des pages par public (UI / UX, animations)
 - Hero en deux colonnes avec une illustration animée propre à chaque public
   (bulletin contrôlé, tableau de bord, liste de clients) et une note flottante.

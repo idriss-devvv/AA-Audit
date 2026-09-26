@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
+import { getAccountContext } from "@/lib/account";
+import { ROLE_LABELS } from "@/lib/plans";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { SidebarNav } from "@/components/app/sidebar-nav";
 import { CompanySwitcher } from "@/components/app/company-switcher";
@@ -24,7 +26,18 @@ export default async function AppLayout({
     redirect("/connexion");
   }
 
+  const account = await getAccountContext();
+  if (account.blocked) {
+    redirect("/compte-bloque");
+  }
+
   const companyContext = await getActiveCompanyContext();
+  const navAccess = {
+    companies: account.canManageCompanies,
+    employees: account.canManageEmployees,
+    admin: account.isStaff,
+    companiesLabel: companyContext.isCabinet ? "Mes clients" : "Mes sociétés",
+  };
   const initial = (user.email ?? "?").charAt(0).toUpperCase();
 
   return (
@@ -40,14 +53,19 @@ export default async function AppLayout({
           <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-400">
             Espace
           </p>
-          <SidebarNav isCabinet={companyContext.isCabinet} />
+          <SidebarNav access={navAccess} />
         </div>
         <div className="border-t border-ink-200/60 p-4">
           <div className="flex items-center gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-beige-50">
               {initial}
             </span>
-            <span className="min-w-0 truncate text-xs text-ink-500">{user.email}</span>
+            <div className="min-w-0">
+              <span className="block truncate text-xs text-ink-500">{user.email}</span>
+              <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-400">
+                {account.isStaff ? ROLE_LABELS[account.role] : `Formule ${account.plan.label}`}
+              </span>
+            </div>
           </div>
         </div>
       </aside>
@@ -60,10 +78,10 @@ export default async function AppLayout({
             </Link>
             <div className="hidden md:block" />
             <div className="flex items-center gap-3">
-              {companyContext.isCabinet && companyContext.ownCompanyId && companyContext.activeCompanyId && (
+              {companyContext.clients.length > 0 && companyContext.ownCompanyId && companyContext.activeCompanyId && (
                 <CompanySwitcher
                   ownCompanyId={companyContext.ownCompanyId}
-                  ownCompanyName={companyContext.ownCompanyName ?? "Cabinet"}
+                  ownCompanyName={companyContext.ownCompanyName ?? "Mon entreprise"}
                   clients={companyContext.clients}
                   activeCompanyId={companyContext.activeCompanyId}
                 />
@@ -72,7 +90,7 @@ export default async function AppLayout({
             </div>
           </div>
           <div className="md:hidden">
-            <SidebarNav isCabinet={companyContext.isCabinet} orientation="horizontal" />
+            <SidebarNav access={navAccess} orientation="horizontal" />
           </div>
         </header>
         <main className="min-w-0 flex-1 print:w-full">{children}</main>

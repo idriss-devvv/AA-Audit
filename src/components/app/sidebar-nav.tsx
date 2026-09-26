@@ -18,6 +18,19 @@ const ICON_PATHS: Record<string, React.ReactNode> = {
       <path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1" />
     </>
   ),
+  "/app/salaries": (
+    <>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    </>
+  ),
+  "/app/admin": (
+    <>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+      <path d="M9.5 12.5 11 14l3.5-3.5" />
+    </>
+  ),
   "/app/historique": (
     <>
       <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
@@ -40,26 +53,32 @@ const ICON_PATHS: Record<string, React.ReactNode> = {
   ),
 };
 
-const baseNavItems = [
-  { href: "/app/dashboard", label: "Accueil" },
-  { href: "/app/historique", label: "Historique" },
-  { href: "/app/anomalies", label: "Anomalies" },
-  { href: "/app/parametres", label: "Paramètres" },
-];
-
-const cabinetNavItem = { href: "/app/clients", label: "Mes clients" };
+export type NavAccess = {
+  companies: boolean;
+  employees: boolean;
+  admin: boolean;
+  companiesLabel: string;
+};
 
 export function SidebarNav({
-  isCabinet = false,
+  access,
   orientation = "vertical",
 }: {
-  isCabinet?: boolean;
+  access: NavAccess;
   orientation?: "vertical" | "horizontal";
 }) {
   const pathname = usePathname();
-  const navItems = isCabinet
-    ? [baseNavItems[0], cabinetNavItem, ...baseNavItems.slice(1)]
-    : baseNavItems;
+  // Onglets affichés selon la formule (Sociétés : Entreprise ; Salariés : Pro
+  // et Entreprise) et le rôle (Administration : admin et gestionnaire).
+  const navItems = [
+    { href: "/app/dashboard", label: "Accueil" },
+    ...(access.companies ? [{ href: "/app/clients", label: access.companiesLabel }] : []),
+    ...(access.employees ? [{ href: "/app/salaries", label: "Salariés" }] : []),
+    { href: "/app/historique", label: "Historique" },
+    { href: "/app/anomalies", label: "Anomalies" },
+    { href: "/app/parametres", label: "Paramètres" },
+    ...(access.admin ? [{ href: "/app/admin", label: "Administration" }] : []),
+  ];
   const horizontal = orientation === "horizontal";
 
   return (

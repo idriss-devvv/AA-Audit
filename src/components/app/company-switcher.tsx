@@ -40,14 +40,14 @@ export function CompanySwitcher({
 
   return (
     <label className="flex items-center gap-2 text-xs text-ink-500">
-      <span className="hidden sm:inline">Client affiché</span>
+      <span className="hidden sm:inline">Société affichée</span>
       <select
         value={activeCompanyId}
         onChange={handleChange}
         disabled={switching}
         className="input w-auto rounded-full py-1.5 pl-3.5 pr-8 font-medium"
       >
-        <option value={ownCompanyId}>{ownCompanyName} (cabinet)</option>
+        <option value={ownCompanyId}>{ownCompanyName} (principale)</option>
         {clients.map((client) => (
           <option key={client.id} value={client.id}>
             {client.name}

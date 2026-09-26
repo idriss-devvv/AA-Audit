@@ -8,13 +8,9 @@ import { PaySettingsForm } from "@/components/app/pay-settings-form";
 import { ContributionRatesManager } from "@/components/app/contribution-rates-manager";
 import { SettingsTabs, resolveSettingsTab } from "@/components/app/settings-tabs";
 import { CONVENTION_GRIDS } from "@/lib/rules/referentiels/grilles-conventionnelles";
-
-const PLAN_LABELS: Record<string, string> = {
-  free: "Gratuit",
-  starter: "Starter",
-  pro: "Pro",
-  entreprise: "Entreprise",
-};
+import { getAccountContext, getQuotaUsage } from "@/lib/account";
+import { PLANS, PLAN_ORDER, ROLE_LABELS, quotaLabel } from "@/lib/plans";
+import { SubscribeButton } from "@/components/pricing/subscribe-button";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
   active: { label: "Actif", className: "bg-emerald-50 text-emerald-700 ring-emerald-200" },
@@ -55,10 +51,8 @@ export default async function ParametresPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { isCabinet, ownCompanyName, clients, activeCompanyId, activeCompanyName } =
-    await getActiveCompanyContext();
-  const isParticulier = !isCabinet && user?.user_metadata?.account_type === "particulier";
-  const accountTypeLabel = isCabinet ? "Cabinet comptable" : isParticulier ? "Particulier" : "Entreprise";
+  const [{ isCabinet, ownCompanyId, ownCompanyName, clients, activeCompanyId, activeCompanyName }, account] =
+    await Promise.all([getActiveCompanyContext(), getAccountContext()]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
@@ -76,11 +70,12 @@ export default async function ParametresPage({
             <dl className="mt-3 text-sm">
               <InfoRow label="Email" value={user?.email} />
               <InfoRow
-                label={isCabinet ? "Cabinet" : isParticulier ? "Nom" : "Entreprise"}
+                label={isCabinet ? "Cabinet" : "Nom du compte"}
                 value={ownCompanyName || (user?.user_metadata?.company_name as string) || "—"}
               />
-              <InfoRow label="Type de compte" value={accountTypeLabel} />
-              {isCabinet && <InfoRow label="Clients gérés" value={clients.length} />}
+              <InfoRow label="Formule" value={account.plan.label} />
+              {account.role !== "client" && <InfoRow label="Rôle" value={ROLE_LABELS[account.role]} />}
+              {clients.length > 0 && <InfoRow label={isCabinet ? "Clients gérés" : "Sociétés rattachées"} value={clients.length} />}
             </dl>
           </section>
 
@@ -96,56 +91,127 @@ export default async function ParametresPage({
         </div>
       )}
 
-      {tab === "abonnement" && <SubscriptionTab userId={user?.id ?? null} />}
+      {tab === "abonnement" && <SubscriptionTab companyId={ownCompanyId} />}
 
       {tab === "baremes" && <BaremesTab companyId={activeCompanyId} companyName={activeCompanyName} />}
     </div>
   );
 }
 
-async function SubscriptionTab({ userId }: { userId: string | null }) {
+async function SubscriptionTab({ companyId }: { companyId: string | null }) {
   const supabase = await createClient();
-  const { data: profile } = userId
-    ? await supabase.from("profiles").select("company_id").eq("id", userId).single()
-    : { data: null };
-
-  const { data: subscription } = profile?.company_id
-    ? await supabase
-        .from("subscriptions")
-        .select("plan, status, current_period_end")
-        .eq("company_id", profile.company_id)
-        .single()
-    : { data: null };
-
-  const plan = subscription?.plan ?? "free";
+  const [account, { data: subscription }] = await Promise.all([
+    getAccountContext(),
+    companyId
+      ? supabase.from("subscriptions").select("status, current_period_end").eq("company_id", companyId).maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
+  const plan = account.plan;
+  const used = companyId ? await getQuotaUsage(companyId, plan) : 0;
   const status = subscription?.status ?? "inactive";
-  const statusInfo = STATUS_LABELS[status] ?? STATUS_LABELS.inactive;
+  const statusInfo = plan.id === "free" ? null : STATUS_LABELS[status] ?? STATUS_LABELS.inactive;
   const periodEnd = subscription?.current_period_end
     ? new Date(subscription.current_period_end).toLocaleDateString("fr-FR")
     : null;
+  const percent = plan.quota ? Math.min(100, Math.round((used / plan.quota) * 100)) : 0;
 
   return (
-    <div className="mt-6 grid max-w-2xl gap-6">
-      <section className="card p-6 sm:p-7">
-        <h2 className="card-title">Votre abonnement</h2>
+    <div className="mt-6 grid gap-6">
+      <section className="card max-w-2xl p-6 sm:p-7">
+        <h2 className="card-title">Votre formule</h2>
         <div className="mt-5 flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm text-ink-500">Plan actuel</p>
-            <p className="mt-1 font-display text-4xl leading-none text-ink-900">{PLAN_LABELS[plan] ?? plan}</p>
+            <p className="font-display text-4xl leading-none text-ink-900">{plan.label}</p>
+            <p className="mt-2 text-sm text-ink-500">
+              {plan.price > 0 ? `${plan.price} € / mois · ` : ""}
+              {quotaLabel(plan)}
+            </p>
           </div>
-          <span className={`badge ${statusInfo.className}`}>{statusInfo.label}</span>
+          {statusInfo && <span className={`badge ${statusInfo.className}`}>{statusInfo.label}</span>}
         </div>
+
+        {plan.quota !== null && (
+          <div className="mt-6">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-ink-500">
+                {plan.quotaPeriod === "total" ? "Fiche d'essai utilisée" : "Fiches importées ce mois-ci"}
+              </span>
+              <span className="font-semibold tabular-nums text-ink-900">
+                {used} / {plan.quota}
+              </span>
+            </div>
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-beige-100">
+              <div
+                style={{ width: `${percent}%` }}
+                className={`h-full rounded-full ${percent >= 100 ? "bg-rose-500" : percent >= 80 ? "bg-amber-400" : "bg-blue-500"}`}
+              />
+            </div>
+            {percent >= 100 && (
+              <p className="mt-2 text-xs font-medium text-rose-600">
+                Limite atteinte : passez à la formule supérieure pour importer d&apos;autres fiches.
+              </p>
+            )}
+          </div>
+        )}
+
         {periodEnd && (
           <dl className="mt-5 text-sm">
             <InfoRow label={status === "canceled" ? "Accès jusqu'au" : "Prochain renouvellement"} value={periodEnd} />
           </dl>
         )}
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <ManageSubscriptionButton />
-          <Link href="/#tarifs" className="text-xs font-semibold text-blue-600 transition hover:text-blue-800">
-            Comparer les formules
-          </Link>
+        {plan.id !== "free" && (
+          <div className="mt-6">
+            <ManageSubscriptionButton />
+          </div>
+        )}
+      </section>
+
+      <section>
+        <h2 className="card-title">Changer de formule</h2>
+        <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {PLAN_ORDER.map((id) => {
+            const option = PLANS[id];
+            const current = option.id === plan.id;
+            return (
+              <div
+                key={id}
+                className={`flex flex-col rounded-2xl border p-5 ${
+                  current ? "border-blue-600 bg-blue-50/60 ring-1 ring-blue-600" : "border-ink-200/70 bg-white"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-semibold uppercase tracking-[0.12em] text-ink-500">{option.label}</p>
+                  {current && <span className="badge bg-blue-600 text-beige-50 ring-blue-600">Actuelle</span>}
+                </div>
+                <p className="mt-3 font-display text-4xl leading-none text-ink-900">
+                  {option.price} €<span className="ml-1 font-sans text-sm text-ink-500">/ mois</span>
+                </p>
+                <ul className="mt-4 flex-1 space-y-2 text-sm text-ink-600">
+                  {option.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <span className="mt-0.5 text-blue-500">✓</span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-5">
+                  {current ? (
+                    <p className="text-center text-xs font-medium text-ink-400">Votre formule actuelle</p>
+                  ) : option.stripePriceId ? (
+                    <SubscribeButton priceId={option.stripePriceId} label={`Passer à ${option.label}`} variant="outline" />
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
         </div>
+        <p className="mt-4 text-xs text-ink-400">
+          Prix HT. La formule Entreprise peut aussi être activée par notre équipe :{" "}
+          <Link href="/contact-entreprise" className="font-semibold text-blue-600 hover:text-blue-800">
+            nous contacter
+          </Link>
+          .
+        </p>
       </section>
     </div>
   );

@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Support multi-tenant "cabinet" : un cabinet comptable gère plusieurs
- * entreprises clientes sous un seul compte. Ce module centralise la
+ * Support multi-sociétés : un compte (formule Entreprise, ou cabinet
+ * comptable) gère plusieurs sociétés rattachées sous un seul compte. Ce module centralise la
  * résolution du "contexte" actif (quelle entreprise consulter) pour que
  * toutes les pages de l'espace /app filtrent leurs requêtes sur la même
  * entreprise, plutôt que de se reposer implicitement sur les policies RLS
@@ -18,9 +18,9 @@ export type ActiveCompanyContext = {
   /** Entreprise propre à l'utilisateur connecté (celle de son profil). */
   ownCompanyId: string | null;
   ownCompanyName: string | null;
-  /** true si le compte est un cabinet comptable pouvant gérer des clients. */
+  /** true si le compte a été créé comme cabinet comptable (libellés « clients »). */
   isCabinet: boolean;
-  /** Entreprises clientes rattachées au cabinet (vide si non-cabinet). */
+  /** Sociétés rattachées au compte (vide si aucune). */
   clients: ClientCompany[];
   /** Entreprise actuellement affichée : le client sélectionné, ou à défaut
    * l'entreprise propre de l'utilisateur. */
@@ -62,7 +62,7 @@ export async function getActiveCompanyContext(): Promise<ActiveCompanyContext> {
   const isCabinet = profile.companies?.is_cabinet ?? false;
   let clients: ClientCompany[] = [];
 
-  if (isCabinet) {
+  {
     const { data: clientRows } = await supabase
       .from("client_companies")
       .select("company:companies(id, name)")
@@ -79,7 +79,7 @@ export async function getActiveCompanyContext(): Promise<ActiveCompanyContext> {
   let activeCompanyId = profile.company_id;
   let activeCompanyName = profile.companies?.name ?? null;
 
-  if (isCabinet) {
+  if (clients.length > 0) {
     const cookieStore = await cookies();
     const selected = cookieStore.get(ACTIVE_COMPANY_COOKIE)?.value ?? null;
     const match = selected ? clients.find((c) => c.id === selected) : undefined;

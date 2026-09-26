@@ -8,36 +8,16 @@ import { hideNavigationLoader, showNavigationLoader } from "@/components/ui/navi
 import { EmailCodeStep } from "./email-code-step";
 import { PasswordInput } from "./password-input";
 
-type AccountType = "particulier" | "entreprise" | "cabinet";
-
-const ACCOUNT_TYPES: { id: AccountType; label: string; nameLabel: string; hint?: string }[] = [
-  {
-    id: "particulier",
-    label: "Particulier",
-    nameLabel: "Nom et prénom",
-    hint: "Pour vérifier vos propres fiches de paie.",
-  },
-  { id: "entreprise", label: "Entreprise", nameLabel: "Nom de l'entreprise" },
-  {
-    id: "cabinet",
-    label: "Cabinet",
-    nameLabel: "Nom du cabinet",
-    hint: "Vous pourrez ajouter et gérer plusieurs entreprises clientes depuis votre espace.",
-  },
-];
-
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [accountType, setAccountType] = useState<AccountType>("entreprise");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   // Étape de saisie du code reçu par e-mail (après inscription, ou connexion
   // d'un compte dont l'adresse n'a pas encore été confirmée).
   const [awaitingCode, setAwaitingCode] = useState(false);
-  const selectedType = ACCOUNT_TYPES.find((type) => type.id === accountType)!;
 
   async function handleGoogle() {
     setError(null);
@@ -73,12 +53,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: {
-              company_name: companyName,
-              account_type: accountType,
-              // Un particulier crée son espace à son propre nom.
-              ...(accountType === "particulier" ? { full_name: companyName } : {}),
-            },
+            // La formule (Free, Starter, Pro, Entreprise) se choisit ensuite, au paiement.
+            data: { company_name: companyName },
           },
         })
         .catch(() => ({ error: { message: "Inscription impossible, vérifiez votre réseau et réessayez." } }));
@@ -148,42 +124,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         {mode === "signup" && (
           <>
             <div className="flex flex-col gap-1.5">
-              <span className="field-label">Vous êtes</span>
-              <div
-                role="radiogroup"
-                aria-label="Type de compte"
-                className="grid grid-cols-3 gap-1 rounded-xl bg-beige-100 p-1 ring-1 ring-inset ring-ink-200/60"
-              >
-                {ACCOUNT_TYPES.map((type) => (
-                  <button
-                    key={type.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={accountType === type.id}
-                    onClick={() => setAccountType(type.id)}
-                    className={`rounded-lg px-2 py-2 text-sm font-medium transition ${
-                      accountType === type.id
-                        ? "bg-white text-ink-900 shadow-soft ring-1 ring-ink-200/70"
-                        : "text-ink-500 hover:text-ink-900"
-                    }`}
-                  >
-                    {type.label}
-                  </button>
-                ))}
-              </div>
-              {selectedType.hint && <p className="text-xs text-ink-500">{selectedType.hint}</p>}
-            </div>
-
-            <div className="flex flex-col gap-1.5">
               <label htmlFor="account-name" className="field-label">
-                {selectedType.nameLabel}
+                Nom de l&apos;entreprise ou votre nom
               </label>
               <input
                 id="account-name"
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                autoComplete={accountType === "particulier" ? "name" : "organization"}
+                autoComplete="organization"
                 required
                 className="input"
               />

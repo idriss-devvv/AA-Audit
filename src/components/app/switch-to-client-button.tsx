@@ -31,7 +31,7 @@ export function SwitchToClientButton({ companyId }: { companyId: string }) {
       disabled={loading}
       className="btn border border-blue-100 bg-blue-50 px-4 py-1.5 text-xs text-blue-600 hover:border-blue-200 hover:bg-blue-100"
     >
-      {loading ? "Ouverture…" : "Consulter ce client"}
+      {loading ? "Ouverture…" : "Consulter"}
     </button>
   );
 }

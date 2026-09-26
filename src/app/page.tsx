@@ -5,6 +5,7 @@ import { SubscribeButton } from "@/components/pricing/subscribe-button";
 import { Reveal } from "@/components/ui/reveal";
 import { FaqItem } from "@/components/ui/faq-item";
 import { ControlsSection } from "@/components/marketing/controls-section";
+import { PLANS, PLAN_ORDER } from "@/lib/plans";
 
 export const metadata: Metadata = {
   title: { absolute: "A&A Audit — Contrôle automatique de fiches de paie" },
@@ -168,34 +169,9 @@ const audiences = [
   },
 ];
 
-const plans = [
-  {
-    name: "Starter",
-    price: "30€",
-    period: "/mois",
-    description: "Pour démarrer le contrôle de vos fiches de paie.",
-    features: [
-      "Jusqu'à 30 fiches de paie / mois",
-      "Moteur de règles standard",
-      "1 utilisateur",
-    ],
-    priceId: "price_starter_30", // à remplacer par le vrai Price ID Stripe
-    highlighted: false,
-  },
-  {
-    name: "Pro",
-    price: "100€",
-    period: "/mois",
-    description: "Pour les cabinets et PME avec plusieurs entités.",
-    features: [
-      "Jusqu'à 150 fiches de paie / mois",
-      "Gestion multi-clients pour les cabinets",
-      "Barèmes propres à chaque entreprise",
-    ],
-    priceId: "price_pro_150", // à remplacer par le vrai Price ID Stripe
-    highlighted: true,
-  },
-];
+// Grille tarifaire : issue de la définition centrale des formules (quotas
+// appliqués par la base), la formule Pro est mise en avant.
+const plans = PLAN_ORDER.map((id) => ({ ...PLANS[id], highlighted: id === "pro" }));
 
 const faqs = [
   {
@@ -221,12 +197,12 @@ const faqs = [
   {
     question: "Puis-je essayer A&A Audit avant de m'abonner ?",
     answer:
-      "Oui, vous pouvez créer un compte et importer une fiche de paie dès maintenant pour voir l'analyse en action, avant de choisir la formule adaptée à votre volume mensuel.",
+      "Oui : la formule Free permet d'analyser une fiche de paie gratuitement, sans carte bancaire, et d'avoir un aperçu des anomalies détectées. Vous choisissez ensuite la formule adaptée à votre volume mensuel.",
   },
   {
     question: "A&A Audit convient-il à un cabinet comptable gérant plusieurs clients ?",
     answer:
-      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Pro couvre un volume plus important, et une offre Entreprise sur devis existe pour les gros volumes.",
+      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Entreprise (500 € / mois) gère plusieurs sociétés avec des fiches illimitées et un onglet Salariés dans chacune.",
   },
 ];
 
@@ -565,14 +541,14 @@ export default function Home() {
               Des tarifs simples et transparents
             </h2>
             <p className="mx-auto mt-5 max-w-lg text-ink-500">
-              Choisissez la formule adaptée à votre volume de fiches de paie.
-              Sans engagement.
+              Commencez gratuitement sur une fiche, puis choisissez la formule
+              adaptée à votre volume. Sans engagement, prix HT.
             </p>
           </Reveal>
 
-          <div className="mt-16 grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-16 grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
             {plans.map((plan, i) => (
-              <Reveal key={plan.name} delay={i * 100} className="h-full">
+              <Reveal key={plan.id} delay={i * 100} className="h-full">
                 <div
                   className={`relative flex h-full flex-col overflow-hidden rounded-3xl p-8 transition duration-300 hover:-translate-y-1 ${
                     plan.highlighted
@@ -588,7 +564,7 @@ export default function Home() {
                   )}
                   <div className="relative flex items-center justify-between gap-3">
                     <h3 className={`text-sm font-semibold uppercase tracking-[0.14em] ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
-                      {plan.name}
+                      {plan.label}
                     </h3>
                     {plan.highlighted && (
                       <span className="rounded-full bg-beige-50/10 px-3 py-1 text-[11px] font-semibold text-beige-100 ring-1 ring-inset ring-beige-50/20">
@@ -597,9 +573,9 @@ export default function Home() {
                     )}
                   </div>
                   <p className={`relative mt-6 font-display text-6xl leading-none ${plan.highlighted ? "text-beige-50" : "text-ink-900"}`}>
-                    {plan.price}
+                    {plan.price} €
                     <span className={`ml-1 font-sans text-sm font-medium ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
-                      {plan.period}
+                      / mois
                     </span>
                   </p>
                   <p className={`relative mt-4 text-sm ${plan.highlighted ? "text-blue-100" : "text-ink-500"}`}>
@@ -613,45 +589,22 @@ export default function Home() {
                     ))}
                   </ul>
                   <div className="relative mt-8">
-                    <SubscribeButton
-                      priceId={plan.priceId}
-                      label="S'abonner"
-                      variant={plan.highlighted ? "inverse" : "outline"}
-                    />
+                    {plan.stripePriceId ? (
+                      <SubscribeButton
+                        priceId={plan.stripePriceId}
+                        label="S'abonner"
+                        variant={plan.highlighted ? "inverse" : "outline"}
+                      />
+                    ) : (
+                      <Link href="/inscription" className="btn-secondary w-full">
+                        Essayer gratuitement
+                      </Link>
+                    )}
                   </div>
                 </div>
               </Reveal>
             ))}
 
-            <Reveal delay={200} className="h-full">
-              <div className="flex h-full flex-col rounded-3xl border border-ink-200/70 bg-beige-50 p-8 transition duration-300 hover:-translate-y-1">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-ink-500">
-                  Entreprise
-                </h3>
-                <p className="mt-6 font-display text-5xl leading-none text-ink-900">
-                  Sur devis
-                </p>
-                <p className="mt-4 text-sm text-ink-500">
-                  Volume important, accompagnement dédié.
-                </p>
-                <ul className="mt-8 flex-1 space-y-3 border-t border-ink-200/70 pt-6 text-sm text-ink-700">
-                  <li className="flex items-start gap-2.5">
-                    <Check /> Volume illimité
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check /> Accompagnement dédié
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check /> Contrat sur mesure
-                  </li>
-                </ul>
-                <div className="mt-8">
-                  <Link href="/contact-entreprise" className="btn-secondary w-full">
-                    Nous contacter
-                  </Link>
-                </div>
-              </div>
-            </Reveal>
           </div>
         </div>
       </section>

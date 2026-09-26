@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
+import { getQuotaUsage } from "@/lib/account";
+import { PLANS, quotaLabel, toPlanId } from "@/lib/plans";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { extractPdfLines } from "@/lib/parsers/pdf-text";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
@@ -53,6 +55,29 @@ export async function POST(req: NextRequest) {
   const { activeCompanyId } = await getActiveCompanyContext();
   const targetCompanyId = activeCompanyId ?? profile.company_id;
 
+  // Quota de la formule, vérifié avant tout envoi pour un message clair (la
+  // base applique la même règle via le trigger enforce_payslip_quota).
+  const [{ data: planId }, { data: isStaff }] = await Promise.all([
+    supabase.rpc("company_plan", { p_company: targetCompanyId }),
+    supabase.rpc("is_staff"),
+  ]);
+  const plan = PLANS[toPlanId(planId as string | null)];
+  if (!isStaff && plan.quota !== null) {
+    const used = await getQuotaUsage(targetCompanyId, plan);
+    if (used >= plan.quota) {
+      return NextResponse.json(
+        {
+          error:
+            plan.id === "free"
+              ? "Votre fiche d'essai gratuite a déjà été utilisée. Choisissez une formule pour continuer à contrôler vos fiches de paie."
+              : `Limite de la formule ${plan.label} atteinte (${quotaLabel(plan)}). Passez à la formule supérieure pour importer davantage de fiches ce mois-ci.`,
+          code: "QUOTA_EXCEEDED",
+        },
+        { status: 403 }
+      );
+    }
+  }
+
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const extension = file.name.split(".").pop()?.toLowerCase() || "pdf";
@@ -93,7 +118,13 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const employeeRef = user.id;
+  // Salarié : reconnu par le nom lu sur le bulletin (référence normalisée),
+  // créé à la première fiche. À défaut de nom, fiche rattachée à un salarié
+  // « non identifié » de l'entreprise.
+  const detectedName = extracted?.employeeName?.trim().replace(/\s+/g, " ") || "";
+  const employeeRef = detectedName
+    ? `nom:${detectedName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`
+    : "non-identifie";
   const { data: existingEmployee } = await supabase
     .from("employees")
     .select("id")
@@ -104,8 +135,7 @@ export async function POST(req: NextRequest) {
   let employeeId: string | undefined = existingEmployee?.id;
 
   if (!employeeId) {
-    const fullName = profile.full_name || user.email || "Salarié";
-    const [firstName, ...rest] = fullName.split(" ").filter(Boolean);
+    const [firstName, ...rest] = detectedName ? detectedName.split(" ") : ["Salarié", "non identifié"];
 
     const { data: newEmployee, error: employeeError } = await supabase
       .from("employees")
@@ -119,7 +149,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (employeeError || !newEmployee) {
-      return NextResponse.json({ error: "Impossible de créer la fiche employé associée." }, { status: 500 });
+      return NextResponse.json({ error: "Impossible de créer la fiche salarié associée." }, { status: 500 });
     }
     employeeId = newEmployee.id;
   }
@@ -143,6 +173,14 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (payslipError || !payslip) {
+    // Fichier déjà stocké : on le retire pour ne pas laisser d'orphelin.
+    await supabase.storage.from("payslips").remove([storagePath]);
+    if (payslipError?.message?.includes("QUOTA_EXCEEDED")) {
+      return NextResponse.json(
+        { error: `Limite de la formule ${plan.label} atteinte (${quotaLabel(plan)}).`, code: "QUOTA_EXCEEDED" },
+        { status: 403 }
+      );
+    }
     return NextResponse.json({ error: `Échec de l'enregistrement de la fiche : ${payslipError?.message ?? ""}` }, { status: 500 });
   }
 

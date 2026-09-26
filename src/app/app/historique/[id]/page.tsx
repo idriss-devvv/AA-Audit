@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
 import { PrintReportButton } from "@/components/app/print-report-button";
 import { Logo } from "@/components/ui/logo";
+import { areResultsLocked } from "@/lib/account";
+import { LockedAnomaly } from "@/components/app/locked-anomaly";
+import { UpgradeNotice } from "@/components/app/upgrade-notice";
 import type { PayslipData } from "@/types/payslip";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +40,7 @@ function formatDays(value: number | null) {
 
 type PayslipDetail = {
   id: string;
+  company_id: string;
   period: string | null;
   original_filename: string | null;
   gross_pay: number | null;
@@ -68,7 +72,7 @@ export default async function RapportControlePage({
   const { data: payslipData } = await supabase
     .from("payslips")
     .select(
-      "id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, company:companies(name)"
+      "id, company_id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, company:companies(name)"
     )
     .eq("id", params.id)
     .single();
@@ -83,6 +87,8 @@ export default async function RapportControlePage({
     .order("detected_at", { ascending: false });
 
   const anomalies = (anomaliesData as unknown as AnomalyDetail[] | null) ?? [];
+  // Formule Free : seule la première anomalie est montrée en clair.
+  const locked = await areResultsLocked(payslip.company_id);
   const extracted = payslip.extracted_data;
   const generatedAt = new Date().toLocaleString("fr-FR");
 
@@ -240,8 +246,13 @@ export default async function RapportControlePage({
             </p>
           ) : (
             <div className="mt-4 flex flex-col gap-2">
-              {anomalies.map((anomaly) => {
+              {anomalies.map((anomaly, index) => {
                 const severityInfo = SEVERITY_LABELS[anomaly.severity] ?? SEVERITY_LABELS.info;
+                if (locked && index > 0) {
+                  return (
+                    <LockedAnomaly key={anomaly.id} compact severityLabel={severityInfo.label} severityClassName={severityInfo.className} />
+                  );
+                }
                 const category = categoryFromRuleId(anomaly.rule_id);
                 return (
                   <div
@@ -263,6 +274,16 @@ export default async function RapportControlePage({
                   </div>
                 );
               })}
+              {locked && anomalies.length > 1 && (
+                <div className="mt-2 print:hidden">
+                  <UpgradeNotice
+                    compact
+                    title="Débloquez le rapport complet"
+                    text="Choisissez une formule pour afficher toutes les anomalies de cette fiche, avec les montants attendus et leurs sources."
+                    requiredPlan="starter"
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
