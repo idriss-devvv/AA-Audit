@@ -1,12 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleIcon } from "./google-icon";
 import { hideNavigationLoader, showNavigationLoader } from "@/components/ui/navigation-loader";
 import { EmailCodeStep } from "./email-code-step";
+import { PasswordInput } from "./password-input";
 
-type AccountType = "entreprise" | "cabinet";
+type AccountType = "particulier" | "entreprise" | "cabinet";
+
+const ACCOUNT_TYPES: { id: AccountType; label: string; nameLabel: string; hint?: string }[] = [
+  {
+    id: "particulier",
+    label: "Particulier",
+    nameLabel: "Nom et prénom",
+    hint: "Pour vérifier vos propres fiches de paie.",
+  },
+  { id: "entreprise", label: "Entreprise", nameLabel: "Nom de l'entreprise" },
+  {
+    id: "cabinet",
+    label: "Cabinet",
+    nameLabel: "Nom du cabinet",
+    hint: "Vous pourrez ajouter et gérer plusieurs entreprises clientes depuis votre espace.",
+  },
+];
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [email, setEmail] = useState("");
@@ -19,6 +37,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   // Étape de saisie du code reçu par e-mail (après inscription, ou connexion
   // d'un compte dont l'adresse n'a pas encore été confirmée).
   const [awaitingCode, setAwaitingCode] = useState(false);
+  const selectedType = ACCOUNT_TYPES.find((type) => type.id === accountType)!;
 
   async function handleGoogle() {
     setError(null);
@@ -54,7 +73,12 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: { company_name: companyName, account_type: accountType },
+            data: {
+              company_name: companyName,
+              account_type: accountType,
+              // Un particulier crée son espace à son propre nom.
+              ...(accountType === "particulier" ? { full_name: companyName } : {}),
+            },
           },
         })
         .catch(() => ({ error: { message: "Inscription impossible, vérifiez votre réseau et réessayez." } }));
@@ -125,46 +149,41 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           <>
             <div className="flex flex-col gap-1.5">
               <span className="field-label">Vous êtes</span>
-              <div className="grid grid-cols-2 gap-1 rounded-xl bg-beige-100 p-1 ring-1 ring-inset ring-ink-200/60">
-                <button
-                  type="button"
-                  onClick={() => setAccountType("entreprise")}
-                  className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                    accountType === "entreprise"
-                      ? "bg-white text-ink-900 shadow-soft ring-1 ring-ink-200/70"
-                      : "text-ink-500 hover:text-ink-900"
-                  }`}
-                >
-                  Une entreprise
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAccountType("cabinet")}
-                  className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                    accountType === "cabinet"
-                      ? "bg-white text-ink-900 shadow-soft ring-1 ring-ink-200/70"
-                      : "text-ink-500 hover:text-ink-900"
-                  }`}
-                >
-                  Un cabinet comptable
-                </button>
+              <div
+                role="radiogroup"
+                aria-label="Type de compte"
+                className="grid grid-cols-3 gap-1 rounded-xl bg-beige-100 p-1 ring-1 ring-inset ring-ink-200/60"
+              >
+                {ACCOUNT_TYPES.map((type) => (
+                  <button
+                    key={type.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={accountType === type.id}
+                    onClick={() => setAccountType(type.id)}
+                    className={`rounded-lg px-2 py-2 text-sm font-medium transition ${
+                      accountType === type.id
+                        ? "bg-white text-ink-900 shadow-soft ring-1 ring-ink-200/70"
+                        : "text-ink-500 hover:text-ink-900"
+                    }`}
+                  >
+                    {type.label}
+                  </button>
+                ))}
               </div>
-              {accountType === "cabinet" && (
-                <p className="text-xs text-ink-500">
-                  Vous pourrez ajouter et gérer plusieurs entreprises clientes
-                  depuis votre espace.
-                </p>
-              )}
+              {selectedType.hint && <p className="text-xs text-ink-500">{selectedType.hint}</p>}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="field-label">
-                {accountType === "cabinet" ? "Nom du cabinet" : "Nom de l'entreprise"}
+              <label htmlFor="account-name" className="field-label">
+                {selectedType.nameLabel}
               </label>
               <input
+                id="account-name"
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
+                autoComplete={accountType === "particulier" ? "name" : "organization"}
                 required
                 className="input"
               />
@@ -173,9 +192,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         )}
 
         <div className="flex flex-col gap-1.5">
-          <label className="field-label">Email</label>
+          <label htmlFor="auth-email" className="field-label">Email</label>
           <input
+            id="auth-email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -184,16 +205,25 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="field-label">
-            Mot de passe
-          </label>
-          <input
-            type="password"
+          <div className="flex items-center justify-between">
+            <label htmlFor="auth-password" className="field-label">
+              Mot de passe
+            </label>
+            {mode === "login" && (
+              <Link
+                href="/mot-de-passe-oublie"
+                className="text-xs font-semibold text-blue-600 underline-offset-4 hover:underline"
+              >
+                Mot de passe oublié ?
+              </Link>
+            )}
+          </div>
+          <PasswordInput
+            id="auth-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            onChange={setPassword}
+            autoComplete={mode === "login" ? "current-password" : "new-password"}
             minLength={6}
-            className="input"
           />
         </div>
 

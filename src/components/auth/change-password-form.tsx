@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { PasswordInput } from "./password-input";
 
 export function ChangePasswordForm() {
   const [password, setPassword] = useState("");
@@ -48,14 +49,13 @@ export function ChangePasswordForm() {
         <label htmlFor="new-password" className="field-label text-xs">
           Nouveau mot de passe
         </label>
-        <input
+        <PasswordInput
           id="new-password"
-          type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={setPassword}
+          autoComplete="new-password"
           minLength={8}
-          required
-          className="input px-3 py-2"
+          className="px-3 py-2"
         />
       </div>
 
@@ -63,14 +63,13 @@ export function ChangePasswordForm() {
         <label htmlFor="confirm-password" className="field-label text-xs">
           Confirmer le mot de passe
         </label>
-        <input
+        <PasswordInput
           id="confirm-password"
-          type="password"
           value={confirmation}
-          onChange={(e) => setConfirmation(e.target.value)}
+          onChange={setConfirmation}
+          autoComplete="new-password"
           minLength={8}
-          required
-          className="input px-3 py-2"
+          className="px-3 py-2"
         />
       </div>
 

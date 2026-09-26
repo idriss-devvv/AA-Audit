@@ -61,3 +61,41 @@ risquent de finir en indésirables).
 2. Vérifier la réception de l'e-mail (et son affichage).
 3. Saisir le code : on doit arriver sur le tableau de bord.
 4. Tester « Renvoyer le code » et un code erroné (message d'erreur attendu).
+
+---
+
+# Mot de passe oublié (code à 6 chiffres)
+
+Parcours : lien « Mot de passe oublié ? » sur `/connexion` → page
+`/mot-de-passe-oublie` → l'utilisateur saisit son e-mail et reçoit un code →
+il saisit le code et son nouveau mot de passe → il arrive connecté sur le
+tableau de bord. Le lien de secours de l'e-mail ouvre
+`/reinitialiser-mot-de-passe` (via `/auth/callback`).
+
+Côté code :
+- `src/components/auth/forgot-password-flow.tsx` — envoi du code
+  (`resetPasswordForEmail`), vérification (`verifyOtp`, type `recovery`) puis
+  mise à jour du mot de passe (`updateUser`) ;
+- `src/components/auth/reset-password-form.tsx` — nouveau mot de passe après
+  ouverture du lien de secours.
+
+## Installer le modèle d'e-mail
+
+Authentication → **Email Templates** → **Reset Password** :
+- **Subject** : `Votre code de réinitialisation A&A Audit : {{ .Token }}`
+- **Message body** : coller le contenu de
+  [`supabase/templates/reinitialisation-mot-de-passe.html`](../supabase/templates/reinitialisation-mot-de-passe.html).
+
+## URL de redirection
+
+Le lien de secours passe un paramètre (`/auth/callback?next=/reinitialiser-mot-de-passe`).
+Dans Authentication → **URL Configuration** → **Redirect URLs**, autoriser le
+domaine entier plutôt qu'une seule adresse :
+`https://payaudit-pay18.vercel.app/**` (et `http://localhost:3000/**` en
+développement).
+
+## Tester
+
+1. Sur `/connexion`, cliquer « Mot de passe oublié ? » et saisir son e-mail.
+2. Saisir le code reçu et un nouveau mot de passe : arrivée sur le tableau de bord.
+3. Se déconnecter puis se reconnecter avec le nouveau mot de passe.

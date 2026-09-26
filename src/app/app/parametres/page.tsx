@@ -57,6 +57,8 @@ export default async function ParametresPage({
 
   const { isCabinet, ownCompanyName, clients, activeCompanyId, activeCompanyName } =
     await getActiveCompanyContext();
+  const isParticulier = !isCabinet && user?.user_metadata?.account_type === "particulier";
+  const accountTypeLabel = isCabinet ? "Cabinet comptable" : isParticulier ? "Particulier" : "Entreprise";
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
@@ -74,10 +76,10 @@ export default async function ParametresPage({
             <dl className="mt-3 text-sm">
               <InfoRow label="Email" value={user?.email} />
               <InfoRow
-                label={isCabinet ? "Cabinet" : "Entreprise"}
+                label={isCabinet ? "Cabinet" : isParticulier ? "Nom" : "Entreprise"}
                 value={ownCompanyName || (user?.user_metadata?.company_name as string) || "—"}
               />
-              <InfoRow label="Type de compte" value={isCabinet ? "Cabinet comptable" : "Entreprise"} />
+              <InfoRow label="Type de compte" value={accountTypeLabel} />
               {isCabinet && <InfoRow label="Clients gérés" value={clients.length} />}
             </dl>
           </section>
