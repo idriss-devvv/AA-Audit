@@ -39,6 +39,18 @@ export async function listCollectiveAgreements(): Promise<CollectiveAgreement[]>
 }
 
 /**
+ * IDCC (normalisés, sans zéros de tête) des conventions dont les critères de
+ * contrôle sont stockés dans le référentiel (tables cc_*, via leurs textes
+ * sources). Une convention détectée mais absente de cette liste est signalée
+ * « non disponible » à l'import.
+ */
+export async function listAvailableAgreementIdccs(): Promise<Set<string>> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("cc_texts").select("idcc_code");
+  return new Set(((data as { idcc_code: string }[] | null) ?? []).map((row) => String(parseInt(row.idcc_code, 10))));
+}
+
+/**
  * Charge les barèmes de contrôle paramétrés pour une entreprise. Ne renvoie
  * jamais de valeur par défaut : tant que rien n'a été saisi dans Paramètres,
  * les champs restent `null` / la liste reste vide, et les règles qui en

@@ -7,7 +7,12 @@ import { PLANS, quotaLabel, toPlanId } from "@/lib/plans";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { extractPdfLines } from "@/lib/parsers/pdf-text";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
-import { getCompanyPaySettings, listCollectiveAgreements, toRuleContext } from "@/lib/pay-settings";
+import {
+  getCompanyPaySettings,
+  listAvailableAgreementIdccs,
+  listCollectiveAgreements,
+  toRuleContext,
+} from "@/lib/pay-settings";
 import { detectCollectiveAgreement } from "@/lib/collective-agreement-detection";
 import type { PayslipData } from "@/types/payslip";
 
@@ -110,6 +115,13 @@ export async function POST(req: NextRequest) {
         extracted.collectiveAgreementIdcc = agreement.idcc;
         extracted.collectiveAgreementName = agreement.name;
       }
+      // Convention détectée mais sans critères de contrôle stockés : signalée
+      // « non disponible pour le moment » (fiche contrôlée sans les règles
+      // conventionnelles).
+      if (extracted.collectiveAgreementIdcc || extracted.collectiveAgreement) {
+        const idcc = extracted.collectiveAgreementIdcc ? String(parseInt(extracted.collectiveAgreementIdcc, 10)) : null;
+        extracted.collectiveAgreementAvailable = idcc !== null && (await listAvailableAgreementIdccs()).has(idcc);
+      }
       status = "processed";
     } catch (err) {
       status = "error";
@@ -208,5 +220,6 @@ export async function POST(req: NextRequest) {
     fileName: file.name,
     extracted,
     anomaliesCount,
+    agreementUnavailable: extracted?.collectiveAgreementAvailable === false,
   });
 }

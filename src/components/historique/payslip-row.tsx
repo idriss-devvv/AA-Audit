@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { PayslipData } from "@/types/payslip";
+import { AGREEMENT_UNAVAILABLE_MESSAGE } from "@/lib/collective-agreement-detection";
 
 type StatusInfo = { label: string; className: string };
 
@@ -47,7 +48,11 @@ function DetailItem({ label, value }: { label: string; value: string }) {
 function formatAgreement(extracted: PayslipData): string {
   const name = extracted.collectiveAgreementName || extracted.collectiveAgreement;
   if (!name && !extracted.collectiveAgreementIdcc) return "Non détectée";
-  return [name, extracted.collectiveAgreementIdcc ? `IDCC ${extracted.collectiveAgreementIdcc}` : null]
+  return [
+    name,
+    extracted.collectiveAgreementIdcc ? `IDCC ${extracted.collectiveAgreementIdcc}` : null,
+    extracted.collectiveAgreementAvailable === false ? AGREEMENT_UNAVAILABLE_MESSAGE : null,
+  ]
     .filter(Boolean)
     .join(" · ");
 }

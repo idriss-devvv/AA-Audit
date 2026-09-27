@@ -2,6 +2,9 @@ import type { CollectiveAgreement } from "@/lib/pay-settings";
 
 export type DetectedAgreement = { idcc: string; name: string };
 
+/** Affiché quand la convention détectée n'a pas de critères de contrôle stockés. */
+export const AGREEMENT_UNAVAILABLE_MESSAGE = "Convention non disponible pour le moment.";
+
 const STOPWORDS = new Set([
   "convention",
   "collective",

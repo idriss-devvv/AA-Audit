@@ -3,12 +3,14 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { hideNavigationLoader, showNavigationLoader } from "@/components/ui/navigation-loader";
+import { AGREEMENT_UNAVAILABLE_MESSAGE } from "@/lib/collective-agreement-detection";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
 
 type UploadResult = {
   status: "processed" | "pending" | "error";
   anomaliesCount?: number;
+  agreementUnavailable?: boolean;
 };
 
 function UploadIcon() {
@@ -111,6 +113,11 @@ export function PayslipUploadButton() {
               ? `${fileName} analysé ✓ — ${result.anomaliesCount} anomalie(s) détectée(s), consultez l'onglet Anomalies.`
               : `${fileName} analysé ✓ — aucune anomalie détectée.`
             : `${fileName} reçu ✓ — stocké en sécurité, analyse en attente.`}
+        </p>
+      )}
+      {status === "success" && result?.agreementUnavailable && (
+        <p className="text-sm font-medium text-amber-700">
+          {AGREEMENT_UNAVAILABLE_MESSAGE} Les contrôles propres à la convention collective n&apos;ont pas été appliqués.
         </p>
       )}
       {status === "error" && (

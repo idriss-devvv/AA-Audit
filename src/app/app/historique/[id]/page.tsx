@@ -7,6 +7,7 @@ import { areResultsLocked } from "@/lib/account";
 import { LockedAnomaly } from "@/components/app/locked-anomaly";
 import { UpgradeNotice } from "@/components/app/upgrade-notice";
 import type { PayslipData } from "@/types/payslip";
+import { AGREEMENT_UNAVAILABLE_MESSAGE } from "@/lib/collective-agreement-detection";
 
 export const dynamic = "force-dynamic";
 
@@ -154,6 +155,9 @@ export default async function RapportControlePage({
               {extracted?.collectiveAgreementName || extracted?.collectiveAgreement || "Non détectée"}
               {extracted?.collectiveAgreementIdcc ? ` · IDCC ${extracted.collectiveAgreementIdcc}` : ""}
             </p>
+            {extracted?.collectiveAgreementAvailable === false && (
+              <p className="mt-1 text-xs font-medium text-amber-700">{AGREEMENT_UNAVAILABLE_MESSAGE}</p>
+            )}
           </div>
           <div>
             <p className="card-title">

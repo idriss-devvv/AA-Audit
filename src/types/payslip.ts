@@ -54,6 +54,8 @@ export interface PayslipData {
   // analysées avant leur introduction ne les contiennent pas.
   collectiveAgreementIdcc?: string | null;
   collectiveAgreementName?: string | null;
+  /** Convention détectée dont les critères de contrôle sont stockés en base (tables cc_*). */
+  collectiveAgreementAvailable?: boolean | null;
   contributionLines?: ContributionLine[];
   overtime?: OvertimeLine[];
   baseHourlyRate?: number | null;
