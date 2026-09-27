@@ -25,6 +25,24 @@ sert de socle de départ pour ce dépôt.
 
 ---
 
+## 2026-09-27
+
+### Référentiel des critères de vérification des conventions collectives
+- Migration Supabase `collective_agreement_rules` : 11 tables rattachées au
+  registre `collective_agreements`, **créées vides** (aucune donnée saisie) :
+  `cc_texts` (textes sources), `cc_classifications`, `cc_salary_minimums`,
+  `cc_seniority_bonuses`, `cc_bonuses` (13e mois, primes), `cc_working_time`
+  (durée, équivalences, forfaits, temps partiel), `cc_pay_increases`
+  (heures sup/complémentaires, nuit, dimanche, fériés, astreintes),
+  `cc_allowances` (repas, déplacements, outillage…), `cc_contributions`
+  (prévoyance, mutuelle, formation, CFA…), `cc_leave_rules`, `cc_sick_pay`
+  (maintien de salaire).
+- Chaque règle est datée (`valid_from` / `valid_to`) pour contrôler une fiche
+  avec les règles en vigueur à sa période, sourcée (`source_text_id`,
+  `verified_at`) et ciblable par catégorie de salariés ou niveau.
+- Lecture pour les utilisateurs connectés, écriture réservée au back-office
+  (admin + gestionnaire). Le moteur de contrôle ne lit pas encore ces tables.
+
 ## 2026-09-26
 
 ### Rôles, formules et back-office
