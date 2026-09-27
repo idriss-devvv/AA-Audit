@@ -27,7 +27,6 @@ SaaS qui vérifie et contrôle les fiches de paie pour détecter les anomalies e
 ```bash
 npm install
 cp .env.example .env
-npx prisma generate
 npm run dev
 ```
 
@@ -45,12 +44,11 @@ src/
       analyze/          Endpoint de lancement de l'analyse d'anomalies
   components/ui/        Composants d'interface réutilisables
   lib/
-    db.ts               Client Prisma
     parsers/            Extraction des données depuis un PDF/fichier de paie
     rules/              Moteur de règles de détection d'anomalies
   types/                Types partagés (Payslip, Anomaly, ...)
-prisma/
-  schema.prisma         Modèle de données
+supabase/
+  migrations/           Schéma et données de la base Supabase
 docs/
   ARCHITECTURE.md        Choix techniques et flux de données
   ROADMAP.md             Étapes du MVP
@@ -61,7 +59,7 @@ docs/
 1. `npm install` en local puis vérifier que `npm run dev` fonctionne.
 2. Créer le dépôt GitHub et pousser ce dossier (`git init`, `git remote add origin ...`, `git push`).
 3. Connecter le dépôt à Vercel pour le déploiement continu.
-4. Provisionner une base PostgreSQL (Vercel Postgres, Supabase ou Neon) et renseigner `DATABASE_URL` dans `.env`.
+4. Renseigner les variables Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) dans `.env`.
 5. Implémenter le parsing des fiches de paie (`src/lib/parsers`) et les premières règles de contrôle (`src/lib/rules`).
 
 Le détail des tâches réalisées est suivi dans la page Notion **« Journal des réalisations »** de l'espace **PayAudit — Espace de pilotage MVP** (nom historique).

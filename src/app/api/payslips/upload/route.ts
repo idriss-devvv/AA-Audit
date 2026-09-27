@@ -24,11 +24,11 @@ const ALLOWED_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
-  if (!user) {
+  // Contexte mémoïsé : un seul getUser + une seule lecture du profil.
+  const { userId, ownCompanyId, activeCompanyId } = await getActiveCompanyContext();
+
+  if (!userId) {
     return NextResponse.json({ error: "Vous devez être connecté." }, { status: 401 });
   }
 
@@ -47,18 +47,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Format non supporté (PDF, JPG ou PNG uniquement)" }, { status: 400 });
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("company_id, full_name")
-    .eq("id", user.id)
-    .single();
-
-  if (profileError || !profile?.company_id) {
+  if (!ownCompanyId) {
     return NextResponse.json({ error: "Profil ou entreprise introuvable pour cet utilisateur." }, { status: 400 });
   }
 
-  const { activeCompanyId } = await getActiveCompanyContext();
-  const targetCompanyId = activeCompanyId ?? profile.company_id;
+  const targetCompanyId = activeCompanyId ?? ownCompanyId;
 
   // Quota de la formule, vérifié avant tout envoi pour un message clair (la
   // base applique la même règle via le trigger enforce_payslip_quota).
@@ -86,49 +79,22 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const extension = file.name.split(".").pop()?.toLowerCase() || "pdf";
-  const storagePath = `${user.id}/${randomUUID()}.${extension}`;
+  const storagePath = `${userId}/${randomUUID()}.${extension}`;
 
-  const { error: uploadError } = await supabase.storage
-    .from("payslips")
-    .upload(storagePath, buffer, { contentType: file.type, upsert: false });
+  // Étapes indépendantes lancées en parallèle : stockage du fichier, lecture
+  // du PDF (avec les référentiels) et barèmes de l'entreprise.
+  const [{ error: uploadError }, analysis, paySettings] = await Promise.all([
+    supabase.storage.from("payslips").upload(storagePath, buffer, { contentType: file.type, upsert: false }),
+    file.type === "application/pdf" ? analyzePdf(buffer) : Promise.resolve(null),
+    getCompanyPaySettings(targetCompanyId),
+  ]);
 
   if (uploadError) {
     return NextResponse.json({ error: `Échec du stockage du fichier : ${uploadError.message}` }, { status: 500 });
   }
 
-  let extracted: PayslipData | null = null;
-  let status: "processed" | "pending" | "error" = "pending";
-  let extractionError: string | null = null;
-
-  if (file.type === "application/pdf") {
-    try {
-      const text = await extractPdfLines(new Uint8Array(buffer));
-      extracted = parsePayslip(text);
-      // Identification automatique de la convention collective (IDCC imprimé
-      // sur le bulletin, sinon rapprochement du libellé avec le registre).
-      const agreement = detectCollectiveAgreement(
-        extracted.collectiveAgreementIdcc,
-        extracted.collectiveAgreement,
-        await listCollectiveAgreements()
-      );
-      if (agreement) {
-        extracted.collectiveAgreementIdcc = agreement.idcc;
-        extracted.collectiveAgreementName = agreement.name;
-      }
-      // Convention détectée mais sans critères de contrôle stockés : signalée
-      // « non disponible pour le moment » (fiche contrôlée sans les règles
-      // conventionnelles).
-      if (extracted.collectiveAgreementIdcc || extracted.collectiveAgreement) {
-        const idcc = extracted.collectiveAgreementIdcc ? String(parseInt(extracted.collectiveAgreementIdcc, 10)) : null;
-        extracted.collectiveAgreementAvailable = idcc !== null && (await listAvailableAgreementIdccs()).has(idcc);
-      }
-      status = "processed";
-    } catch (err) {
-      status = "error";
-      extractionError = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
-      console.error("[payslips/upload] Échec extraction PDF:", err);
-    }
-  }
+  const extracted: PayslipData | null = analysis?.extracted ?? null;
+  const status: "processed" | "pending" | "error" = analysis ? (analysis.extracted ? "processed" : "error") : "pending";
 
   // Salarié : reconnu par le nom lu sur le bulletin (référence normalisée),
   // créé à la première fiche. À défaut de nom, fiche rattachée à un salarié
@@ -171,7 +137,7 @@ export async function POST(req: NextRequest) {
     .insert({
       company_id: targetCompanyId,
       employee_id: employeeId,
-      uploaded_by: user.id,
+      uploaded_by: userId,
       period: extracted?.period ?? new Date().toISOString().slice(0, 7),
       file_url: storagePath,
       gross_pay: extracted?.grossPay ?? null,
@@ -198,7 +164,6 @@ export async function POST(req: NextRequest) {
 
   let anomaliesCount = 0;
   if (extracted) {
-    const paySettings = await getCompanyPaySettings(targetCompanyId);
     const anomalies = runAnomalyRules(extracted, toRuleContext(paySettings));
     anomaliesCount = anomalies.length;
 
@@ -222,4 +187,42 @@ export async function POST(req: NextRequest) {
     anomaliesCount,
     agreementUnavailable: extracted?.collectiveAgreementAvailable === false,
   });
+}
+
+/**
+ * Lecture du PDF et identification de la convention collective (IDCC imprimé
+ * sur le bulletin, sinon rapprochement du libellé avec le registre). Les
+ * référentiels sont chargés pendant la lecture du PDF.
+ */
+async function analyzePdf(buffer: Buffer): Promise<{ extracted: PayslipData | null }> {
+  const agreementsPromise = listCollectiveAgreements();
+  const availablePromise = listAvailableAgreementIdccs();
+  // Évite un rejet non géré si l'extraction échoue avant leur lecture.
+  agreementsPromise.catch(() => undefined);
+  availablePromise.catch(() => undefined);
+
+  try {
+    const text = await extractPdfLines(new Uint8Array(buffer));
+    const extracted = parsePayslip(text);
+    const agreement = detectCollectiveAgreement(
+      extracted.collectiveAgreementIdcc,
+      extracted.collectiveAgreement,
+      await agreementsPromise
+    );
+    if (agreement) {
+      extracted.collectiveAgreementIdcc = agreement.idcc;
+      extracted.collectiveAgreementName = agreement.name;
+    }
+    // Convention détectée mais sans critères de contrôle stockés : signalée
+    // « non disponible pour le moment » (fiche contrôlée sans les règles
+    // conventionnelles).
+    if (extracted.collectiveAgreementIdcc || extracted.collectiveAgreement) {
+      const idcc = extracted.collectiveAgreementIdcc ? String(parseInt(extracted.collectiveAgreementIdcc, 10)) : null;
+      extracted.collectiveAgreementAvailable = idcc !== null && (await availablePromise).has(idcc);
+    }
+    return { extracted };
+  } catch (err) {
+    console.error("[payslips/upload] Échec extraction PDF:", err);
+    return { extracted: null };
+  }
 }

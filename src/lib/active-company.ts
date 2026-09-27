@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 
@@ -15,6 +16,8 @@ export const ACTIVE_COMPANY_COOKIE = "active_company_id";
 export type ClientCompany = { id: string; name: string };
 
 export type ActiveCompanyContext = {
+  /** Utilisateur connecté (null si non connecté). */
+  userId: string | null;
   /** Entreprise propre à l'utilisateur connecté (celle de son profil). */
   ownCompanyId: string | null;
   ownCompanyName: string | null;
@@ -33,8 +36,13 @@ type ProfileWithCompany = {
   companies: { id: string; name: string; is_cabinet: boolean } | null;
 };
 
-export async function getActiveCompanyContext(): Promise<ActiveCompanyContext> {
+/**
+ * Mémoïsé par requête (React `cache`) : le layout /app et la page appellent
+ * tous deux cette fonction, sans refaire les requêtes.
+ */
+export const getActiveCompanyContext = cache(async (): Promise<ActiveCompanyContext> => {
   const empty: ActiveCompanyContext = {
+    userId: null,
     ownCompanyId: null,
     ownCompanyName: null,
     isCabinet: false,
@@ -49,6 +57,7 @@ export async function getActiveCompanyContext(): Promise<ActiveCompanyContext> {
   } = await supabase.auth.getUser();
 
   if (!user) return empty;
+  const withUser = { ...empty, userId: user.id };
 
   const { data: profileData } = await supabase
     .from("profiles")
@@ -57,7 +66,7 @@ export async function getActiveCompanyContext(): Promise<ActiveCompanyContext> {
     .single();
 
   const profile = profileData as unknown as ProfileWithCompany | null;
-  if (!profile?.company_id) return empty;
+  if (!profile?.company_id) return withUser;
 
   const isCabinet = profile.companies?.is_cabinet ?? false;
   let clients: ClientCompany[] = [];
@@ -90,6 +99,7 @@ export async function getActiveCompanyContext(): Promise<ActiveCompanyContext> {
   }
 
   return {
+    userId: user.id,
     ownCompanyId: profile.company_id,
     ownCompanyName: profile.companies?.name ?? null,
     isCabinet,
@@ -97,4 +107,4 @@ export async function getActiveCompanyContext(): Promise<ActiveCompanyContext> {
     activeCompanyId,
     activeCompanyName,
   };
-}
+});

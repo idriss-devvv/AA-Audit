@@ -2,7 +2,7 @@
 
 ## Étape 1 — Fondations (fait)
 - [x] Initialisation du projet Next.js + TypeScript + Tailwind
-- [x] Structure des dossiers (app, lib, components, types, prisma)
+- [x] Structure des dossiers (app, lib, components, types, supabase)
 - [x] Charte graphique (beige/bleu, typographie Plus Jakarta Sans)
 - [x] Pages vitrine : accueil, contact, pages légales, tarifs
 - [x] Premier déploiement Vercel

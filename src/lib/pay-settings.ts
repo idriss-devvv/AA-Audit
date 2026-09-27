@@ -22,6 +22,23 @@ export type CompanyPaySettings = {
 };
 
 /**
+ * Référentiels communs à tous les comptes (registre des conventions, IDCC
+ * disponibles) : gardés 5 minutes en mémoire de l'instance serveur pour éviter
+ * deux requêtes à chaque import. Un résultat vide n'est pas mis en cache.
+ */
+const REFERENCE_TTL_MS = 5 * 60 * 1000;
+const referenceCache = new Map<string, { expiresAt: number; value: unknown }>();
+
+async function cachedReference<T>(key: string, load: () => Promise<T>): Promise<T> {
+  const hit = referenceCache.get(key);
+  if (hit && hit.expiresAt > Date.now()) return hit.value as T;
+  const value = await load();
+  const empty = Array.isArray(value) ? value.length === 0 : value instanceof Set && value.size === 0;
+  if (!empty) referenceCache.set(key, { expiresAt: Date.now() + REFERENCE_TTL_MS, value });
+  return value;
+}
+
+/**
  * Charge le registre des conventions collectives prioritaires (liste
  * volontairement limitée aux plus courantes — voir la migration
  * add_collective_agreements_registry). Ne contient que des identifiants et
@@ -29,13 +46,15 @@ export type CompanyPaySettings = {
  * automatiquement la convention de chaque fiche importée.
  */
 export async function listCollectiveAgreements(): Promise<CollectiveAgreement[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("collective_agreements")
-    .select("idcc_code, name, sector, coverage_note, verified_at")
-    .order("sector", { ascending: true })
-    .order("name", { ascending: true });
-  return (data as CollectiveAgreement[] | null) ?? [];
+  return cachedReference("collective_agreements", async () => {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("collective_agreements")
+      .select("idcc_code, name, sector, coverage_note, verified_at")
+      .order("sector", { ascending: true })
+      .order("name", { ascending: true });
+    return (data as CollectiveAgreement[] | null) ?? [];
+  });
 }
 
 /**
@@ -45,9 +64,11 @@ export async function listCollectiveAgreements(): Promise<CollectiveAgreement[]>
  * « non disponible » à l'import.
  */
 export async function listAvailableAgreementIdccs(): Promise<Set<string>> {
-  const supabase = await createClient();
-  const { data } = await supabase.from("cc_texts").select("idcc_code");
-  return new Set(((data as { idcc_code: string }[] | null) ?? []).map((row) => String(parseInt(row.idcc_code, 10))));
+  return cachedReference("available_idccs", async () => {
+    const supabase = await createClient();
+    const { data } = await supabase.from("cc_texts").select("idcc_code");
+    return new Set(((data as { idcc_code: string }[] | null) ?? []).map((row) => String(parseInt(row.idcc_code, 10))));
+  });
 }
 
 /**
