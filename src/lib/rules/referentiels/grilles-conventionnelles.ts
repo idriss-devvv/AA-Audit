@@ -113,10 +113,16 @@ export const CONVENTION_GRIDS: ConventionGrid[] = [
     effectiveFrom: "2026-03-01",
     source: "https://www.legifrance.gouv.fr/conv_coll/id/KALITEXT000054454077",
     annualDivisor: 12,
+    // Niveaux I à VI : minima mensuels ; cadres VII à X : minima annuels.
     levels: [
-      [1839.81, 1850.85, 1861.96], [1873.13, 1884.37, 1895.67], [1907.05, 1918.49, 1930.0],
-      [1941.58, 1953.23, 1964.95], [1973.03, 2047.02, 2123.78], [2203.43, 2286.05, 2371.78],
-    ].flatMap((steps, i) => steps.map((amount, j) => ({ code: `${toRoman(i + 1)}-${j + 1}`, amount, unit: "mensuel" as const }))),
+      ...[
+        [1839.81, 1850.85, 1861.96], [1873.13, 1884.37, 1895.67], [1907.05, 1918.49, 1930.0],
+        [1941.58, 1953.23, 1964.95], [1973.03, 2047.02, 2123.78], [2203.43, 2286.05, 2371.78],
+      ].flatMap((steps, i) => steps.map((amount, j) => ({ code: `${toRoman(i + 1)}-${j + 1}`, amount, unit: "mensuel" as const }))),
+      ...[
+        [30338.3, 31855.22, 33447.98], [38709.35, 42580.28, 46838.31], [51522.14, 56674.36], [65175.51, 78210.61],
+      ].flatMap((steps, i) => steps.map((amount, j) => ({ code: `${toRoman(i + 7)}-${j + 1}`, amount, unit: "annuel" as const }))),
+    ],
     levelCode: (c) => {
       const n = niveauEchelon(c);
       return n && n.step ? `${toRoman(n.level)}-${n.step}` : null;
@@ -169,9 +175,10 @@ export const CONVENTION_GRIDS: ConventionGrid[] = [
     effectiveFrom: "2026-08-01",
     source: "https://www.legifrance.gouv.fr/conv_coll/id/KALITEXT000054434579",
     annualDivisor: 12,
+    // Salaire mensuel minimum garanti (pauses payées incluses), et non le taux de base.
     levels: [
-      ["1A", 1823.07], ["1B", 1824.59], ["2A", 1826.11], ["2B", 1839.76], ["3A", 1841.27], ["3B", 1857.96],
-      ["4A", 1860.99], ["4B", 1956.54], ["5", 2063.88], ["6", 2181.64], ["7", 2832.03], ["8", 3806.25],
+      ["1A", 1914.19], ["1B", 1915.78], ["2A", 1917.37], ["2B", 1931.7], ["3A", 1933.3], ["3B", 1950.81],
+      ["4A", 1954.0], ["4B", 2054.33], ["5", 2167.03], ["6", 2290.67], ["7", 2973.57], ["8", 3996.47],
     ].map(([code, amount]) => ({ code: code as string, amount: amount as number, unit: "mensuel" as const })),
     levelCode: (c) => {
       const n = niveauEchelon(c);
@@ -252,7 +259,8 @@ export const CONVENTION_GRIDS: ConventionGrid[] = [
     label: "Banque — accord du 16 avril 2026 relatif aux salaires (étendu, JORF 27/06/2026), minima annuels",
     effectiveFrom: "2026-04-01",
     source: "https://www.legifrance.gouv.fr/conv_coll/id/KALITEXT000054802084",
-    annualDivisor: 12,
+    // Salaire de base versé en 13 mensualités.
+    annualDivisor: 13,
     // Minimum à l'embauche (le plus bas de chaque niveau, quelle que soit l'ancienneté).
     levels: [
       ["A", 23387], ["B", 23387], ["C", 23387], ["D", 23387], ["E", 24240], ["F", 26272],

@@ -27,6 +27,31 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-27
 
+### Critères de contrôle des 11 conventions collectives
+- Base alimentée pour les 11 conventions du registre : Syntec (1486),
+  Métallurgie (3248), Commerces de gros (573), HCR (1979), Restauration
+  rapide (1501), Commerce alimentaire (2216), Services de l'automobile (1090),
+  Immobilier (1527), Propreté (3043), Banque (2120), Boulangerie-pâtisserie
+  artisanale (843).
+- Critères couverts : classifications, minima, ancienneté, primes, durée du
+  travail, majorations, indemnités, cotisations, congés, maintien de salaire.
+- Règles relevées dans la base officielle **KALI** (DILA / Légifrance) ;
+  chaque règle cite son article source.
+- Migrations `20260927140001` à `20260927140011_cc_rules_idcc_*`.
+
+### Import : convention sans critères
+- Message « Convention non disponible pour le moment. » affiché à l'import
+  quand la convention détectée n'a pas de critères stockés.
+
+### Corrections des grilles de minima conventionnels
+- Commerce alimentaire (2216) : comparaison au **salaire mensuel minimum
+  garanti** de l'avenant n° 99 (pauses payées incluses) au lieu du taux de
+  base, trop bas (1A 1 914,19 € … 8 3 996,47 €).
+- Banque (2120) : minimum annuel divisé par **13** (salaire de base versé en
+  13 mensualités) au lieu de 12.
+- Commerces de gros (573) : ajout des niveaux cadres **VII à X** (minima
+  annuels au 01/03/2026, de VII-1 30 338,30 € à X-2 78 210,61 €).
+
 ### Référentiel des critères de vérification des conventions collectives
 - Migration Supabase `collective_agreement_rules` : 11 tables rattachées au
   registre `collective_agreements`, **créées vides** (aucune donnée saisie) :
