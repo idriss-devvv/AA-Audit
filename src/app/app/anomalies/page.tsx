@@ -23,17 +23,19 @@ type AnomalyRow = {
 export default async function AnomaliesPage() {
   const supabase = await createClient();
   const { activeCompanyId } = await getActiveCompanyContext();
-  const { data } = await supabase
-    .from("anomalies")
-    .select(
-      "id, rule_id, severity, message, detected_at, payslip:payslips!inner(period, original_filename, company_id)"
-    )
-    .eq("payslip.company_id", activeCompanyId ?? "")
-    .order("detected_at", { ascending: false });
+  const [{ data }, locked] = await Promise.all([
+    supabase
+      .from("anomalies")
+      .select(
+        "id, rule_id, severity, message, detected_at, payslip:payslips!inner(period, original_filename, company_id)"
+      )
+      .eq("payslip.company_id", activeCompanyId ?? "")
+      .order("detected_at", { ascending: false }),
+    // Formule Free : seule la première anomalie est montrée en clair.
+    areResultsLocked(activeCompanyId),
+  ]);
 
   const anomalies = (data as unknown as AnomalyRow[] | null) ?? [];
-  // Formule Free : seule la première anomalie est montrée en clair.
-  const locked = await areResultsLocked(activeCompanyId);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">

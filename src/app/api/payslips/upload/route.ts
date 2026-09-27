@@ -126,10 +126,22 @@ export async function POST(req: NextRequest) {
       .select("id")
       .single();
 
-    if (employeeError || !newEmployee) {
+    if (employeeError?.code === "23505") {
+      // Créé au même instant par un autre import (index unique) : on le relit.
+      const { data: concurrentEmployee } = await supabase
+        .from("employees")
+        .select("id")
+        .eq("company_id", targetCompanyId)
+        .eq("employee_ref", employeeRef)
+        .maybeSingle();
+      employeeId = concurrentEmployee?.id;
+    } else if (newEmployee) {
+      employeeId = newEmployee.id;
+    }
+
+    if (!employeeId) {
       return NextResponse.json({ error: "Impossible de créer la fiche salarié associée." }, { status: 500 });
     }
-    employeeId = newEmployee.id;
   }
 
   const { data: payslip, error: payslipError } = await supabase

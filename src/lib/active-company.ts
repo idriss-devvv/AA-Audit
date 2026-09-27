@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCurrentProfile, getCurrentUser } from "@/lib/supabase/server";
 
 /**
  * Support multi-sociétés : un compte (formule Entreprise, ou cabinet
@@ -31,11 +31,6 @@ export type ActiveCompanyContext = {
   activeCompanyName: string | null;
 };
 
-type ProfileWithCompany = {
-  company_id: string | null;
-  companies: { id: string; name: string; is_cabinet: boolean } | null;
-};
-
 /**
  * Mémoïsé par requête (React `cache`) : le layout /app et la page appellent
  * tous deux cette fonction, sans refaire les requêtes.
@@ -51,23 +46,13 @@ export const getActiveCompanyContext = cache(async (): Promise<ActiveCompanyCont
     activeCompanyName: null,
   };
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [user, profile] = await Promise.all([getCurrentUser(), getCurrentProfile()]);
 
   if (!user) return empty;
   const withUser = { ...empty, userId: user.id };
-
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("company_id, companies(id, name, is_cabinet)")
-    .eq("id", user.id)
-    .single();
-
-  const profile = profileData as unknown as ProfileWithCompany | null;
   if (!profile?.company_id) return withUser;
 
+  const supabase = await createClient();
   const isCabinet = profile.companies?.is_cabinet ?? false;
   let clients: ClientCompany[] = [];
 

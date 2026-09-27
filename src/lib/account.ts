@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { cache } from "react";
+import { createClient, getCurrentProfile, getCurrentUser } from "@/lib/supabase/server";
 import { PLANS, toPlanId, type AppRole, type PlanDefinition } from "@/lib/plans";
 
 export type AccountContext = {
@@ -20,12 +21,7 @@ export type AccountContext = {
  * la fonction SQL `company_plan` (abonnement actif de l'entreprise, sinon
  * free) : la même source que celle qui applique les quotas en base.
  */
-export async function getAccountContext(): Promise<AccountContext> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+export const getAccountContext = cache(async (): Promise<AccountContext> => {
   const anonymous: AccountContext = {
     userId: null,
     email: null,
@@ -37,19 +33,15 @@ export async function getAccountContext(): Promise<AccountContext> {
     canManageCompanies: false,
     canManageEmployees: false,
   };
+  const [user, profile] = await Promise.all([getCurrentUser(), getCurrentProfile()]);
   if (!user) return anonymous;
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("company_id, app_role, blocked_at")
-    .eq("id", user.id)
-    .single();
 
   const role = (profile?.app_role as AppRole | undefined) ?? "client";
   const isStaff = role === "admin" || role === "gestionnaire";
 
   let plan = PLANS.free;
   if (profile?.company_id) {
+    const supabase = await createClient();
     const { data: planId } = await supabase.rpc("company_plan", { p_company: profile.company_id });
     plan = PLANS[toPlanId(planId as string | null)];
   }
@@ -65,7 +57,7 @@ export async function getAccountContext(): Promise<AccountContext> {
     canManageCompanies: isStaff || plan.companiesTab,
     canManageEmployees: isStaff || plan.employeesTab,
   };
-}
+});
 
 /** Nombre de fiches déjà importées sur la période de quota de la formule. */
 export async function getQuotaUsage(companyId: string, plan: PlanDefinition): Promise<number> {
@@ -85,10 +77,10 @@ export async function getQuotaUsage(companyId: string, plan: PlanDefinition): Pr
  */
 export async function areResultsLocked(companyId: string | null): Promise<boolean> {
   if (!companyId) return false;
+  // Rôle déjà connu via le contexte mémoïsé : pas d'appel is_staff en plus.
+  const account = await getAccountContext();
+  if (account.isStaff) return false;
   const supabase = await createClient();
-  const [{ data: planId }, { data: isStaff }] = await Promise.all([
-    supabase.rpc("company_plan", { p_company: companyId }),
-    supabase.rpc("is_staff"),
-  ]);
-  return !isStaff && PLANS[toPlanId(planId as string | null)].blurredResults;
+  const { data: planId } = await supabase.rpc("company_plan", { p_company: companyId });
+  return PLANS[toPlanId(planId as string | null)].blurredResults;
 }

@@ -14,8 +14,9 @@ type CookieToSet = {
 };
 
 /**
- * 1. Rafraîchit la session Supabase (nécessaire pour que les Server
- *    Components voient un utilisateur connecté).
+ * 1. Rafraîchit la session Supabase sur /app et les pages de connexion
+ *    (nécessaire pour que les Server Components voient un utilisateur
+ *    connecté).
  * 2. Redirige un utilisateur déjà connecté des pages de connexion /
  *    inscription vers son tableau de bord.
  * 3. Réécrit les requêtes venant de app.domaine.fr vers le préfixe /app
@@ -28,7 +29,16 @@ export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (supabaseUrl && supabaseAnonKey) {
+  const hostname = request.headers.get("host") || "";
+  const subdomain = hostname.split(".")[0];
+  const url = request.nextUrl;
+
+  // Session vérifiée uniquement là où elle sert (espace /app et pages de
+  // connexion) : les pages publiques évitent un appel réseau à Supabase Auth.
+  const needsSession =
+    url.pathname.startsWith("/app") || AUTH_PAGES.includes(url.pathname) || subdomain === APP_SUBDOMAIN;
+
+  if (needsSession && supabaseUrl && supabaseAnonKey) {
     const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
@@ -57,10 +67,6 @@ export async function middleware(request: NextRequest) {
     response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
     return redirect;
   }
-
-  const hostname = request.headers.get("host") || "";
-  const subdomain = hostname.split(".")[0];
-  const url = request.nextUrl;
 
   if (subdomain === APP_SUBDOMAIN && !url.pathname.startsWith("/app")) {
     url.pathname = `/app${url.pathname}`;

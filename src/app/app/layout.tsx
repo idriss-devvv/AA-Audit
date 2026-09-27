@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { getAccountContext } from "@/lib/account";
 import { ROLE_LABELS } from "@/lib/plans";
@@ -17,21 +17,22 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Utilisateur, compte et société active chargés en parallèle ; les appels
+  // Auth et profil sont partagés (mémoïsés) avec la page.
+  const [user, account, companyContext] = await Promise.all([
+    getCurrentUser(),
+    getAccountContext(),
+    getActiveCompanyContext(),
+  ]);
 
   if (!user) {
     redirect("/connexion");
   }
 
-  const account = await getAccountContext();
   if (account.blocked) {
     redirect("/compte-bloque");
   }
 
-  const companyContext = await getActiveCompanyContext();
   const navAccess = {
     companies: account.canManageCompanies,
     employees: account.canManageEmployees,

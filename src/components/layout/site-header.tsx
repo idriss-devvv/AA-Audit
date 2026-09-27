@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
-import { createClient } from "@/lib/supabase/server";
+import { HeaderAuthButtons } from "@/components/layout/header-auth-buttons";
 
 const navLinks = [
   { href: "/#fonctionnalites", label: "Fonctionnalités" },
@@ -10,22 +10,7 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-async function isSignedIn(): Promise<boolean> {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    return Boolean(user);
-  } catch {
-    // Supabase indisponible : on affiche les boutons de connexion par défaut.
-    return false;
-  }
-}
-
-export async function SiteHeader() {
-  const signedIn = await isSignedIn();
-
+export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-ink-200/60 bg-beige-50/75 backdrop-blur-xl backdrop-saturate-150">
       <div className="container-page flex h-16 items-center justify-between gap-4">
@@ -46,23 +31,7 @@ export async function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          {signedIn ? (
-            <Link href="/app/dashboard" className="btn-dark whitespace-nowrap px-4 py-2 text-[13px] sm:px-5">
-              Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/connexion"
-                className="whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold text-ink-700 transition hover:text-ink-900 sm:px-4"
-              >
-                Se connecter
-              </Link>
-              <Link href="/inscription" className="btn-dark whitespace-nowrap px-4 py-2 text-[13px] sm:px-5">
-                S&apos;inscrire
-              </Link>
-            </>
-          )}
+          <HeaderAuthButtons />
         </div>
       </div>
     </header>

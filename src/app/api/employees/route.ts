@@ -50,6 +50,9 @@ export async function POST(req: NextRequest) {
     last_name: lastName,
     employee_ref: employeeRef,
   });
+  if (error?.code === "23505") {
+    return NextResponse.json({ error: "Ce salarié existe déjà." }, { status: 409 });
+  }
   if (error) {
     return NextResponse.json({ error: `Ajout impossible : ${error.message}` }, { status: 500 });
   }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { getCompanyPaySettings } from "@/lib/pay-settings";
 import { ChangePasswordForm } from "@/components/auth/change-password-form";
@@ -46,13 +46,8 @@ export default async function ParametresPage({
 }) {
   const tab = resolveSettingsTab(searchParams.onglet);
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const [{ isCabinet, ownCompanyId, ownCompanyName, clients, activeCompanyId, activeCompanyName }, account] =
-    await Promise.all([getActiveCompanyContext(), getAccountContext()]);
+  const [user, { isCabinet, ownCompanyId, ownCompanyName, clients, activeCompanyId, activeCompanyName }, account] =
+    await Promise.all([getCurrentUser(), getActiveCompanyContext(), getAccountContext()]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
