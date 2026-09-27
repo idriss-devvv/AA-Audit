@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PayslipPreviewButton } from "@/components/payslips/payslip-preview";
+import { employeeDisplayName } from "@/lib/payslips";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAccountContext } from "@/lib/account";
@@ -51,7 +52,7 @@ export default async function SalarieDetailPage({ params }: { params: { id: stri
   const employee = data as unknown as EmployeeDetail | null;
   if (!employee) notFound();
 
-  const name = `${employee.first_name} ${employee.last_name === "-" ? "" : employee.last_name}`.trim();
+  const name = employeeDisplayName(employee);
   const payslips = [...employee.payslips].sort((a, b) => (b.period ?? "").localeCompare(a.period ?? ""));
   const totalAnomalies = payslips.reduce((sum, p) => sum + p.anomalies.length, 0);
   const critical = payslips.reduce((sum, p) => sum + p.anomalies.filter((a) => a.severity === "critical").length, 0);

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { getAccountContext } from "@/lib/account";
+import { employeeDisplayName } from "@/lib/payslips";
 import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
 import { UpgradeNotice } from "@/components/app/upgrade-notice";
 import { AddEmployeeForm } from "@/components/app/add-employee-form";
@@ -60,7 +61,7 @@ export default async function SalariesPage() {
     const payslips = [...employee.payslips].sort((a, b) => (b.period ?? "").localeCompare(a.period ?? ""));
     return {
       id: employee.id,
-      name: `${employee.first_name} ${employee.last_name === "-" ? "" : employee.last_name}`.trim(),
+      name: employeeDisplayName(employee),
       count: payslips.length,
       lastPeriod: payslips[0]?.period ?? null,
       lastGross: payslips[0]?.gross_pay ?? null,

@@ -70,8 +70,9 @@ export function employeeDisplayName(
   employee: { first_name: string | null; last_name: string | null; employee_ref?: string | null } | null | undefined,
   extractedName?: string | null
 ): string {
-  if (extractedName?.trim()) return extractedName.trim();
+  if (extractedName?.trim() && !extractedName.includes("@")) return extractedName.trim();
   if (!employee || employee.employee_ref === "non-identifie") return "Salarié non identifié";
   const name = [employee.first_name, employee.last_name].filter((part) => part && part !== "-").join(" ").trim();
-  return name || "Salarié non identifié";
+  // Une adresse e-mail est celle d'un utilisateur du compte, pas d'un salarié.
+  return name && !name.includes("@") ? name : "Salarié non identifié";
 }

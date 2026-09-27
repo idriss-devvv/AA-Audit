@@ -152,8 +152,8 @@ export function FichesExplorer({
     <>
       {/* Filtres */}
       <div className="card mt-8 p-4">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
-          <label className="relative">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <label className="relative sm:col-span-2 lg:col-span-4">
             <span className="sr-only">Rechercher</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" aria-hidden>
               <circle cx="11" cy="11" r="7" />
