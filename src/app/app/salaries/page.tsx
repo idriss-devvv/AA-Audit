@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { getAccountContext } from "@/lib/account";
+import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
 import { UpgradeNotice } from "@/components/app/upgrade-notice";
 import { AddEmployeeForm } from "@/components/app/add-employee-form";
 
@@ -27,7 +28,7 @@ function formatAmount(value: number | null) {
 
 /** Onglet « Salariés » : suivi par salarié (formules Pro et Entreprise). */
 export default async function SalariesPage() {
-  const [account, { activeCompanyId, activeCompanyName }] = await Promise.all([
+  const [account, { activeCompanyId }] = await Promise.all([
     getAccountContext(),
     getActiveCompanyContext(),
   ]);
@@ -50,8 +51,9 @@ export default async function SalariesPage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("employees")
-    .select("id, first_name, last_name, payslips(period, gross_pay, anomalies(count))")
+    .select("id, first_name, last_name, payslips(period, gross_pay, deleted_at, anomalies(count))")
     .eq("company_id", activeCompanyId ?? "")
+    .is("payslips.deleted_at", null)
     .order("last_name", { ascending: true });
 
   const employees = ((data as unknown as EmployeeRow[] | null) ?? []).map((employee) => {
@@ -72,7 +74,7 @@ export default async function SalariesPage() {
         <div>
           <h1 className="heading-display text-4xl md:text-[2.75rem]">Salariés</h1>
           <p className="mt-3 max-w-2xl text-sm text-ink-500">
-            {activeCompanyName ? `${activeCompanyName} — ` : ""}les salariés sont reconnus automatiquement
+            Les salariés sont reconnus automatiquement
             grâce au nom imprimé sur chaque fiche importée.
           </p>
         </div>
@@ -82,9 +84,12 @@ export default async function SalariesPage() {
       {employees.length === 0 ? (
         <div className="mt-10 rounded-2xl border border-dashed border-ink-200 bg-beige-100/50 p-10 text-center">
           <p className="text-sm text-ink-500">
-            Aucun salarié pour le moment. Importez une fiche de paie depuis le tableau de bord : le
-            salarié sera créé automatiquement.
+            Aucun salarié pour le moment. Importez une fiche de paie : le salarié est créé
+            automatiquement à partir du nom imprimé sur le bulletin.
           </p>
+          <div className="mt-5 flex justify-center">
+            <PayslipUploadButton variant="compact" />
+          </div>
         </div>
       ) : (
         <div className="card mt-10 overflow-x-auto">

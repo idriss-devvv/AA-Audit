@@ -99,13 +99,13 @@ const features = [
     icon: IconChat,
     title: "Explication claire",
     description:
-      "Chaque anomalie détectée est expliquée en langage simple, avec le montant attendu, le montant constaté et l'écart chiffré — fini les tableurs illisibles.",
+      "Chaque anomalie est expliquée en langage simple, avec la valeur attendue et sa source officielle, à côté du bulletin d'origine pour la vérifier d'un coup d'œil.",
   },
   {
     icon: IconGrid,
     title: "Suivi centralisé",
     description:
-      "Un tableau de bord unique pour suivre toutes les fiches contrôlées, filtrées par employé, par période ou par niveau de gravité.",
+      "Toutes vos fiches au même endroit, filtrées par salarié, par période ou par gravité, avec l'aperçu de chaque bulletin en un clic.",
   },
   {
     icon: IconBook,
@@ -141,7 +141,7 @@ const steps = [
   {
     number: "03",
     title: "Consultez les anomalies détaillées",
-    description: "Retrouvez les écarts détectés, triés par gravité, avec le détail complet de chaque bulletin dans votre tableau de bord.",
+    description: "Retrouvez les écarts détectés, triés par gravité, et affichez le bulletin d'origine à côté de son rapport de contrôle.",
   },
 ];
 
@@ -182,7 +182,7 @@ const faqs = [
   {
     question: "Quels formats de fiches de paie sont acceptés ?",
     answer:
-      "Vous pouvez importer vos bulletins au format PDF directement depuis votre logiciel de paie. Le support des fichiers image (JPG, PNG) est en cours d'amélioration pour les bulletins scannés.",
+      "Vous pouvez importer vos bulletins au format PDF directement depuis votre logiciel de paie. Les photos et scans (JPG, PNG) peuvent déjà être déposés : leur analyse arrive bientôt, et ils ne sont pas décomptés de votre quota en attendant.",
   },
   {
     question: "Les règles de contrôle sont-elles personnalisables ?",
@@ -233,7 +233,7 @@ function HeroPreview() {
           <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
           <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
           <span className="ml-3 truncate rounded-md bg-white px-3 py-1 text-[11px] font-medium text-ink-400 ring-1 ring-ink-100">
-            A&A Audit — Historique
+            A&A Audit — Rapport de contrôle
           </span>
         </div>
         <div className="grid gap-0 text-left md:grid-cols-[1.35fr_1fr]">

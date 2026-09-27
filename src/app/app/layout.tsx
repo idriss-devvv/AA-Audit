@@ -4,8 +4,8 @@ import { getCurrentUser } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { getAccountContext } from "@/lib/account";
 import { ROLE_LABELS } from "@/lib/plans";
-import { LogoutButton } from "@/components/auth/logout-button";
-import { SidebarNav } from "@/components/app/sidebar-nav";
+import { AccountMenu } from "@/components/app/account-menu";
+import { MobileNav, SidebarNav } from "@/components/app/sidebar-nav";
 import { CompanySwitcher } from "@/components/app/company-switcher";
 import { Logo } from "@/components/ui/logo";
 
@@ -39,7 +39,7 @@ export default async function AppLayout({
     admin: account.isStaff,
     companiesLabel: companyContext.isCabinet ? "Mes clients" : "Mes sociétés",
   };
-  const initial = (user.email ?? "?").charAt(0).toUpperCase();
+  const accountSubtitle = account.isStaff ? ROLE_LABELS[account.role] : `Formule ${account.plan.label}`;
 
   return (
     <div className="min-h-screen bg-beige-50 md:flex">
@@ -55,19 +55,6 @@ export default async function AppLayout({
             Espace
           </p>
           <SidebarNav access={navAccess} />
-        </div>
-        <div className="border-t border-ink-200/60 p-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-beige-50">
-              {initial}
-            </span>
-            <div className="min-w-0">
-              <span className="block truncate text-xs text-ink-500">{user.email}</span>
-              <span className="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-400">
-                {account.isStaff ? ROLE_LABELS[account.role] : `Formule ${account.plan.label}`}
-              </span>
-            </div>
-          </div>
         </div>
       </aside>
 
@@ -87,14 +74,13 @@ export default async function AppLayout({
                   activeCompanyId={companyContext.activeCompanyId}
                 />
               )}
-              <LogoutButton />
+              <AccountMenu email={user.email ?? ""} subtitle={accountSubtitle} />
             </div>
           </div>
-          <div className="md:hidden">
-            <SidebarNav access={navAccess} orientation="horizontal" />
-          </div>
         </header>
-        <main className="min-w-0 flex-1 print:w-full">{children}</main>
+        {/* Marge basse sur mobile : la barre de navigation est fixée en bas. */}
+        <main className="min-w-0 flex-1 pb-20 print:w-full print:pb-0 md:pb-0">{children}</main>
+        <MobileNav access={navAccess} />
       </div>
     </div>
   );

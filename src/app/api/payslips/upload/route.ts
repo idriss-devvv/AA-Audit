@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { getQuotaUsage } from "@/lib/account";
@@ -15,6 +15,7 @@ import {
 } from "@/lib/pay-settings";
 import { detectCollectiveAgreement } from "@/lib/collective-agreement-detection";
 import type { PayslipData } from "@/types/payslip";
+import { formatDate, isImageFile } from "@/lib/payslips";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -52,6 +53,33 @@ export async function POST(req: NextRequest) {
   }
 
   const targetCompanyId = activeCompanyId ?? ownCompanyId;
+  const isImage = isImageFile(file.type);
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const fileHash = createHash("sha256").update(buffer).digest("hex");
+
+  // Doublon : même fichier déjà importé dans cette entreprise. L'utilisateur
+  // est prévenu et peut confirmer l'import (champ « force »).
+  if (formData.get("force") !== "1") {
+    const { data: duplicate } = await supabase
+      .from("payslips")
+      .select("id, uploaded_at")
+      .eq("company_id", targetCompanyId)
+      .eq("file_hash", fileHash)
+      .is("deleted_at", null)
+      .order("uploaded_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (duplicate) {
+      return NextResponse.json(
+        {
+          error: `Cette fiche de paie a déjà été importée le ${formatDate(duplicate.uploaded_at)}.`,
+          code: "DUPLICATE",
+          existingId: duplicate.id,
+        },
+        { status: 409 }
+      );
+    }
+  }
 
   // Quota de la formule, vérifié avant tout envoi pour un message clair (la
   // base applique la même règle via le trigger enforce_payslip_quota).
@@ -60,7 +88,8 @@ export async function POST(req: NextRequest) {
     supabase.rpc("is_staff"),
   ]);
   const plan = PLANS[toPlanId(planId as string | null)];
-  if (!isStaff && plan.quota !== null) {
+  // Les images ne sont pas encore analysées : elles ne comptent pas dans le quota.
+  if (!isStaff && plan.quota !== null && !isImage) {
     const used = await getQuotaUsage(targetCompanyId, plan);
     if (used >= plan.quota) {
       return NextResponse.json(
@@ -75,8 +104,6 @@ export async function POST(req: NextRequest) {
       );
     }
   }
-
-  const buffer = Buffer.from(await file.arrayBuffer());
 
   const extension = file.name.split(".").pop()?.toLowerCase() || "pdf";
   const storagePath = `${userId}/${randomUUID()}.${extension}`;
@@ -94,6 +121,7 @@ export async function POST(req: NextRequest) {
   }
 
   const extracted: PayslipData | null = analysis?.extracted ?? null;
+  const errorMessage = analysis && !analysis.extracted ? analysis.errorMessage : null;
   const status: "processed" | "pending" | "error" = analysis ? (analysis.extracted ? "processed" : "error") : "pending";
 
   // Salarié : reconnu par le nom lu sur le bulletin (référence normalisée),
@@ -158,6 +186,8 @@ export async function POST(req: NextRequest) {
       original_filename: file.name,
       mime_type: file.type,
       extracted_data: extracted,
+      file_hash: fileHash,
+      error_message: errorMessage,
     })
     .select("id")
     .single();
@@ -193,6 +223,8 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     status,
+    isImage,
+    errorMessage,
     payslipId: payslip.id,
     fileName: file.name,
     extracted,
@@ -206,15 +238,16 @@ export async function POST(req: NextRequest) {
  * sur le bulletin, sinon rapprochement du libellé avec le registre). Les
  * référentiels sont chargés pendant la lecture du PDF.
  */
-async function analyzePdf(buffer: Buffer): Promise<{ extracted: PayslipData | null }> {
+async function analyzePdf(buffer: Buffer): Promise<{ extracted: PayslipData | null; errorMessage: string | null }> {
   const agreementsPromise = listCollectiveAgreements();
   const availablePromise = listAvailableAgreementIdccs();
   // Évite un rejet non géré si l'extraction échoue avant leur lecture.
   agreementsPromise.catch(() => undefined);
   availablePromise.catch(() => undefined);
 
+  let text = "";
   try {
-    const text = await extractPdfLines(new Uint8Array(buffer));
+    text = await extractPdfLines(new Uint8Array(buffer));
     const extracted = parsePayslip(text);
     const agreement = detectCollectiveAgreement(
       extracted.collectiveAgreementIdcc,
@@ -232,9 +265,15 @@ async function analyzePdf(buffer: Buffer): Promise<{ extracted: PayslipData | nu
       const idcc = extracted.collectiveAgreementIdcc ? String(parseInt(extracted.collectiveAgreementIdcc, 10)) : null;
       extracted.collectiveAgreementAvailable = idcc !== null && (await availablePromise).has(idcc);
     }
-    return { extracted };
+    return { extracted, errorMessage: null };
   } catch (err) {
     console.error("[payslips/upload] Échec extraction PDF:", err);
-    return { extracted: null };
+    const message = err instanceof Error ? err.message.toLowerCase() : "";
+    const errorMessage = message.includes("password")
+      ? "Ce PDF est protégé par un mot de passe : exportez une version sans protection depuis votre logiciel de paie."
+      : text.trim().length === 0
+        ? "Aucun texte lisible dans ce PDF (document scanné ou photographié ?). Importez l'export PDF de votre logiciel de paie."
+        : "Le contenu de ce PDF n'a pas pu être interprété comme une fiche de paie. Vérifiez qu'il s'agit bien d'un bulletin de salaire.";
+    return { extracted: null, errorMessage };
   }
 }

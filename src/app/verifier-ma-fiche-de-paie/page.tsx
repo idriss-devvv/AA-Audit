@@ -51,7 +51,7 @@ const content: AudiencePageContent = {
     {
       question: "Quels bulletins sont acceptés ?",
       answer:
-        "Les bulletins au format PDF issus d'un logiciel de paie. Les photos et scans (JPG, PNG) peuvent être importés mais ne sont pas encore analysés automatiquement.",
+        "Les bulletins au format PDF issus d'un logiciel de paie. Les photos et scans (JPG, PNG) peuvent être importés : leur analyse arrive bientôt, et ils ne sont pas décomptés du quota en attendant.",
     },
     {
       question: "Mes données sont-elles protégées ?",

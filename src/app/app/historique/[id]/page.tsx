@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
@@ -8,6 +9,9 @@ import { LockedAnomaly } from "@/components/app/locked-anomaly";
 import { UpgradeNotice } from "@/components/app/upgrade-notice";
 import type { PayslipData } from "@/types/payslip";
 import { AGREEMENT_UNAVAILABLE_MESSAGE } from "@/lib/collective-agreement-detection";
+import { employeeDisplayName, statusExplanation, statusInfo } from "@/lib/payslips";
+import { PayslipFileFrame } from "@/components/payslips/payslip-preview";
+import { DeletePayslipButton } from "@/components/payslips/delete-payslip-button";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +53,11 @@ type PayslipDetail = {
   status: string;
   uploaded_at: string;
   extracted_data: PayslipData | null;
+  mime_type: string | null;
+  error_message: string | null;
+  deleted_at: string | null;
   company: { name: string } | null;
+  employee: { first_name: string | null; last_name: string | null; employee_ref: string | null } | null;
 };
 
 type AnomalyDetail = {
@@ -73,23 +81,28 @@ export default async function RapportControlePage({
   const { data: payslipData } = await supabase
     .from("payslips")
     .select(
-      "id, company_id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, company:companies(name)"
+      "id, company_id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, mime_type, error_message, deleted_at, company:companies(name), employee:employees(first_name, last_name, employee_ref)"
     )
     .eq("id", params.id)
     .single();
 
   const payslip = payslipData as unknown as PayslipDetail | null;
-  if (!payslip) notFound();
+  if (!payslip || payslip.deleted_at) notFound();
 
-  const { data: anomaliesData } = await supabase
-    .from("anomalies")
-    .select("id, rule_id, severity, message, detected_at")
-    .eq("payslip_id", payslip.id)
-    .order("detected_at", { ascending: false });
+  const [{ data: anomaliesData }, locked] = await Promise.all([
+    supabase
+      .from("anomalies")
+      .select("id, rule_id, severity, message, detected_at")
+      .eq("payslip_id", payslip.id)
+      .order("detected_at", { ascending: false }),
+    // Formule Free : seule la première anomalie est montrée en clair.
+    areResultsLocked(payslip.company_id),
+  ]);
 
   const anomalies = (anomaliesData as unknown as AnomalyDetail[] | null) ?? [];
-  // Formule Free : seule la première anomalie est montrée en clair.
-  const locked = await areResultsLocked(payslip.company_id);
+  const employeeName = employeeDisplayName(payslip.employee, payslip.extracted_data?.employeeName);
+  const status = statusInfo(payslip.status, payslip.mime_type);
+  const explanation = statusExplanation(payslip.status, payslip.mime_type, payslip.error_message);
   const extracted = payslip.extracted_data;
   const generatedAt = new Date().toLocaleString("fr-FR");
 
@@ -102,15 +115,24 @@ export default async function RapportControlePage({
   );
 
   return (
-    <div className="mx-auto max-w-3xl p-8 print:max-w-none print:p-0">
-      <div className="flex items-center justify-between print:hidden">
-        <a href="/app/historique" className="text-sm font-medium text-ink-500 transition hover:text-ink-900">
-          ← Retour à l&apos;historique
-        </a>
-        <PrintReportButton />
+    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10 print:max-w-none print:p-0">
+      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <Link href="/app/fiches" className="text-sm font-medium text-ink-500 transition hover:text-ink-900">
+          ← Fiches de paie
+        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <PrintReportButton />
+          <DeletePayslipButton payslipId={payslip.id} label={`${employeeName} — ${formatPeriod(payslip.period)}`} redirectTo="/app/fiches" />
+        </div>
       </div>
 
-      <div className="card mt-6 rounded-3xl p-6 sm:p-10 print:mt-0 print:rounded-none print:border-0 print:shadow-none">
+      <div className="mt-6 grid gap-6 lg:grid-cols-2 print:mt-0 print:block">
+      {/* Fiche d'origine, à côté du rapport pour vérifier chaque anomalie. */}
+      <div className="card h-[75vh] overflow-hidden p-2 lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] print:hidden">
+        <PayslipFileFrame payslipId={payslip.id} mimeType={payslip.mime_type} title={`Fiche de paie — ${employeeName}`} />
+      </div>
+
+      <div className="card rounded-3xl p-6 sm:p-10 print:rounded-none print:border-0 print:shadow-none">
         <div className="flex flex-col-reverse items-start justify-between gap-3 border-b border-ink-200/70 pb-6 sm:flex-row">
           <div>
             <Logo size="sm" />
@@ -123,6 +145,12 @@ export default async function RapportControlePage({
           </div>
           <p className="shrink-0 text-xs text-ink-400">Généré le {generatedAt}</p>
         </div>
+
+        {explanation && (
+          <p className={`mt-6 rounded-xl px-4 py-3 text-sm ring-1 ring-inset ${status.key === "error" ? "bg-rose-50 text-rose-800 ring-rose-200" : "bg-blue-50 text-blue-800 ring-blue-200"}`}>
+            {explanation}
+          </p>
+        )}
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
           <div>
@@ -138,7 +166,7 @@ export default async function RapportControlePage({
               Salarié
             </p>
             <p className="mt-1 text-sm text-ink-900">
-              {extracted?.employeeName || "Non détecté"}
+              {employeeName}
             </p>
           </div>
           <div>
@@ -301,6 +329,7 @@ export default async function RapportControlePage({
             conventionnelles applicables.
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

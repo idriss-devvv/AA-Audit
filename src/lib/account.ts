@@ -62,7 +62,13 @@ export const getAccountContext = cache(async (): Promise<AccountContext> => {
 /** Nombre de fiches déjà importées sur la période de quota de la formule. */
 export async function getQuotaUsage(companyId: string, plan: PlanDefinition): Promise<number> {
   const supabase = await createClient();
-  let query = supabase.from("payslips").select("id", { count: "exact", head: true }).eq("company_id", companyId);
+  // Même règle que le trigger enforce_payslip_quota : les fiches supprimées
+  // restent comptées, les images (pas encore analysées) ne le sont pas.
+  let query = supabase
+    .from("payslips")
+    .select("id", { count: "exact", head: true })
+    .eq("company_id", companyId)
+    .or("mime_type.is.null,mime_type.not.like.image/*");
   if (plan.quotaPeriod === "month") {
     const now = new Date();
     query = query.gte("uploaded_at", new Date(now.getFullYear(), now.getMonth(), 1).toISOString());

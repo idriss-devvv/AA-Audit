@@ -27,6 +27,29 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-27
 
+### Expérience utilisateur : fiches de paie centralisées
+- Nouvelle page « Fiches de paie » qui réunit l'historique et les anomalies :
+  recherche, filtres par salarié, période, gravité et statut, panneau de
+  détail avec le bulletin d'origine, les anomalies et les actions.
+- Bouton « œil » pour voir la fiche de paie d'origine (lien signé temporaire)
+  sur le tableau de bord, la liste des fiches et la page salarié ; rapport de
+  contrôle affiché à côté du bulletin.
+- Suppression d'une fiche (fichier et données effacés, fiche toujours comptée
+  dans le quota).
+- Fiches en erreur : cause lisible (PDF scanné, protégé, illisible).
+- Doublons : un fichier déjà importé est signalé, avec « Voir la fiche
+  existante » ou « Importer quand même ».
+- Photos et scans (JPG, PNG) : statut « Analyse bientôt disponible », non
+  décomptés du quota.
+- Tableau de bord : import en haut, anomalies critiques mises en avant avec
+  accès direct, dernières fiches avec salarié, période et anomalies.
+- Navigation : « Tableau de bord », « Fiches de paie » ; barre de navigation
+  en bas de l'écran sur mobile ; menu compte unique (paramètres, abonnement,
+  déconnexion). Utilisateur (compte connecté) et salarié (personne de la
+  fiche) clairement distingués.
+- Base : colonnes file_hash, error_message, deleted_at ; lecture des fichiers
+  ouverte à toute l'entreprise (collègues, cabinet).
+
 ### Critères de contrôle des 11 conventions collectives
 - Base alimentée pour les 11 conventions du registre : Syntec (1486),
   Métallurgie (3248), Commerces de gros (573), HCR (1979), Restauration

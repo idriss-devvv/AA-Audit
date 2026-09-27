@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PayslipPreviewButton } from "@/components/payslips/payslip-preview";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAccountContext } from "@/lib/account";
@@ -15,6 +16,7 @@ type EmployeeDetail = {
     gross_pay: number | null;
     net_pay: number | null;
     status: string;
+    mime_type: string | null;
     anomalies: { severity: string }[];
   }[];
 };
@@ -41,8 +43,9 @@ export default async function SalarieDetailPage({ params }: { params: { id: stri
   // RLS : le salarié n'est lisible que s'il appartient à une société accessible.
   const { data } = await supabase
     .from("employees")
-    .select("id, first_name, last_name, payslips(id, period, gross_pay, net_pay, status, anomalies(severity))")
+    .select("id, first_name, last_name, payslips(id, period, gross_pay, net_pay, status, mime_type, deleted_at, anomalies(severity))")
     .eq("id", params.id)
+    .is("payslips.deleted_at", null)
     .maybeSingle();
 
   const employee = data as unknown as EmployeeDetail | null;
@@ -107,10 +110,13 @@ export default async function SalarieDetailPage({ params }: { params: { id: stri
                       <span className="badge bg-emerald-50 text-emerald-700 ring-emerald-200">Aucune</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link href={`/app/historique/${payslip.id}`} className="whitespace-nowrap text-sm font-semibold text-blue-600 transition hover:text-blue-800">
-                      Rapport →
-                    </Link>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-end gap-3">
+                      <PayslipPreviewButton payslipId={payslip.id} mimeType={payslip.mime_type} title={`${name} — ${formatPeriod(payslip.period)}`} />
+                      <Link href={`/app/historique/${payslip.id}`} className="whitespace-nowrap text-sm font-semibold text-blue-600 transition hover:text-blue-800">
+                        Rapport →
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}

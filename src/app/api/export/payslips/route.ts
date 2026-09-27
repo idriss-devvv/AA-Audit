@@ -57,6 +57,7 @@ export async function GET() {
       "id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, anomalies(count)"
     )
     .eq("company_id", activeCompanyId ?? "")
+    .is("deleted_at", null)
     .order("uploaded_at", { ascending: false });
 
   if (error) {
