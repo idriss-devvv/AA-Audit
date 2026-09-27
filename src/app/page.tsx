@@ -171,7 +171,8 @@ const audiences = [
 
 // Grille tarifaire : issue de la définition centrale des formules (quotas
 // appliqués par la base), la formule Pro est mise en avant.
-const plans = PLAN_ORDER.map((id) => ({ ...PLANS[id], highlighted: id === "pro" }));
+const plans = PLAN_ORDER.filter((id) => id !== "entreprise").map((id) => ({ ...PLANS[id], highlighted: id === "pro" }));
+const enterprisePlan = PLANS.entreprise;
 
 const faqs = [
   {
@@ -202,7 +203,7 @@ const faqs = [
   {
     question: "A&A Audit convient-il à un cabinet comptable gérant plusieurs clients ?",
     answer:
-      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Entreprise (500 € / mois) gère plusieurs sociétés avec des fiches illimitées et un onglet Salariés dans chacune.",
+      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Entreprise (à partir de 500 € / mois) gère plusieurs sociétés avec des fiches illimitées et un onglet Salariés dans chacune.",
   },
 ];
 
@@ -546,7 +547,7 @@ export default function Home() {
             </p>
           </Reveal>
 
-          <div className="mt-16 grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-16 grid items-stretch gap-5 md:grid-cols-3">
             {plans.map((plan, i) => (
               <Reveal key={plan.id} delay={i * 100} className="h-full">
                 <div
@@ -604,8 +605,35 @@ export default function Home() {
                 </div>
               </Reveal>
             ))}
-
           </div>
+
+          {/* Formule Entreprise : carte pleine largeur, tarif sur devis. */}
+          <Reveal delay={300} className="mt-5">
+            <div className="relative flex flex-col gap-8 overflow-hidden rounded-3xl bg-ink-900 p-8 text-beige-50 shadow-lift transition duration-300 hover:-translate-y-1 md:flex-row md:items-center md:justify-between md:p-10">
+              <div aria-hidden className="bg-grid-light mask-fade-b pointer-events-none absolute inset-0" />
+              <div className="relative md:max-w-sm">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-beige-300">{enterprisePlan.label}</h3>
+                <p className="mt-5 font-sans text-sm font-medium text-beige-300">À partir de</p>
+                <p className="mt-1 font-display text-6xl leading-none">
+                  {enterprisePlan.price} €
+                  <span className="ml-1 font-sans text-sm font-medium text-beige-300">/ mois</span>
+                </p>
+                <p className="mt-4 text-sm text-beige-200">{enterprisePlan.description}</p>
+              </div>
+              <ul className="relative grid flex-1 gap-3 text-sm text-beige-100 sm:grid-cols-2 md:border-l md:border-white/15 md:pl-10">
+                {enterprisePlan.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2.5">
+                    <Check className="text-blue-300" /> {feature}
+                  </li>
+                ))}
+              </ul>
+              <div className="relative shrink-0">
+                <Link href="/contact-entreprise" className="btn-primary w-full px-8 py-3.5 md:w-auto">
+                  Nous contacter
+                </Link>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
