@@ -171,8 +171,13 @@ const audiences = [
 
 // Grille tarifaire : issue de la définition centrale des formules (quotas
 // appliqués par la base), la formule Pro est mise en avant.
-const plans = PLAN_ORDER.filter((id) => id !== "entreprise").map((id) => ({ ...PLANS[id], highlighted: id === "pro" }));
-const enterprisePlan = PLANS.entreprise;
+// Formules payantes affichées sur la landing (l'essai Free reste accessible
+// à l'inscription). Entreprise : tarif « à partir de », sur devis.
+const plans = PLAN_ORDER.filter((id) => id !== "free").map((id) => ({
+  ...PLANS[id],
+  highlighted: id === "pro",
+  onQuote: id === "entreprise",
+}));
 
 const faqs = [
   {
@@ -573,7 +578,10 @@ export default function Home() {
                       </span>
                     )}
                   </div>
-                  <p className={`relative mt-6 font-display text-6xl leading-none ${plan.highlighted ? "text-beige-50" : "text-ink-900"}`}>
+                  <p className={`relative mt-6 h-5 text-sm font-medium ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
+                    {plan.onQuote ? "À partir de" : ""}
+                  </p>
+                  <p className={`relative mt-1 font-display text-6xl leading-none ${plan.highlighted ? "text-beige-50" : "text-ink-900"}`}>
                     {plan.price} €
                     <span className={`ml-1 font-sans text-sm font-medium ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
                       / mois
@@ -590,7 +598,11 @@ export default function Home() {
                     ))}
                   </ul>
                   <div className="relative mt-8">
-                    {plan.stripePriceId ? (
+                    {plan.onQuote ? (
+                      <Link href="/contact-entreprise" className="btn-secondary w-full">
+                        Nous contacter
+                      </Link>
+                    ) : plan.stripePriceId ? (
                       <SubscribeButton
                         priceId={plan.stripePriceId}
                         label="S'abonner"
@@ -607,33 +619,6 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Formule Entreprise : carte pleine largeur, tarif sur devis. */}
-          <Reveal delay={300} className="mt-5">
-            <div className="relative flex flex-col gap-8 overflow-hidden rounded-3xl bg-ink-900 p-8 text-beige-50 shadow-lift transition duration-300 hover:-translate-y-1 md:flex-row md:items-center md:justify-between md:p-10">
-              <div aria-hidden className="bg-grid-light mask-fade-b pointer-events-none absolute inset-0" />
-              <div className="relative md:max-w-sm">
-                <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-beige-300">{enterprisePlan.label}</h3>
-                <p className="mt-5 font-sans text-sm font-medium text-beige-300">À partir de</p>
-                <p className="mt-1 font-display text-6xl leading-none">
-                  {enterprisePlan.price} €
-                  <span className="ml-1 font-sans text-sm font-medium text-beige-300">/ mois</span>
-                </p>
-                <p className="mt-4 text-sm text-beige-200">{enterprisePlan.description}</p>
-              </div>
-              <ul className="relative grid flex-1 gap-3 text-sm text-beige-100 sm:grid-cols-2 md:border-l md:border-white/15 md:pl-10">
-                {enterprisePlan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5">
-                    <Check className="text-blue-300" /> {feature}
-                  </li>
-                ))}
-              </ul>
-              <div className="relative shrink-0">
-                <Link href="/contact-entreprise" className="btn-primary w-full px-8 py-3.5 md:w-auto">
-                  Nous contacter
-                </Link>
-              </div>
-            </div>
-          </Reveal>
         </div>
       </section>
 
