@@ -27,6 +27,20 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Réduction générale dégressive unique (RGDU 2026)
+- Contrôle de la réduction générale des cotisations patronales selon la
+  formule de l'article D241-7 CSS en vigueur (décret n° 2026-509 du
+  12 juin 2026) : Tmin 0,02, Tdelta 0,3781 / 0,3821 selon le taux FNAL,
+  exposant 1,75, seuil 3 SMIC (SMIC au 1er janvier 2026).
+  Réduction manquante sous 3 SMIC, réduction indue au-delà, montant éloigné
+  du coefficient mensuel (le calcul reste annuel, régularisé chaque mois).
+- 2026 : les taux réduits maladie (7 %) et allocations familiales (3,45 %)
+  sont intégrés à la RGDU ; paramètres clos au 31/12/2025 et taux réduit
+  appliqué en 2026 signalé.
+- Paramètres ajoutés à la veille réglementaire datée (modifiables).
+- Les bulletins de test (mars 2026, construits sur les règles 2025) sont
+  désormais signalés sur ces points : à régénérer avec les règles 2026.
+
 ### Cotisations patronales, mutuelle et veille réglementaire
 - Référentiel réglementaire daté (`regulatory_parameters`), géré dans
   l'Administration (« Veille réglementaire ») : chaque évolution s'ajoute

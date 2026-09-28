@@ -386,6 +386,10 @@ export function parsePayslip(rawContent: string): PayslipData {
     totalEmployeeContributions: firstDecimalOnMatchingLine(lines, /total\s+(?:des\s+)?cotisations/i),
     netBeforeTax: firstDecimalOnMatchingLine(lines, /net\s+(?:(?:à|a)\s+payer\s+)?avant\s+imp[ôo]t/i),
     netSocial: firstDecimalOnMatchingLine(lines, /(?:montant\s+)?net\s+social/i),
+    generalReduction: (() => {
+      const value = lastDecimalOnMatchingLine(lines, /r[ée]duction\s+g[ée]n[ée]rale|\brgdu\b|r[ée]duction\s+fillon|all[èe]gement\s+g[ée]n[ée]ral/i);
+      return value === null ? null : Math.abs(value);
+    })(),
     employeeHealthContribution: health.employee,
     employerHealthContribution: health.employer,
     incomeTaxWithheld: lastDecimalOnMatchingLine(

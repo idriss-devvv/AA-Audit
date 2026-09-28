@@ -36,10 +36,20 @@ function reducedRateRule(id: string, prefix: "maladie" | "famille", pattern: Reg
       const reduced = regulatoryValue(context, `${prefix}.taux_reduit`, payslip.period);
       const threshold = regulatoryValue(context, `${prefix}.seuil_smic`, payslip.period);
       const smic = smicHourlyFor(payslip.period);
-      if (!full || !reduced || !threshold || !smic || payslip.grossPay <= 0) return null;
+      if (!full || !smic || payslip.grossPay <= 0) return null;
       const tolerance = tolerancesFor(context).ratePoints;
       const line = (payslip.contributionLines ?? []).find((l) => pattern.test(l.label));
       if (!line) return null;
+      // Taux réduit supprimé (2026 : fusion dans la réduction générale dégressive unique).
+      if (!reduced || !threshold) {
+        const oldReduced = prefix === "maladie" ? 7 : 3.45;
+        const rate = line.employerRatePercent ?? line.ratePercent;
+        if (Math.abs(rate - oldReduced) > tolerance) return null;
+        return {
+          severity: "critical",
+          message: `${label} au taux réduit de ${PCT(oldReduced)} : ce taux réduit n'existe plus depuis le 1er janvier 2026, il est intégré à la réduction générale dégressive unique. Le taux applicable est ${PCT(full.value)}, l'allègement passant par la ligne de réduction générale (Code de la sécurité sociale, art. L241-13).`,
+        };
+      }
       const rate = employerRate(line, [full.value, reduced.value], tolerance);
       if (rate === null) return null;
       // Seuil mensuel indicatif : le seuil légal s'apprécie sur la rémunération annuelle.
@@ -72,9 +82,66 @@ function atMpRate(context: RuleContext): number | null {
   return rate !== null && rate > 0 ? rate : null;
 }
 
+/** Réduction générale dégressive unique (2026) : coefficient mensuel indicatif, régularisé sur l'année. */
+function rgduCoefficient(context: RuleContext, payslip: PayslipData, tdelta: number): { coefficient: number; limit: number } | null {
+  const tmin = regulatoryValue(context, "rgdu.tmin", payslip.period);
+  const p = regulatoryValue(context, "rgdu.exposant", payslip.period);
+  const seuil = regulatoryValue(context, "rgdu.seuil_smic", payslip.period);
+  const smic = regulatoryValue(context, "rgdu.smic_horaire", payslip.period);
+  if (!tmin || !p || !seuil || !smic || payslip.grossPay <= 0) return null;
+  const smicMonth = smic.value * hoursOf(payslip);
+  const limit = seuil.value * smicMonth;
+  if (payslip.grossPay >= limit) return { coefficient: 0, limit };
+  const inner = 0.5 * (limit / payslip.grossPay - 1);
+  const coefficient = Math.min(tmin.value + tdelta, Math.round((tmin.value + tdelta * Math.pow(inner, p.value)) * 10000) / 10000);
+  return { coefficient, limit };
+}
+
 export const cotisationsPatronalesRules: AnomalyRule[] = [
   reducedRateRule("cotisations.maladie-taux", "maladie", /maladie/i, "Cotisation patronale d'assurance maladie"),
   reducedRateRule("cotisations.famille-taux", "famille", /allocations?\s+familiales|\bfamille\b/i, "Cotisation d'allocations familiales"),
+  {
+    id: "cotisations.reduction-generale",
+    category: "cotisations",
+    description: "Réduction générale dégressive unique (2026) : présence sous 3 SMIC et montant cohérent avec la formule de l'article D241-7",
+    check: (payslip, context) => {
+      const t010 = regulatoryValue(context, "rgdu.tdelta_fnal_010", payslip.period);
+      const t050 = regulatoryValue(context, "rgdu.tdelta_fnal_050", payslip.period);
+      if (!t010 || !t050) return null;
+      const low = rgduCoefficient(context, payslip, t010.value);
+      const high = rgduCoefficient(context, payslip, t050.value);
+      if (!low || !high) return null;
+      const amount = payslip.generalReduction ?? null;
+      const minEuros = tolerancesFor(context).relativeMinEuros;
+      if (low.coefficient === 0) {
+        if (amount !== null && amount > minEuros) {
+          return {
+            severity: "critical",
+            message: `Réduction générale de ${EURO(amount)} alors que le brut (${EURO(payslip.grossPay)}) atteint ou dépasse 3 SMIC (${EURO(low.limit)} pour ${hoursOf(payslip).toLocaleString("fr-FR")} h) : aucune réduction n'est due (${t010.source}).`,
+          };
+        }
+        return null;
+      }
+      const expectedMin = low.coefficient * payslip.grossPay;
+      const expectedMax = high.coefficient * payslip.grossPay;
+      if (amount === null) {
+        const showsEmployer = (payslip.contributionLines ?? []).some((l) => l.employerRatePercent != null);
+        if (!showsEmployer) return null;
+        return {
+          severity: "warning",
+          message: `Aucune ligne de réduction générale lue alors que le brut (${EURO(payslip.grossPay)}) est inférieur à 3 SMIC : réduction attendue d'environ ${EURO(expectedMin)} à ${EURO(expectedMax)} ce mois-ci (coefficient ${low.coefficient.toLocaleString("fr-FR")} à ${high.coefficient.toLocaleString("fr-FR")} selon le taux FNAL — ${t010.source}).`,
+        };
+      }
+      const margin = Math.max(expectedMax * (tolerancesFor(context).relativePercent / 100), minEuros);
+      if (amount < expectedMin - margin || amount > expectedMax + margin) {
+        return {
+          severity: "info",
+          message: `Réduction générale de ${EURO(amount)} éloignée du montant mensuel attendu (${EURO(expectedMin)} à ${EURO(expectedMax)}, coefficient ${low.coefficient.toLocaleString("fr-FR")} à ${high.coefficient.toLocaleString("fr-FR")}). Le calcul est annuel et régularisé chaque mois (heures supplémentaires, absences, primes) : vérifier le cumul annuel.`,
+        };
+      }
+      return null;
+    },
+  },
   {
     id: "cotisations.at-mp",
     category: "cotisations",

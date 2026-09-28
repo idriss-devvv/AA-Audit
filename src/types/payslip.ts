@@ -73,6 +73,8 @@ export interface PayslipData {
   netSocial?: number | null;
   /** Part patronale de complémentaire santé (imposable), dernière valeur de la ligne santé. */
   employerHealthContribution?: number | null;
+  /** Montant de la réduction générale des cotisations patronales (valeur absolue). */
+  generalReduction?: number | null;
   /** Part salariale de complémentaire santé. */
   employeeHealthContribution?: number | null;
   incomeTaxWithheld?: number | null;

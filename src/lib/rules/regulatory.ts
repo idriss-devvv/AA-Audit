@@ -21,12 +21,18 @@ export const DEFAULT_REGULATORY_PARAMETERS: RegulatoryParameter[] = [
   { key: "sante.part_employeur_min", label: "Complémentaire santé : part patronale minimale", value: 50, unit: "pourcent", valid_from: "2016-01-01", valid_to: null, source: "Code de la sécurité sociale, art. L911-7" },
   { key: "prevoyance.cadres_taux_min_t1", label: "Prévoyance des cadres : cotisation patronale minimale sur la tranche 1", value: 1.5, unit: "pourcent", valid_from: "2018-01-01", valid_to: null, source: "ANI du 17 novembre 2017 relatif à la prévoyance des cadres, art. 7" },
   { key: "maladie.taux_plein", label: "Assurance maladie : taux patronal plein", value: 13, unit: "pourcent", valid_from: "2019-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D242-3" },
-  { key: "maladie.taux_reduit", label: "Assurance maladie : taux patronal réduit", value: 7, unit: "pourcent", valid_from: "2019-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D242-3" },
+  { key: "maladie.taux_reduit", label: "Assurance maladie : taux patronal réduit", value: 7, unit: "pourcent", valid_from: "2019-01-01", valid_to: "2026-01-01", source: "Code de la sécurité sociale, art. D242-3" },
   { key: "maladie.seuil_smic", label: "Assurance maladie : seuil du taux réduit (nombre de SMIC)", value: 2.5, unit: "smic", valid_from: "2019-01-01", valid_to: "2025-01-01", source: "Code de la sécurité sociale, art. L241-2-1 et D242-3" },
-  { key: "maladie.seuil_smic", label: "Assurance maladie : seuil du taux réduit (nombre de SMIC)", value: 2.25, unit: "smic", valid_from: "2025-01-01", valid_to: null, source: "Code de la sécurité sociale, art. L241-2-1 et D242-3" },
+  { key: "maladie.seuil_smic", label: "Assurance maladie : seuil du taux réduit (nombre de SMIC)", value: 2.25, unit: "smic", valid_from: "2025-01-01", valid_to: "2026-01-01", source: "Code de la sécurité sociale, art. L241-2-1 et D242-3" },
   { key: "famille.taux_plein", label: "Allocations familiales : taux patronal plein", value: 5.25, unit: "pourcent", valid_from: "2016-04-01", valid_to: null, source: "Code de la sécurité sociale, art. D241-3-1" },
-  { key: "famille.taux_reduit", label: "Allocations familiales : taux patronal réduit", value: 3.45, unit: "pourcent", valid_from: "2016-04-01", valid_to: null, source: "Code de la sécurité sociale, art. L241-6-1 et D241-3-1" },
-  { key: "famille.seuil_smic", label: "Allocations familiales : seuil du taux réduit (nombre de SMIC)", value: 3.5, unit: "smic", valid_from: "2016-04-01", valid_to: null, source: "Code de la sécurité sociale, art. L241-6-1" },
+  { key: "famille.taux_reduit", label: "Allocations familiales : taux patronal réduit", value: 3.45, unit: "pourcent", valid_from: "2016-04-01", valid_to: "2026-01-01", source: "Code de la sécurité sociale, art. L241-6-1 et D241-3-1" },
+  { key: "famille.seuil_smic", label: "Allocations familiales : seuil du taux réduit (nombre de SMIC)", value: 3.5, unit: "smic", valid_from: "2016-04-01", valid_to: "2026-01-01", source: "Code de la sécurité sociale, art. L241-6-1" },
+  { key: "rgdu.tmin", label: "Réduction générale dégressive unique : T min", value: 0.02, unit: "coefficient", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D241-7" },
+  { key: "rgdu.tdelta_fnal_010", label: "RGDU : T delta (FNAL 0,10 %)", value: 0.3781, unit: "coefficient", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D241-7 (décret n° 2026-509 du 12 juin 2026)" },
+  { key: "rgdu.tdelta_fnal_050", label: "RGDU : T delta (FNAL 0,50 %)", value: 0.3821, unit: "coefficient", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D241-7 (décret n° 2026-509 du 12 juin 2026)" },
+  { key: "rgdu.exposant", label: "RGDU : exposant P", value: 1.75, unit: "coefficient", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D241-7" },
+  { key: "rgdu.seuil_smic", label: "RGDU : seuil d'éligibilité (nombre de SMIC)", value: 3, unit: "smic", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. L241-13 et D241-7" },
+  { key: "rgdu.smic_horaire", label: "RGDU : SMIC horaire retenu pour le calcul", value: 12.02, unit: "euros", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D241-7 (SMIC au 1er janvier 2026)" },
 ];
 
 /** Valeur d'un paramètre en vigueur au premier jour de la période « AAAA-MM ». */
