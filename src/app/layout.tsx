@@ -20,7 +20,7 @@ const display = Instrument_Serif({
   display: "swap",
 });
 
-const title = "A&A Audit — Contrôle et détection d'anomalies sur vos fiches de paie";
+const title = "A&A Audit | Contrôle et détection d'anomalies sur vos fiches de paie";
 const description =
   "A&A Audit analyse automatiquement vos fiches de paie et détecte les anomalies : erreurs de cotisations, écarts brut/net, convention collective, congés payés et primes. Gagnez du temps et sécurisez votre paie.";
 
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: title,
-    template: `%s — ${SITE_NAME}`,
+    template: `%s | ${SITE_NAME}`,
   },
   description,
   keywords: [
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F7F2E9",
+  themeColor: "#F4EDE0",
   width: "device-width",
   initialScale: 1,
 };

@@ -8,7 +8,7 @@ import { ControlsSection } from "@/components/marketing/controls-section";
 import { PLANS, PLAN_ORDER } from "@/lib/plans";
 
 export const metadata: Metadata = {
-  title: { absolute: "A&A Audit — Contrôle automatique de fiches de paie" },
+  title: { absolute: "A&A Audit | Contrôle automatique de fiches de paie" },
   description:
     "A&A Audit détecte automatiquement les anomalies sur vos fiches de paie : cotisations, brut/net, convention collective, congés payés et primes. Essayez gratuitement.",
   alternates: { canonical: "/" },

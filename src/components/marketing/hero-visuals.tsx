@@ -47,7 +47,7 @@ function ParticulierVisual() {
   return (
     <>
       <div className="overflow-hidden rounded-3xl border border-ink-200/80 bg-white shadow-lift">
-        <WindowBar label="Mon bulletin — mars 2026" />
+        <WindowBar label="Mon bulletin · mars 2026" />
         <div className="relative overflow-hidden p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -100,7 +100,7 @@ function EntrepriseVisual() {
   return (
     <>
       <div className="overflow-hidden rounded-3xl border border-ink-200/80 bg-white shadow-lift">
-        <WindowBar label="Tableau de bord — mars 2026" />
+        <WindowBar label="Tableau de bord · mars 2026" />
         <div className="p-6">
           <div className="grid grid-cols-3 gap-3">
             {stats.map((stat, i) => (
@@ -151,7 +151,7 @@ function CabinetVisual() {
   return (
     <>
       <div className="overflow-hidden rounded-3xl border border-ink-200/80 bg-white shadow-lift">
-        <WindowBar label="Mes clients — cabinet" />
+        <WindowBar label="Mes clients · cabinet" />
         <div className="p-6">
           <div className="flex items-center justify-between">
             <p className="font-display text-2xl text-ink-900">4 clients</p>
