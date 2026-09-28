@@ -10,6 +10,7 @@ import { extractPdfLines } from "@/lib/parsers/pdf-text";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
 import {
   getCompanyPaySettings,
+  listRegulatoryParameters,
   listAvailableAgreementIdccs,
   listCollectiveAgreements,
   toRuleContext,
@@ -230,7 +231,8 @@ export async function POST(req: NextRequest) {
         .maybeSingle();
       previousPayslip = (previous?.extracted_data as PayslipData | null) ?? null;
     }
-    const anomalies = runAnomalyRules(extracted, { ...toRuleContext(paySettings), previousPayslip });
+    const regulatory = await listRegulatoryParameters();
+    const anomalies = runAnomalyRules(extracted, { ...toRuleContext(paySettings), previousPayslip, regulatory });
     anomaliesCount = anomalies.length;
     criticalCount = anomalies.filter((a) => a.severity === "critical").length;
 

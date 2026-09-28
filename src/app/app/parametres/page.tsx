@@ -217,7 +217,7 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
 async function BaremesTab({ companyId, companyName }: { companyId: string | null; companyName: string | null }) {
   const paySettings = companyId
     ? await getCompanyPaySettings(companyId)
-    : { csgCrdsNonDeductiblePercent: null, salaireMinimumConventionnel: null, contributionRates: [], tolerances: {} };
+    : { csgCrdsNonDeductiblePercent: null, salaireMinimumConventionnel: null, contributionRates: [], tolerances: {}, atMpRatePercent: null };
 
   return (
     <div className="mt-6 grid max-w-2xl gap-6">
@@ -248,6 +248,7 @@ async function BaremesTab({ companyId, companyName }: { companyId: string | null
         <PaySettingsForm
           initialCsgCrds={paySettings.csgCrdsNonDeductiblePercent}
           initialSalaireMinimum={paySettings.salaireMinimumConventionnel}
+          initialAtMp={paySettings.atMpRatePercent}
         />
       </section>
 

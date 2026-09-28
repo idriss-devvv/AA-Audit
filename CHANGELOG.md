@@ -27,6 +27,18 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Cotisations patronales, mutuelle et veille réglementaire
+- Référentiel réglementaire daté (`regulatory_parameters`), géré dans
+  l'Administration (« Veille réglementaire ») : chaque évolution s'ajoute
+  avec sa date d'effet et sa source, les fiches antérieures gardent
+  l'ancienne valeur. Valeurs initiales sourcées (CSS L911-7, D242-3,
+  L241-6-1, ANI prévoyance cadres 2017).
+- Nouveaux contrôles : taux réduit maladie (seuil 2,25 SMIC depuis 2025) et
+  allocations familiales (3,5 SMIC), taux AT/MP notifié (saisi dans
+  Paramètres), complémentaire santé (présence, part patronale ≥ 50 %),
+  prévoyance des cadres (≥ 1,50 % de la tranche 1).
+- Lecteur PDF : part patronale de chaque ligne de cotisation.
+
 ### Net imposable, montant net social et tranches de cotisations
 - Net imposable recalculé : net avant impôt + CSG non déductible et CRDS,
   + part patronale de complémentaire santé, − heures supplémentaires

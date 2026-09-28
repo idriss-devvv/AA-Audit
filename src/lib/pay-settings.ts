@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { RuleContext } from "@/lib/rules/anomaly-rules";
 import { sanitizeTolerances, type Tolerances } from "@/lib/rules/tolerances";
+import type { RegulatoryParameter } from "@/lib/rules/regulatory";
 
 export type ContributionRateRow = {
   id: string;
@@ -22,6 +23,8 @@ export type CompanyPaySettings = {
   contributionRates: ContributionRateRow[];
   /** Seuils de tolérance réglés (les autres gardent leur valeur par défaut). */
   tolerances: Partial<Tolerances>;
+  /** Taux AT/MP notifié par la CARSAT, en %. */
+  atMpRatePercent: number | null;
 };
 
 /**
@@ -87,7 +90,7 @@ export async function getCompanyPaySettings(companyId: string): Promise<CompanyP
     supabase
       .from("company_pay_settings")
       .select(
-"csg_crds_non_deductible_percent, salaire_minimum_conventionnel, tolerances"
+"csg_crds_non_deductible_percent, salaire_minimum_conventionnel, tolerances, at_mp_rate_percent"
       )
       .eq("company_id", companyId)
       .maybeSingle(),
@@ -103,7 +106,21 @@ export async function getCompanyPaySettings(companyId: string): Promise<CompanyP
     salaireMinimumConventionnel: settings?.salaire_minimum_conventionnel ?? null,
     contributionRates: (rates as ContributionRateRow[] | null) ?? [],
     tolerances: sanitizeTolerances(settings?.tolerances),
+    atMpRatePercent: settings?.at_mp_rate_percent != null ? Number(settings.at_mp_rate_percent) : null,
   };
+}
+
+/** Paramètres réglementaires datés (communs à tous les comptes, gardés 5 minutes en mémoire). */
+export async function listRegulatoryParameters(): Promise<RegulatoryParameter[]> {
+  return cachedReference("regulatory_parameters", async () => {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("regulatory_parameters")
+      .select("key, label, value, unit, valid_from, valid_to, source")
+      .order("key", { ascending: true })
+      .order("valid_from", { ascending: false });
+    return ((data as RegulatoryParameter[] | null) ?? []).map((p) => ({ ...p, value: Number(p.value) }));
+  });
 }
 
 export function toRuleContext(settings: CompanyPaySettings): RuleContext {
@@ -115,5 +132,6 @@ export function toRuleContext(settings: CompanyPaySettings): RuleContext {
       expectedRatePercent: r.expected_rate_percent,
     })),
     tolerances: settings.tolerances,
+    atMpRatePercent: settings.atMpRatePercent,
   };
 }

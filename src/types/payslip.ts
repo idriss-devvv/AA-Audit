@@ -10,6 +10,9 @@ export interface ContributionLine {
   base: number;
   ratePercent: number;
   amount: number;
+  /** Part patronale lue sur la même ligne (second triplet base × taux = montant). */
+  employerRatePercent?: number | null;
+  employerAmount?: number | null;
 }
 
 /** Ligne d'heures supplémentaires détectée sur le bulletin. */

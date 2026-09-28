@@ -6,13 +6,16 @@ import { useRouter } from "next/navigation";
 export function PaySettingsForm({
   initialCsgCrds,
   initialSalaireMinimum,
+  initialAtMp,
 }: {
   initialCsgCrds: number | null;
   initialSalaireMinimum: number | null;
+  initialAtMp: number | null;
 }) {
   const router = useRouter();
   const [csgCrds, setCsgCrds] = useState(initialCsgCrds?.toString() ?? "");
   const [salaireMinimum, setSalaireMinimum] = useState(initialSalaireMinimum?.toString() ?? "");
+  const [atMp, setAtMp] = useState(initialAtMp?.toString() ?? "");
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +32,7 @@ export function PaySettingsForm({
       body: JSON.stringify({
         csgCrdsNonDeductiblePercent: csgCrds || null,
         salaireMinimumConventionnel: salaireMinimum || null,
+        atMpRatePercent: atMp || null,
       }),
     });
 
@@ -74,8 +78,23 @@ export function PaySettingsForm({
           />
           <p className="text-xs text-ink-400">
             Utilisé seulement si la convention détectée n&apos;a pas de grille intégrée
-            (Bâtiment, Transports routiers, Experts-comptables, Enseignement privé). Pour les
-            autres, le minimum est lu automatiquement dans la grille conventionnelle.
+            (Bâtiment et Travaux publics : minima régionaux). Pour les autres, le minimum est lu
+            automatiquement dans la grille conventionnelle.
+          </p>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label className="field-label">Taux accident du travail notifié (%)</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="Non renseigné"
+            value={atMp}
+            onChange={(e) => setAtMp(e.target.value)}
+            className="input"
+          />
+          <p className="text-xs text-ink-400">
+            Taux AT/MP de l&apos;année, figurant sur la notification de la CARSAT (compte AT/MP sur net-entreprises.fr).
           </p>
         </div>
       </div>

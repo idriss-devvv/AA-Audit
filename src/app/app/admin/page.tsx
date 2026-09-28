@@ -5,6 +5,7 @@ import { PLANS, PLAN_ORDER, ROLE_LABELS, toPlanId } from "@/lib/plans";
 import { AdminAccountsTable, type AdminAccount } from "@/components/app/admin-accounts-table";
 import { AdminInviteForm } from "@/components/app/admin-invite-form";
 import { AdminSupportForm } from "@/components/app/admin-support-form";
+import { RegulatoryParametersManager, type RegulatoryRow } from "@/components/app/regulatory-parameters-manager";
 import { getSupportContact } from "@/lib/support";
 
 export const dynamic = "force-dynamic";
@@ -28,11 +29,17 @@ export default async function AdminPage() {
   if (!account.isStaff || !account.userId) notFound();
 
   const supabase = await createClient();
-  const [{ data: overviewData }, { data: accountsData }, supportContact] = await Promise.all([
+  const [{ data: overviewData }, { data: accountsData }, supportContact, { data: regulatoryData }] = await Promise.all([
     supabase.rpc("admin_overview"),
     supabase.rpc("admin_list_accounts"),
     getSupportContact(),
+    supabase
+      .from("regulatory_parameters")
+      .select("id, key, label, value, unit, valid_from, valid_to, source")
+      .order("key", { ascending: true })
+      .order("valid_from", { ascending: false }),
   ]);
+  const regulatory = ((regulatoryData as RegulatoryRow[] | null) ?? []).map((r) => ({ ...r, value: Number(r.value) }));
   const overview = (overviewData as Overview | null) ?? null;
   const accounts = (accountsData as AdminAccount[] | null) ?? [];
 
@@ -84,6 +91,8 @@ export default async function AdminPage() {
       <AdminInviteForm isSuperAdmin={account.isSuperAdmin} />
 
       <AdminSupportForm contact={supportContact} />
+
+      <RegulatoryParametersManager rows={regulatory} />
 
       <AdminAccountsTable accounts={accounts} currentUserId={account.userId} isSuperAdmin={account.isSuperAdmin} />
     </div>

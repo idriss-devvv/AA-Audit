@@ -47,6 +47,10 @@ export type RuleContext = {
   tolerances?: Partial<import("./tolerances").Tolerances>;
   /** Fiche précédente du même salarié (écart N / N-1), si elle existe. */
   previousPayslip?: PayslipData | null;
+  /** Paramètres réglementaires datés (table regulatory_parameters). */
+  regulatory?: import("./regulatory").RegulatoryParameter[];
+  /** Taux AT/MP notifié à l'entreprise, en %. */
+  atMpRatePercent?: number | null;
 };
 
 export type AnomalyRule = {

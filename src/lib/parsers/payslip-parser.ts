@@ -200,9 +200,26 @@ function extractContributionLines(lines: string[]): ContributionLine[] {
   const result: ContributionLine[] = [];
   for (const line of lines) {
     if (!CONTRIBUTION_LINE.test(line) || /^\s*total/i.test(line)) continue;
-    const triple = findRateTriple(decimalsInLine(line));
+    const numbers = decimalsInLine(line);
+    const triple = findRateTriple(numbers);
     if (!triple) continue;
-    result.push({ label: labelOf(line), base: triple.base, ratePercent: triple.rate, amount: triple.amount });
+    // Part patronale : taux et montant qui suivent la part salariale, sur la même base.
+    const after = numbers.slice(numbers.indexOf(triple.amount) + 1);
+    let employer: { rate: number; amount: number } | null = null;
+    for (let i = 0; i + 1 < after.length; i++) {
+      if (after[i] > 0 && after[i] < 100 && closeTo((triple.base * after[i]) / 100, after[i + 1])) {
+        employer = { rate: after[i], amount: after[i + 1] };
+        break;
+      }
+    }
+    result.push({
+      label: labelOf(line),
+      base: triple.base,
+      ratePercent: triple.rate,
+      amount: triple.amount,
+      employerRatePercent: employer?.rate ?? null,
+      employerAmount: employer?.amount ?? null,
+    });
   }
   return result.slice(0, 40);
 }
