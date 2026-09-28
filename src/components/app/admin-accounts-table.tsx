@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PLANS, PLAN_ORDER, ROLE_LABELS, toPlanId, type AppRole, type PlanId } from "@/lib/plans";
+import { PLANS, PLAN_ORDER, ROLE_LABELS, quotaLabel, toPlanId, type AppRole, type PlanId } from "@/lib/plans";
 
 export type AdminAccount = {
   user_id: string;
@@ -15,6 +15,10 @@ export type AdminAccount = {
   company_id: string | null;
   company_name: string | null;
   plan: string;
+  /** Limite personnalisée (null = celle de la formule). */
+  custom_quota: number | null;
+  /** Limite effective (null = illimité). */
+  quota: number | null;
   payslips_month: number;
   payslips_total: number;
   sub_companies: number;
@@ -35,11 +39,11 @@ function formatDate(value: string | null) {
 export function AdminAccountsTable({
   accounts,
   currentUserId,
-  isAdmin,
+  isSuperAdmin,
 }: {
   accounts: AdminAccount[];
   currentUserId: string;
-  isAdmin: boolean;
+  isSuperAdmin: boolean;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -72,6 +76,31 @@ export function AdminAccountsTable({
     }
     setFeedback({ tone: "ok", text: success });
     router.refresh();
+  }
+
+  function editQuota(account: AdminAccount) {
+    const plan = PLANS[toPlanId(account.plan)];
+    const current = account.custom_quota === null ? "" : String(account.custom_quota);
+    const answer = window.prompt(
+      `Limite de fiches de ${account.email} (${plan.id === "free" ? "au total" : "par mois"}).
+` +
+        `Laisser vide pour revenir à la limite de la formule ${plan.label} (${quotaLabel(plan)}).`,
+      current
+    );
+    if (answer === null) return;
+    const trimmed = answer.trim();
+    const value = trimmed === "" ? null : Number(trimmed);
+    if (value !== null && !(Number.isInteger(value) && value >= 0)) {
+      setFeedback({ tone: "error", text: "La limite doit être un nombre entier positif." });
+      return;
+    }
+    run(
+      `quota-${account.user_id}`,
+      { action: "quota", companyId: account.company_id, value },
+      value === null
+        ? `${account.email} revient à la limite de la formule.`
+        : `Limite de ${account.email} : ${quotaLabel(plan, value)}.`
+    );
   }
 
   return (
@@ -119,6 +148,7 @@ export function AdminAccountsTable({
               <th className="px-5 py-3">Compte</th>
               <th className="px-5 py-3">Formule</th>
               <th className="whitespace-nowrap px-5 py-3">Fiches (mois / total)</th>
+              <th className="px-5 py-3">Limite</th>
               <th className="px-5 py-3">Rôle</th>
               <th className="px-5 py-3">Statut</th>
               <th className="px-5 py-3" aria-label="Actions" />
@@ -129,8 +159,8 @@ export function AdminAccountsTable({
               const plan = toPlanId(account.plan);
               const isSelf = account.user_id === currentUserId;
               const blocked = Boolean(account.blocked_at);
-              // Un gestionnaire ne peut agir que sur les comptes clients.
-              const canBlock = !isSelf && (isAdmin || account.app_role === "client");
+              // Un admin ne peut agir que sur les comptes clients.
+              const canBlock = !isSelf && (isSuperAdmin || account.app_role === "client");
               return (
                 <tr key={account.user_id} className={blocked ? "bg-rose-50/40" : "transition-colors hover:bg-beige-50/70"}>
                   <td className="px-5 py-4">
@@ -169,8 +199,26 @@ export function AdminAccountsTable({
                   <td className="whitespace-nowrap px-5 py-4 tabular-nums text-ink-700">
                     {account.payslips_month} / {account.payslips_total}
                   </td>
+                  <td className="whitespace-nowrap px-5 py-4">
+                    {account.company_id ? (
+                      <button
+                        type="button"
+                        disabled={pending !== null}
+                        onClick={() => editQuota(account)}
+                        title="Modifier la limite de fiches"
+                        className="text-left text-xs font-semibold text-ink-700 underline decoration-ink-200 underline-offset-4 hover:decoration-ink-500"
+                      >
+                        {quotaLabel(PLANS[plan], account.quota)}
+                        {account.custom_quota !== null && (
+                          <span className="ml-1.5 font-normal text-blue-700">(personnalisée)</span>
+                        )}
+                      </button>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                   <td className="px-5 py-4">
-                    {isAdmin && !isSelf ? (
+                    {isSuperAdmin && !isSelf ? (
                       <select
                         value={account.app_role}
                         disabled={pending !== null}
@@ -184,7 +232,7 @@ export function AdminAccountsTable({
                         }
                         className="input w-auto rounded-full py-1.5 pl-3 pr-8 text-xs font-semibold"
                       >
-                        {(["client", "gestionnaire", "admin"] as AppRole[]).map((role) => (
+                        {(["client", "admin", "super_admin"] as AppRole[]).map((role) => (
                           <option key={role} value={role}>
                             {ROLE_LABELS[role]}
                           </option>
@@ -229,7 +277,7 @@ export function AdminAccountsTable({
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-5 py-10 text-center text-sm text-ink-500">
+                <td colSpan={7} className="px-5 py-10 text-center text-sm text-ink-500">
                   Aucun compte ne correspond à la recherche.
                 </td>
               </tr>

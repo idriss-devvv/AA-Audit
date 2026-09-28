@@ -6,12 +6,16 @@ export type AccountContext = {
   userId: string | null;
   email: string | null;
   role: AppRole;
+  /** Super admin ou admin : accès au back-office. */
   isStaff: boolean;
-  isAdmin: boolean;
+  /** Super admin (développeurs) : gère aussi les rôles. */
+  isSuperAdmin: boolean;
   blocked: boolean;
   /** Formule de l'entreprise propre de l'utilisateur. */
   plan: PlanDefinition;
-  /** Onglets débloqués (formule, ou accès complet pour l'admin / le gestionnaire). */
+  /** Limite de fiches effective (personnalisée ou celle de la formule) ; null = illimité. */
+  quota: number | null;
+  /** Onglets débloqués (formule, ou accès complet pour le super admin / l'admin). */
   canManageCompanies: boolean;
   canManageEmployees: boolean;
 };
@@ -27,9 +31,10 @@ export const getAccountContext = cache(async (): Promise<AccountContext> => {
     email: null,
     role: "client",
     isStaff: false,
-    isAdmin: false,
+    isSuperAdmin: false,
     blocked: false,
     plan: PLANS.free,
+    quota: PLANS.free.quota,
     canManageCompanies: false,
     canManageEmployees: false,
   };
@@ -37,13 +42,18 @@ export const getAccountContext = cache(async (): Promise<AccountContext> => {
   if (!user) return anonymous;
 
   const role = (profile?.app_role as AppRole | undefined) ?? "client";
-  const isStaff = role === "admin" || role === "gestionnaire";
+  const isStaff = role === "super_admin" || role === "admin";
 
   let plan = PLANS.free;
+  let quota = plan.quota;
   if (profile?.company_id) {
     const supabase = await createClient();
-    const { data: planId } = await supabase.rpc("company_plan", { p_company: profile.company_id });
+    const [{ data: planId }, { data: quotaValue }] = await Promise.all([
+      supabase.rpc("company_plan", { p_company: profile.company_id }),
+      supabase.rpc("company_quota", { p_company: profile.company_id }),
+    ]);
     plan = PLANS[toPlanId(planId as string | null)];
+    quota = (quotaValue as number | null) ?? null;
   }
 
   return {
@@ -51,9 +61,10 @@ export const getAccountContext = cache(async (): Promise<AccountContext> => {
     email: user.email ?? null,
     role,
     isStaff,
-    isAdmin: role === "admin",
+    isSuperAdmin: role === "super_admin",
     blocked: Boolean(profile?.blocked_at),
     plan,
+    quota,
     canManageCompanies: isStaff || plan.companiesTab,
     canManageEmployees: isStaff || plan.employeesTab,
   };
@@ -69,7 +80,9 @@ export async function getQuotaUsage(companyId: string, plan: PlanDefinition): Pr
     .select("id", { count: "exact", head: true })
     .eq("company_id", companyId)
     .or("mime_type.is.null,mime_type.not.like.image/*");
-  if (plan.quotaPeriod === "month") {
+  // Au total pour free, par mois pour les autres formules (y compris une
+  // limite personnalisée sur la formule Entreprise).
+  if (plan.id !== "free") {
     const now = new Date();
     query = query.gte("uploaded_at", new Date(now.getFullYear(), now.getMonth(), 1).toISOString());
   }

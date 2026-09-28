@@ -83,21 +83,24 @@ export async function POST(req: NextRequest) {
 
   // Quota de la formule, vérifié avant tout envoi pour un message clair (la
   // base applique la même règle via le trigger enforce_payslip_quota).
-  const [{ data: planId }, { data: isStaff }] = await Promise.all([
+  const [{ data: planId }, { data: quotaValue }, { data: isStaff }] = await Promise.all([
     supabase.rpc("company_plan", { p_company: targetCompanyId }),
+    supabase.rpc("company_quota", { p_company: targetCompanyId }),
     supabase.rpc("is_staff"),
   ]);
   const plan = PLANS[toPlanId(planId as string | null)];
+  // Limite personnalisée par le back-office, sinon celle de la formule.
+  const quota = (quotaValue as number | null) ?? null;
   // Les images ne sont pas encore analysées : elles ne comptent pas dans le quota.
-  if (!isStaff && plan.quota !== null && !isImage) {
+  if (!isStaff && quota !== null && !isImage) {
     const used = await getQuotaUsage(targetCompanyId, plan);
-    if (used >= plan.quota) {
+    if (used >= quota) {
       return NextResponse.json(
         {
           error:
             plan.id === "free"
               ? "Votre fiche d'essai gratuite a déjà été utilisée. Choisissez une formule pour continuer à contrôler vos fiches de paie."
-              : `Limite de la formule ${plan.label} atteinte (${quotaLabel(plan)}). Passez à la formule supérieure pour importer davantage de fiches ce mois-ci.`,
+              : `Limite de la formule ${plan.label} atteinte (${quotaLabel(plan, quota)}). Passez à la formule supérieure pour importer davantage de fiches ce mois-ci.`,
           code: "QUOTA_EXCEEDED",
         },
         { status: 403 }
@@ -197,7 +200,7 @@ export async function POST(req: NextRequest) {
     await supabase.storage.from("payslips").remove([storagePath]);
     if (payslipError?.message?.includes("QUOTA_EXCEEDED")) {
       return NextResponse.json(
-        { error: `Limite de la formule ${plan.label} atteinte (${quotaLabel(plan)}).`, code: "QUOTA_EXCEEDED" },
+        { error: `Limite de la formule ${plan.label} atteinte (${quotaLabel(plan, quota)}).`, code: "QUOTA_EXCEEDED" },
         { status: 403 }
       );
     }

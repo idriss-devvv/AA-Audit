@@ -57,7 +57,7 @@ export type NavAccess = {
 
 function navItemsFor(access: NavAccess) {
   // Onglets affichés selon la formule (Sociétés : Entreprise ; Salariés : Pro
-  // et Entreprise) et le rôle (Administration : admin et gestionnaire).
+  // et Entreprise) et le rôle (Administration : super admin et admin).
   return [
     { href: "/app/dashboard", label: "Tableau de bord", short: "Accueil" },
     { href: "/app/fiches", label: "Fiches de paie", short: "Fiches" },

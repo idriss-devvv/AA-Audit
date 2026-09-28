@@ -5,7 +5,7 @@
  */
 
 export type PlanId = "free" | "starter" | "pro" | "entreprise";
-export type AppRole = "admin" | "gestionnaire" | "client";
+export type AppRole = "super_admin" | "admin" | "client";
 
 export type PlanDefinition = {
   id: PlanId;
@@ -92,13 +92,15 @@ export function toPlanId(value: string | null | undefined): PlanId {
   return value && value in PLANS ? (value as PlanId) : "free";
 }
 
-export function quotaLabel(plan: PlanDefinition): string {
-  if (plan.quota === null) return "Fiches illimitées";
-  return plan.quotaPeriod === "total" ? `${plan.quota} fiche au total` : `${plan.quota} fiches / mois`;
+/** Limite de fiches ; `quota` remplace celle de la formule (limite personnalisée). */
+export function quotaLabel(plan: PlanDefinition, quota: number | null = plan.quota): string {
+  if (quota === null) return "Fiches illimitées";
+  const unit = quota > 1 ? "fiches" : "fiche";
+  return plan.id === "free" ? `${quota} ${unit} au total` : `${quota} ${unit} / mois`;
 }
 
 export const ROLE_LABELS: Record<AppRole, string> = {
+  super_admin: "Super admin",
   admin: "Admin",
-  gestionnaire: "Gestionnaire",
   client: "Client",
 };

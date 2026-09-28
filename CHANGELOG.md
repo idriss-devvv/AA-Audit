@@ -25,6 +25,20 @@ sert de socle de départ pour ce dépôt.
 
 ---
 
+## 2026-09-28
+
+### Rôles simplifiés, limite de fiches personnalisée, invitations
+- Trois rôles : **Super admin** (développeurs, tous les droits, nomment les
+  admins), **Admin** (propriétaires du SaaS : back-office) et **Client**
+  (accès selon la formule Free / Starter / Pro / Entreprise). Les anciens
+  rôles admin → super admin, gestionnaire → admin.
+- Limite de fiches personnalisable par compte depuis l'Administration
+  (colonne `subscriptions.custom_quota`, vide = limite de la formule),
+  appliquée par la base (trigger `enforce_payslip_quota`).
+- Ajout d'un utilisateur depuis l'Administration : e-mail d'invitation,
+  formule, limite et rôle (nécessite `SUPABASE_SERVICE_ROLE_KEY`).
+- Migration `20260928120000_super_admin_custom_quota.sql`.
+
 ## 2026-09-27
 
 ### Expérience utilisateur : fiches de paie centralisées

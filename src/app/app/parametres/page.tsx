@@ -108,7 +108,8 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
   const periodEnd = subscription?.current_period_end
     ? new Date(subscription.current_period_end).toLocaleDateString("fr-FR")
     : null;
-  const percent = plan.quota ? Math.min(100, Math.round((used / plan.quota) * 100)) : 0;
+  const quota = account.quota;
+  const percent = quota ? Math.min(100, Math.round((used / quota) * 100)) : 0;
 
   return (
     <div className="mt-6 grid gap-6">
@@ -119,20 +120,20 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
             <p className="font-display text-4xl leading-none text-ink-900">{plan.label}</p>
             <p className="mt-2 text-sm text-ink-500">
               {plan.price > 0 ? `${plan.price} € / mois · ` : ""}
-              {quotaLabel(plan)}
+              {quotaLabel(plan, quota)}
             </p>
           </div>
           {statusInfo && <span className={`badge ${statusInfo.className}`}>{statusInfo.label}</span>}
         </div>
 
-        {plan.quota !== null && (
+        {quota !== null && (
           <div className="mt-6">
             <div className="flex items-center justify-between text-sm">
               <span className="text-ink-500">
-                {plan.quotaPeriod === "total" ? "Fiche d'essai utilisée" : "Fiches importées ce mois-ci"}
+                {plan.id === "free" ? "Fiches d'essai utilisées" : "Fiches importées ce mois-ci"}
               </span>
               <span className="font-semibold tabular-nums text-ink-900">
-                {used} / {plan.quota}
+                {used} / {quota}
               </span>
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-beige-100">

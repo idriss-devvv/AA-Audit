@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getAccountContext } from "@/lib/account";
 import { PLANS, PLAN_ORDER, ROLE_LABELS, toPlanId } from "@/lib/plans";
 import { AdminAccountsTable, type AdminAccount } from "@/components/app/admin-accounts-table";
+import { AdminInviteForm } from "@/components/app/admin-invite-form";
 
 export const dynamic = "force-dynamic";
 
@@ -16,8 +17,8 @@ type Overview = {
 };
 
 /**
- * Back-office (rôles admin et gestionnaire) : vue d'ensemble du SaaS,
- * comptes, formules et blocages. Les données viennent de fonctions SQL
+ * Back-office (super admin et admin) : vue d'ensemble du SaaS, ajout
+ * d'utilisateurs, formules, limites de fiches et blocages. Les données viennent de fonctions SQL
  * security definer qui refusent tout appel d'un simple client.
  */
 export default async function AdminPage() {
@@ -48,9 +49,9 @@ export default async function AdminPage() {
       </div>
       <p className="mt-3 max-w-2xl text-sm text-ink-500">
         Vue d&apos;ensemble du SaaS : utilisateurs, formules et accès.{" "}
-        {account.isAdmin
-          ? "En tant qu'admin, vous pouvez aussi nommer des gestionnaires."
-          : "Les changements de rôle sont réservés à l'admin."}
+        {account.isSuperAdmin
+          ? "En tant que super admin, vous pouvez aussi nommer des admins."
+          : "Les changements de rôle sont réservés aux super admins."}
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -77,7 +78,9 @@ export default async function AdminPage() {
         </p>
       </div>
 
-      <AdminAccountsTable accounts={accounts} currentUserId={account.userId} isAdmin={account.isAdmin} />
+      <AdminInviteForm isSuperAdmin={account.isSuperAdmin} />
+
+      <AdminAccountsTable accounts={accounts} currentUserId={account.userId} isSuperAdmin={account.isSuperAdmin} />
     </div>
   );
 }

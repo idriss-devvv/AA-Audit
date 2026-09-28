@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { hideNavigationLoader, showNavigationLoader } from "@/components/ui/navigation-loader";
@@ -10,13 +10,32 @@ const MIN_PASSWORD_LENGTH = 8;
 
 /**
  * Nouveau mot de passe après ouverture du lien de secours de l'e-mail
- * (la session de récupération est ouverte par /auth/callback).
+ * (la session de récupération est ouverte par /auth/callback) ou du lien
+ * d'invitation envoyé par le back-office (jetons dans le fragment « # »).
  */
 export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Lien d'invitation : Supabase renvoie la session dans le fragment de l'URL,
+  // que le client (flux PKCE) ne lit pas de lui-même.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
+    if (params.get("error_description")) {
+      setError("Le lien a expiré. Demandez un nouveau code depuis la page « Mot de passe oublié ».");
+    }
+    if (!accessToken || !refreshToken) return;
+    window.history.replaceState(null, "", window.location.pathname);
+    createClient()
+      .auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+      .then(({ error }) => {
+        if (error) setError("Le lien a expiré. Demandez un nouveau code depuis la page « Mot de passe oublié ».");
+      });
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
