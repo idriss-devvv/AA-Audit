@@ -8,7 +8,7 @@ import { PLANS, quotaLabel, toPlanId } from "@/lib/plans";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { extractPdfLines } from "@/lib/parsers/pdf-text";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
-import type { ConventionSickPayRule } from "@/lib/rules/types";
+import type { ConventionRules, ConventionSickPayRule } from "@/lib/rules/types";
 import {
   getCompanyPaySettings,
   listRegulatoryParameters,
@@ -245,7 +245,8 @@ export async function POST(req: NextRequest) {
         .map((r) => ({ ...r, rate_percent: Number(r.rate_percent) }));
     }
     const regulatory = await listRegulatoryParameters();
-    const anomalies = runAnomalyRules(extracted, { ...toRuleContext(paySettings), previousPayslip, previousPayslips, regulatory, conventionSickPay });
+    const conventionRules = await loadConventionRules(supabase, extracted);
+    const anomalies = runAnomalyRules(extracted, { ...toRuleContext(paySettings), previousPayslip, previousPayslips, regulatory, conventionSickPay, conventionRules });
     anomaliesCount = anomalies.length;
     criticalCount = anomalies.filter((a) => a.severity === "critical").length;
 
@@ -340,4 +341,37 @@ async function analyzePdf(buffer: Buffer): Promise<{ extracted: PayslipData | nu
         : "Le contenu de ce PDF n'a pas pu être interprété comme une fiche de paie. Vérifiez qu'il s'agit bien d'un bulletin de salaire.";
     return { extracted: null, errorMessage };
   }
+}
+
+/**
+ * Règles de la convention collective de la fiche (ancienneté, majorations,
+ * primes) en vigueur à sa période, lues dans les tables cc_*.
+ */
+async function loadConventionRules(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  payslip: PayslipData
+): Promise<ConventionRules | null> {
+  if (!payslip.collectiveAgreementIdcc || !/^\d{4}-\d{2}/.test(payslip.period)) return null;
+  const idcc = String(parseInt(payslip.collectiveAgreementIdcc, 10));
+  const day = `${payslip.period.slice(0, 7)}-01`;
+  const inForce = <T extends { valid_from: string; valid_to: string | null }>(rows: T[] | null) =>
+    (rows ?? []).filter((r) => r.valid_from <= day && (!r.valid_to || r.valid_to > day));
+  const [{ data: agreement }, { data: seniority }, { data: increases }, { data: bonuses }] = await Promise.all([
+    supabase.from("collective_agreements").select("name").eq("idcc_code", idcc).maybeSingle(),
+    supabase
+      .from("cc_seniority_bonuses")
+      .select("categories, classification_codes, seniority_min_months, rate_percent, fixed_amount, calculation_base, seniority_definition, notes, valid_from, valid_to")
+      .eq("idcc_code", idcc),
+    supabase.from("cc_pay_increases").select("kind, label, categories, hours_from, rate_percent, notes, valid_from, valid_to").eq("idcc_code", idcc),
+    supabase.from("cc_bonuses").select("kind, label, categories, payment_months, seniority_min_months, notes, valid_from, valid_to").eq("idcc_code", idcc),
+  ]);
+  if (!agreement) return null;
+  const num = (v: unknown) => (v === null || v === undefined ? null : Number(v));
+  return {
+    idcc,
+    name: agreement.name ?? null,
+    seniority: inForce(seniority).map((r) => ({ ...r, rate_percent: num(r.rate_percent), fixed_amount: num(r.fixed_amount) })),
+    payIncreases: inForce(increases).map((r) => ({ ...r, hours_from: num(r.hours_from), rate_percent: num(r.rate_percent) })),
+    bonuses: inForce(bonuses),
+  };
 }

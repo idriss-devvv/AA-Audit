@@ -13,7 +13,8 @@ export type RuleCategory =
   | "heures-sup"
   | "plafonds"
   | "mentions-obligatoires"
-  | "ecart-periode";
+  | "ecart-periode"
+  | "conventions";
 
 export const CATEGORY_LABELS: Record<RuleCategory, string> = {
   coherence: "Cohérence des montants",
@@ -27,6 +28,7 @@ export const CATEGORY_LABELS: Record<RuleCategory, string> = {
   plafonds: "Plafond de la Sécurité sociale",
   "mentions-obligatoires": "Mentions obligatoires",
   "ecart-periode": "Écart N / N-1",
+  conventions: "Convention collective",
 };
 
 export type RuleFinding = {
@@ -51,6 +53,38 @@ export type ConventionSickPayRule = {
   rate_base: string;
 };
 
+/** Règles de la convention collective de la fiche (tables cc_*), en vigueur à la période. */
+export type ConventionRules = {
+  idcc: string;
+  name: string | null;
+  seniority: {
+    categories: string[] | null;
+    classification_codes: string[] | null;
+    seniority_min_months: number;
+    rate_percent: number | null;
+    fixed_amount: number | null;
+    calculation_base: string;
+    seniority_definition: string | null;
+    notes: string | null;
+  }[];
+  payIncreases: {
+    kind: string;
+    label: string;
+    categories: string[] | null;
+    hours_from: number | null;
+    rate_percent: number | null;
+    notes: string | null;
+  }[];
+  bonuses: {
+    kind: string;
+    label: string;
+    categories: string[] | null;
+    payment_months: number[] | null;
+    seniority_min_months: number | null;
+    notes: string | null;
+  }[];
+};
+
 export type RuleContext = {
   contributionRates?: ContributionRateSetting[];
   csgCrdsNonDeductiblePercent?: number | null;
@@ -67,6 +101,8 @@ export type RuleContext = {
   previousPayslips?: PayslipData[];
   /** Maintien de salaire prévu par la convention collective de la fiche. */
   conventionSickPay?: ConventionSickPayRule[];
+  /** Autres règles de la convention collective de la fiche. */
+  conventionRules?: ConventionRules | null;
 };
 
 export type AnomalyRule = {

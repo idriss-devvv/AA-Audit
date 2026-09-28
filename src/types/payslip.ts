@@ -93,6 +93,12 @@ export interface PayslipData {
   /** Part patronale de complémentaire santé (imposable), dernière valeur de la ligne santé. */
   employerHealthContribution?: number | null;
   sickLeave?: SickLeaveInfo | null;
+  /** Prime d'ancienneté versée ce mois-ci. */
+  seniorityBonus?: number | null;
+  /** 13e mois, prime annuelle ou gratification versée ce mois-ci. */
+  annualBonus?: number | null;
+  /** Majorations de nuit, dimanche ou jour férié lues avec leur taux. */
+  premiumLines?: { kind: "nuit" | "dimanche" | "jour_ferie"; label: string; ratePercent: number | null; amount: number | null }[];
   /** Montant de la réduction générale des cotisations patronales (valeur absolue). */
   generalReduction?: number | null;
   /** Part salariale de complémentaire santé. */

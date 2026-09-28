@@ -14,6 +14,7 @@ import { ecartPeriodeRules } from "./catalog/ecart-periode";
 import { netsTranchesRules } from "./catalog/nets-tranches";
 import { cotisationsPatronalesRules } from "./catalog/cotisations-patronales";
 import { maladieRules } from "./catalog/maladie";
+import { conventionRules } from "./catalog/convention";
 
 export type { AnomalyRule, RuleCategory, RuleFinding, RuleContext, ContributionRateSetting } from "./types";
 export { CATEGORY_LABELS, categoryFromRuleId } from "./types";
@@ -42,6 +43,7 @@ export const RULES: AnomalyRule[] = [
   ...netsTranchesRules,
   ...cotisationsPatronalesRules,
   ...maladieRules,
+  ...conventionRules,
 ];
 
 export function runAnomalyRules(payslip: PayslipData, context: RuleContext = {}): Anomaly[] {

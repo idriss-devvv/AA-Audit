@@ -27,6 +27,19 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Le moteur applique les règles des conventions collectives
+- Nouvelle catégorie « Convention collective » : les règles relevées en base
+  (tables cc_*) sont chargées pour la convention de chaque fiche, en vigueur
+  à sa période, et contrôlées avec leur article source :
+  prime d'ancienneté (présence et montant selon l'ancienneté, base minimum
+  du niveau, salaire de base ou forfait), majoration des heures
+  supplémentaires, majorations nuit / dimanche / jour férié, 13e mois ou
+  prime annuelle attendu le mois prévu.
+- Lecteur PDF : prime d'ancienneté, 13e mois / prime annuelle, lignes de
+  majoration avec leur taux.
+- Règles ciblées (catégorie, niveau) ignorées quand la fiche ne permet pas
+  de les établir, pour éviter les faux positifs.
+
 ### Cas maladie et contrôle des IJSS
 - Lecture de l'arrêt sur le bulletin : absence (jours / heures, retenue),
   IJSS (montant, nombre de jours), subrogation, complément employeur,

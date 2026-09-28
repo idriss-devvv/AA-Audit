@@ -379,6 +379,24 @@ function extractSickLeave(lines: string[], text: string): SickLeaveInfo | null {
   };
 }
 
+/** Majorations nuit / dimanche / jour férié : taux lu dans le libellé (« 25 % ») ou dans la ligne. */
+function extractPremiumLines(lines: string[]): NonNullable<PayslipData["premiumLines"]> {
+  const out: NonNullable<PayslipData["premiumLines"]> = [];
+  for (const line of lines) {
+    const kind = /\bnuit\b/i.test(line) ? "nuit" : /dimanche/i.test(line) ? "dimanche" : /jours?\s+f[ée]ri[ée]s?/i.test(line) ? "jour_ferie" : null;
+    if (!kind || !/major|prime|heures?|indemnit/i.test(line) || /panier/i.test(line)) continue;
+    const percent = line.match(/(\d{1,3}(?:[.,]\d+)?)\s*%/);
+    const numbers = decimalsInLine(line);
+    out.push({
+      kind,
+      label: labelOf(line),
+      ratePercent: percent ? parseFloat(percent[1].replace(",", ".")) : null,
+      amount: numbers.length > 0 ? numbers[numbers.length - 1] : null,
+    });
+  }
+  return out.slice(0, 10);
+}
+
 const NON_SUBJECT_ITEMS =
   /titres?[- ]restaurant|tickets?[- ]restaurant|frais\s+de\s+transport|transport\s+en\s+commun|remboursement|acompte|avance|avantages?\s+en\s+nature|indemnit[ée]s?\s+non\s+soumises?|non\s+soumis|saisie|pr[êe]t|indemnit[ée]s?\s+kilom[ée]triques?/i;
 
@@ -436,6 +454,9 @@ export function parsePayslip(rawContent: string): PayslipData {
     netBeforeTax: firstDecimalOnMatchingLine(lines, /net\s+(?:(?:à|a)\s+payer\s+)?avant\s+imp[ôo]t/i),
     netSocial: firstDecimalOnMatchingLine(lines, /(?:montant\s+)?net\s+social/i),
     sickLeave: extractSickLeave(lines, text),
+    seniorityBonus: lastDecimalOnMatchingLine(lines, /prime\s+d['’]?\s*anciennet[ée]|anciennet[ée]\s+\d|prime\s+anciennet[ée]/i),
+    annualBonus: lastDecimalOnMatchingLine(lines, /13\s*[eè]?(?:me)?\s+mois|treizi[èe]me\s+mois|prime\s+annuelle|gratification\s+annuelle|prime\s+de\s+fin\s+d['’]ann[ée]e/i),
+    premiumLines: extractPremiumLines(lines),
     generalReduction: (() => {
       const value = lastDecimalOnMatchingLine(lines, /r[ée]duction\s+g[ée]n[ée]rale|\brgdu\b|r[ée]duction\s+fillon|all[èe]gement\s+g[ée]n[ée]ral/i);
       return value === null ? null : Math.abs(value);
