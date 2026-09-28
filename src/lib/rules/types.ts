@@ -12,7 +12,8 @@ export type RuleCategory =
   | "arrets-travail"
   | "heures-sup"
   | "plafonds"
-  | "mentions-obligatoires";
+  | "mentions-obligatoires"
+  | "ecart-periode";
 
 export const CATEGORY_LABELS: Record<RuleCategory, string> = {
   coherence: "Cohérence des montants",
@@ -25,6 +26,7 @@ export const CATEGORY_LABELS: Record<RuleCategory, string> = {
   "heures-sup": "Heures supplémentaires",
   plafonds: "Plafond de la Sécurité sociale",
   "mentions-obligatoires": "Mentions obligatoires",
+  "ecart-periode": "Écart N / N-1",
 };
 
 export type RuleFinding = {
@@ -43,6 +45,8 @@ export type RuleContext = {
   salaireMinimumConventionnel?: number | null;
   /** Seuils de tolérance réglés par l'entreprise (voir tolerances.ts). */
   tolerances?: Partial<import("./tolerances").Tolerances>;
+  /** Fiche précédente du même salarié (écart N / N-1), si elle existe. */
+  previousPayslip?: PayslipData | null;
 };
 
 export type AnomalyRule = {

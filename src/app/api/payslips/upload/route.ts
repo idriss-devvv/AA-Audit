@@ -209,7 +209,24 @@ export async function POST(req: NextRequest) {
 
   let anomaliesCount = 0;
   if (extracted) {
-    const anomalies = runAnomalyRules(extracted, toRuleContext(paySettings));
+    // Fiche précédente du même salarié (écart N / N-1) : la plus récente
+    // période antérieure, hors fiches supprimées ou non analysées.
+    let previousPayslip: PayslipData | null = null;
+    if (employeeRef !== "non-identifie" && /^\d{4}-\d{2}/.test(extracted.period)) {
+      const { data: previous } = await supabase
+        .from("payslips")
+        .select("extracted_data")
+        .eq("company_id", targetCompanyId)
+        .eq("employee_id", employeeId)
+        .eq("status", "processed")
+        .is("deleted_at", null)
+        .lt("period", extracted.period.slice(0, 7))
+        .order("period", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      previousPayslip = (previous?.extracted_data as PayslipData | null) ?? null;
+    }
+    const anomalies = runAnomalyRules(extracted, { ...toRuleContext(paySettings), previousPayslip });
     anomaliesCount = anomalies.length;
 
     if (anomalies.length > 0) {

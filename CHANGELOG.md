@@ -27,6 +27,14 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Écart N / N-1
+- Nouvelle catégorie de contrôles « Écart N / N-1 » : chaque fiche est
+  comparée à la fiche précédente du même salarié — variation du brut et du
+  net au-delà du seuil réglable (20 % par défaut), baisse du salaire de base
+  à horaire égal, taux de cotisation modifié en cours d'année.
+- Les éléments qui expliquent une variation (heures, heures supplémentaires,
+  arrêt, changement de classification) sont cités et abaissent la gravité.
+
 ### Seuils de tolérance configurables
 - Les écarts tolérés par la détection d'anomalies sont réglables par
   entreprise (Paramètres › Calcul et barèmes) : montant recalculé, marge sous
