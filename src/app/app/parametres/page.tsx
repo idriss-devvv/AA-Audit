@@ -8,6 +8,7 @@ import { TolerancesForm } from "@/components/app/tolerances-form";
 import { PaySettingsForm } from "@/components/app/pay-settings-form";
 import { ContributionRatesManager } from "@/components/app/contribution-rates-manager";
 import { SettingsTabs, resolveSettingsTab } from "@/components/app/settings-tabs";
+import { ConventionsTab } from "@/components/app/conventions-tab";
 import { CONVENTION_GRIDS } from "@/lib/rules/referentiels/grilles-conventionnelles";
 import { getAccountContext, getQuotaUsage } from "@/lib/account";
 import { PLANS, PLAN_ORDER, ROLE_LABELS, quotaLabel } from "@/lib/plans";
@@ -90,6 +91,8 @@ export default async function ParametresPage({
       {tab === "abonnement" && <SubscriptionTab companyId={ownCompanyId} />}
 
       {tab === "baremes" && <BaremesTab companyId={activeCompanyId} companyName={activeCompanyName} />}
+
+      {tab === "conventions" && <ConventionsTab />}
     </div>
   );
 }

@@ -27,6 +27,11 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Paramètres : onglet « Conventions collectives »
+- Liste des conventions intégrées (IDCC, nom, secteur, effectifs couverts),
+  dernier texte de salaires avec sa date d'effet et date de la dernière mise
+  à jour des critères.
+
 ### Réduction générale dégressive unique (RGDU 2026)
 - Contrôle de la réduction générale des cotisations patronales selon la
   formule de l'article D241-7 CSS en vigueur (décret n° 2026-509 du

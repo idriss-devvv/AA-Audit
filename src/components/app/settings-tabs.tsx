@@ -4,6 +4,7 @@ export const SETTINGS_TABS = [
   { id: "compte", label: "Compte" },
   { id: "abonnement", label: "Abonnement" },
   { id: "baremes", label: "Calcul et barèmes" },
+  { id: "conventions", label: "Conventions collectives" },
 ] as const;
 
 export type SettingsTabId = (typeof SETTINGS_TABS)[number]["id"];
@@ -30,6 +31,12 @@ const ICONS: Record<SettingsTabId, React.ReactNode> = {
     <>
       <rect x="5" y="3" width="14" height="18" rx="2" />
       <path d="M9 7h6M9 11h1M14 11h1M9 15h1M14 15h1" />
+    </>
+  ),
+  conventions: (
+    <>
+      <path d="M4 5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+      <path d="M14 3v5h5M8 13h8M8 17h5" />
     </>
   ),
 };
