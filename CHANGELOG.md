@@ -27,6 +27,24 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Conventions collectives : les 20 du cahier des charges
+- Registre aligné sur la liste V1 du cahier des charges (20 conventions,
+  21 codes IDCC) : ajout de Prévention et sécurité (1351), Bâtiment cadres
+  (2420), Travaux publics ouvriers (1702) et ETAM (2614), Commerce de détail
+  non alimentaire (1517), Assurances (1672), Industrie pharmaceutique (176),
+  Pharmacie d'officine (1996) ; retrait de Restauration rapide (1501),
+  Boulangerie (843), Experts-comptables (787), Enseignement privé (3211).
+- Critères sourcés (article Légifrance par règle) importés pour les 12
+  conventions qui n'en avaient pas : textes, classifications, minima,
+  ancienneté, primes, durée du travail, majorations, congés, maintien de
+  salaire (~1 200 lignes, migrations `20260928130000…130012`).
+- BTP ouvriers / ETAM : minima régionaux non intégrés (champ manuel des
+  Paramètres) ; Transports routiers : barèmes voyageurs 2026 et
+  marchandises (dernier barème étendu, 12/2023).
+- Moteur de contrôle : 7 nouvelles grilles nationales (1351, 1517, 1996,
+  176, 1672, 2420, 16), grilles 1501 et 843 retirées.
+- Outils d'import KALI versionnés dans `scripts/cc-rules/`.
+
 ### Rôles simplifiés, limite de fiches personnalisée, invitations
 - Trois rôles : **Super admin** (développeurs, tous les droits, nomment les
   admins), **Admin** (propriétaires du SaaS : back-office) et **Client**

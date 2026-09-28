@@ -1,0 +1,1 @@
+module.exports = require("./btp_etam")("2614", "KALITEXT000018926214", "Convention collective nationale des employés, techniciens et agents de maîtrise des travaux publics du 12 juillet 2006", "travaux publics");

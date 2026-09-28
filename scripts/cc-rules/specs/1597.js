@@ -1,0 +1,1 @@
+module.exports = require("./btp_ouvriers")("1597", "KALITEXT000005645150", "Convention collective nationale des ouvriers des entreprises du bâtiment occupant plus de 10 salariés du 8 octobre 1990", "1990-10-08");
