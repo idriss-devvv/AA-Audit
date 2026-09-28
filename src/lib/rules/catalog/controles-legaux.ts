@@ -1,5 +1,6 @@
 import type { MandatoryMentionKey } from "@/types/payslip";
 import type { AnomalyRule } from "../types";
+import { tolerancesFor } from "../tolerances";
 import {
   LEGAL_SOURCES,
   PMSS_BY_YEAR,
@@ -20,9 +21,6 @@ const EURO = (value: number) =>
   new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(value);
 const PCT = (value: number) => `${value.toLocaleString("fr-FR", { maximumFractionDigits: 3 })} %`;
 
-const RATE_TOLERANCE = 0.005;
-const NET_TOLERANCE_EUROS = 1;
-const CONGES_TOLERANCE_DAYS = 0.5;
 /** 8 heures par semaine rapportées au mois (8 × 52 / 12). */
 const MONTHLY_HOURS_AT_25_PERCENT = (8 * 52) / 12;
 
@@ -48,8 +46,9 @@ export const controlesLegauxRules: AnomalyRule[] = [
   {
     id: "coherence.net-a-payer-calcul",
     category: "coherence",
-    description: "Net à payer = brut − cotisations salariales − retenues (écart toléré : 1 €)",
-    check: (payslip) => {
+    description: "Net à payer = brut − cotisations salariales − retenues (écart toléré réglable, 1 € par défaut)",
+    check: (payslip, context) => {
+      const NET_TOLERANCE_EUROS = tolerancesFor(context).amountEuros;
       const gross = payslip.grossPay;
       const totalContributions = payslip.totalEmployeeContributions ?? null;
       const netBeforeTax = payslip.netBeforeTax ?? null;
@@ -126,7 +125,8 @@ export const controlesLegauxRules: AnomalyRule[] = [
     id: "cotisations.taux-urssaf",
     category: "cotisations",
     description: "Compare le taux de chaque cotisation détectée au barème officiel en vigueur pour la période",
-    check: (payslip) => {
+    check: (payslip, context) => {
+      const RATE_TOLERANCE = tolerancesFor(context).ratePoints;
       const year = yearOfPeriod(payslip.period);
       const lines = payslip.contributionLines ?? [];
       if (!isYearCovered(year) || lines.length === 0) return null;
@@ -191,7 +191,8 @@ export const controlesLegauxRules: AnomalyRule[] = [
     id: "conges.solde-incoherent",
     category: "conges",
     description: "Solde de congés payés = congés acquis − congés pris",
-    check: (payslip) => {
+    check: (payslip, context) => {
+      const CONGES_TOLERANCE_DAYS = tolerancesFor(context).leaveDays;
       const { acquired, taken, balance } = payslip.paidLeave;
       if (acquired === null || taken === null || balance === null) return null;
       const expected = acquired - taken;

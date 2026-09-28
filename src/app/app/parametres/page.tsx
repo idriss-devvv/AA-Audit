@@ -4,6 +4,7 @@ import { getActiveCompanyContext } from "@/lib/active-company";
 import { getCompanyPaySettings } from "@/lib/pay-settings";
 import { ChangePasswordForm } from "@/components/auth/change-password-form";
 import { ManageSubscriptionButton } from "@/components/app/manage-subscription-button";
+import { TolerancesForm } from "@/components/app/tolerances-form";
 import { PaySettingsForm } from "@/components/app/pay-settings-form";
 import { ContributionRatesManager } from "@/components/app/contribution-rates-manager";
 import { SettingsTabs, resolveSettingsTab } from "@/components/app/settings-tabs";
@@ -216,7 +217,7 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
 async function BaremesTab({ companyId, companyName }: { companyId: string | null; companyName: string | null }) {
   const paySettings = companyId
     ? await getCompanyPaySettings(companyId)
-    : { csgCrdsNonDeductiblePercent: null, salaireMinimumConventionnel: null, contributionRates: [] };
+    : { csgCrdsNonDeductiblePercent: null, salaireMinimumConventionnel: null, contributionRates: [], tolerances: {} };
 
   return (
     <div className="mt-6 grid max-w-2xl gap-6">
@@ -257,6 +258,15 @@ async function BaremesTab({ companyId, companyName }: { companyId: string | null
           CARSAT), mutuelle, prévoyance, versement mobilité… — un libellé par cotisation à vérifier.
         </p>
         <ContributionRatesManager rates={paySettings.contributionRates} />
+      </section>
+
+      <section className="card p-6 sm:p-7">
+        <h2 className="card-title">Seuils de tolérance</h2>
+        <p className="mt-1 text-xs text-ink-500">
+          Écarts en dessous desquels aucune anomalie n&apos;est signalée. Laissez un champ vide pour garder la
+          valeur par défaut.
+        </p>
+        <TolerancesForm initial={paySettings.tolerances} />
       </section>
     </div>
   );

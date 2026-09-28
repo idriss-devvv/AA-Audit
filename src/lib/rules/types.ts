@@ -41,6 +41,8 @@ export type RuleContext = {
   contributionRates?: ContributionRateSetting[];
   csgCrdsNonDeductiblePercent?: number | null;
   salaireMinimumConventionnel?: number | null;
+  /** Seuils de tolérance réglés par l'entreprise (voir tolerances.ts). */
+  tolerances?: Partial<import("./tolerances").Tolerances>;
 };
 
 export type AnomalyRule = {

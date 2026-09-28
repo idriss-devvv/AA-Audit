@@ -1,5 +1,6 @@
 import type { AnomalyRule } from "../types";
 import { findConventionGrid } from "../referentiels/grilles-conventionnelles";
+import { tolerancesFor } from "../tolerances";
 
 function normalizeLabel(label: string): string {
   return label
@@ -17,8 +18,11 @@ function labelsMatch(a: string, b: string): boolean {
   return na.includes(nb) || nb.includes(na);
 }
 
-const TOLERANCE_RELATIVE = 0.08;
-const TOLERANCE_ABSOLUTE_MIN = 3;
+/** Écart relatif et plancher en € réglables (8 % et 3 € par défaut). */
+function relativeTolerance(context: Parameters<typeof tolerancesFor>[0]) {
+  const t = tolerancesFor(context);
+  return { relative: t.relativePercent / 100, minimum: t.relativeMinEuros };
+}
 
 export const baremesParametrablesRules: AnomalyRule[] = [
   {
@@ -28,6 +32,7 @@ export const baremesParametrablesRules: AnomalyRule[] = [
     check: (payslip, context) => {
       const rates = context.contributionRates ?? [];
       if (rates.length === 0 || payslip.grossPay <= 0) return null;
+      const { relative: TOLERANCE_RELATIVE, minimum: TOLERANCE_ABSOLUTE_MIN } = relativeTolerance(context);
       const ecarts: string[] = [];
       for (const rate of rates) {
         const line = payslip.contributions.find((c) => labelsMatch(c.label, rate.label));
@@ -78,6 +83,7 @@ export const baremesParametrablesRules: AnomalyRule[] = [
       if (!rate || rate <= 0) return null;
       if (!payslip.netTaxable || payslip.netPay <= 0 || payslip.grossPay <= 0) return null;
       const estimated = payslip.netPay + payslip.grossPay * (rate / 100);
+      const { relative: TOLERANCE_RELATIVE, minimum: TOLERANCE_ABSOLUTE_MIN } = relativeTolerance(context);
       const tolerance = Math.max(estimated * TOLERANCE_RELATIVE, TOLERANCE_ABSOLUTE_MIN);
       if (Math.abs(payslip.netTaxable - estimated) > tolerance) {
         return { severity: "info", message: `Net imposable détecté (${payslip.netTaxable.toFixed(2)} €) éloigné de l'estimation approximative (${estimated.toFixed(2)} €) basée sur le taux de CSG/CRDS non déductible paramétré (${rate} % du brut). Cette estimation est indicative et ne remplace pas un contrôle détaillé.` };

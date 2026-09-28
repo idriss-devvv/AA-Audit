@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { RuleContext } from "@/lib/rules/anomaly-rules";
+import { sanitizeTolerances, type Tolerances } from "@/lib/rules/tolerances";
 
 export type ContributionRateRow = {
   id: string;
@@ -19,6 +20,8 @@ export type CompanyPaySettings = {
   csgCrdsNonDeductiblePercent: number | null;
   salaireMinimumConventionnel: number | null;
   contributionRates: ContributionRateRow[];
+  /** Seuils de tolérance réglés (les autres gardent leur valeur par défaut). */
+  tolerances: Partial<Tolerances>;
 };
 
 /**
@@ -84,7 +87,7 @@ export async function getCompanyPaySettings(companyId: string): Promise<CompanyP
     supabase
       .from("company_pay_settings")
       .select(
-"csg_crds_non_deductible_percent, salaire_minimum_conventionnel"
+"csg_crds_non_deductible_percent, salaire_minimum_conventionnel, tolerances"
       )
       .eq("company_id", companyId)
       .maybeSingle(),
@@ -99,6 +102,7 @@ export async function getCompanyPaySettings(companyId: string): Promise<CompanyP
     csgCrdsNonDeductiblePercent: settings?.csg_crds_non_deductible_percent ?? null,
     salaireMinimumConventionnel: settings?.salaire_minimum_conventionnel ?? null,
     contributionRates: (rates as ContributionRateRow[] | null) ?? [],
+    tolerances: sanitizeTolerances(settings?.tolerances),
   };
 }
 
@@ -110,5 +114,6 @@ export function toRuleContext(settings: CompanyPaySettings): RuleContext {
       label: r.label,
       expectedRatePercent: r.expected_rate_percent,
     })),
+    tolerances: settings.tolerances,
   };
 }

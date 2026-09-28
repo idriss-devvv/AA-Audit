@@ -27,6 +27,14 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Seuils de tolérance configurables
+- Les écarts tolérés par la détection d'anomalies sont réglables par
+  entreprise (Paramètres › Calcul et barèmes) : montant recalculé, marge sous
+  le SMIC / minimum conventionnel, taux de cotisation, congés payés, écart
+  relatif sur cotisation paramétrée, ratio net / brut, variation N / N-1.
+- Valeurs par défaut inchangées (module `src/lib/rules/tolerances.ts`) ;
+  colonne `company_pay_settings.tolerances` (jsonb).
+
 ### Bouton d'aide / assistance vers le cabinet
 - Bouton « Aide » dans l'en-tête de l'espace /app : coordonnées du cabinet
   (nom, e-mail, téléphone, lien, horaires), jamais celles de l'éditeur.

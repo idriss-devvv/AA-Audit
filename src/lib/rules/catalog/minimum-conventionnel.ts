@@ -2,12 +2,11 @@ import type { PayslipData } from "@/types/payslip";
 import type { AnomalyRule, RuleFinding } from "../types";
 import { findConventionGrid, type ConventionGrid, type GridLevel } from "../referentiels/grilles-conventionnelles";
 import { LEGAL_MONTHLY_HOURS, LEGAL_SOURCES, smicHourlyFor } from "../referentiels/legal";
+import { tolerancesFor } from "../tolerances";
 
 const EURO = (value: number) =>
   new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(value);
 
-/** Tolérance d'arrondi (les grilles sont souvent exprimées à l'euro près). */
-const TOLERANCE_EUROS = 0.5;
 
 function periodStart(payslip: PayslipData): string | null {
   return /^\d{4}-\d{2}/.test(payslip.period) ? `${payslip.period.slice(0, 7)}-01` : null;
@@ -38,7 +37,9 @@ export const minimumConventionnelRules: AnomalyRule[] = [
     category: "baremes",
     description:
       "Compare la rémunération au salaire minimum de la grille conventionnelle (niveau lu sur la fiche) et au SMIC",
-    check: (payslip): RuleFinding | null => {
+    check: (payslip, context): RuleFinding | null => {
+      // Tolérance d'arrondi (les grilles sont souvent exprimées à l'euro près), réglable.
+      const TOLERANCE_EUROS = tolerancesFor(context).minimumEuros;
       const start = periodStart(payslip);
       if (!start || payslip.grossPay <= 0) return null;
       const hours = monthlyHours(payslip);
