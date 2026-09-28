@@ -27,6 +27,12 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Bouton d'aide / assistance vers le cabinet
+- Bouton « Aide » dans l'en-tête de l'espace /app : coordonnées du cabinet
+  (nom, e-mail, téléphone, lien, horaires), jamais celles de l'éditeur.
+- Coordonnées réglables dans l'Administration (table `platform_settings`,
+  modification réservée au back-office). Sans réglage : lien vers Contact.
+
 ### Conventions collectives : les 20 du cahier des charges
 - Registre aligné sur la liste V1 du cahier des charges (20 conventions,
   21 codes IDCC) : ajout de Prévention et sécurité (1351), Bâtiment cadres

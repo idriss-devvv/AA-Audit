@@ -4,6 +4,8 @@ import { getAccountContext } from "@/lib/account";
 import { PLANS, PLAN_ORDER, ROLE_LABELS, toPlanId } from "@/lib/plans";
 import { AdminAccountsTable, type AdminAccount } from "@/components/app/admin-accounts-table";
 import { AdminInviteForm } from "@/components/app/admin-invite-form";
+import { AdminSupportForm } from "@/components/app/admin-support-form";
+import { getSupportContact } from "@/lib/support";
 
 export const dynamic = "force-dynamic";
 
@@ -26,9 +28,10 @@ export default async function AdminPage() {
   if (!account.isStaff || !account.userId) notFound();
 
   const supabase = await createClient();
-  const [{ data: overviewData }, { data: accountsData }] = await Promise.all([
+  const [{ data: overviewData }, { data: accountsData }, supportContact] = await Promise.all([
     supabase.rpc("admin_overview"),
     supabase.rpc("admin_list_accounts"),
+    getSupportContact(),
   ]);
   const overview = (overviewData as Overview | null) ?? null;
   const accounts = (accountsData as AdminAccount[] | null) ?? [];
@@ -79,6 +82,8 @@ export default async function AdminPage() {
       </div>
 
       <AdminInviteForm isSuperAdmin={account.isSuperAdmin} />
+
+      <AdminSupportForm contact={supportContact} />
 
       <AdminAccountsTable accounts={accounts} currentUserId={account.userId} isSuperAdmin={account.isSuperAdmin} />
     </div>
