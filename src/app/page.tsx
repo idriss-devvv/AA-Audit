@@ -318,7 +318,7 @@ export default function Home() {
       />
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-gradient-to-b from-beige-50 via-beige-50 to-beige-100/70">
         <div aria-hidden className="bg-grid mask-radial pointer-events-none absolute inset-0" />
         <div
           aria-hidden
@@ -412,7 +412,7 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section id="fonctionnalites" className="border-t border-ink-200/60 bg-beige-100/70 py-24 md:py-32">
+      <section id="fonctionnalites" className="border-t border-ink-200/60 bg-gradient-to-b from-beige-100 via-beige-50 to-beige-100/80 py-24 md:py-32">
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
             <span className="eyebrow">
@@ -494,7 +494,7 @@ export default function Home() {
       </section>
 
       {/* Pour qui */}
-      <section className="bg-beige-50 py-24 md:py-32">
+      <section className="bg-gradient-to-br from-beige-50 via-beige-100/70 to-beige-50 py-24 md:py-32">
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
             <span className="eyebrow">
@@ -623,7 +623,7 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="border-t border-ink-200/60 bg-beige-50 py-24 md:py-32">
+      <section id="faq" className="border-t border-ink-200/60 bg-gradient-to-b from-beige-100/70 to-beige-50 py-24 md:py-32">
         <div className="container-page grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
           <Reveal className="lg:sticky lg:top-28 lg:self-start">
             <span className="eyebrow">
