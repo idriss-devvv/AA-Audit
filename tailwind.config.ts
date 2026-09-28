@@ -10,12 +10,12 @@ const config: Config = {
       colors: {
         // Beige — sable doux, fonds et surfaces chaleureuses
         beige: {
-          50: "#F4EDE0",
-          100: "#EBE1CE",
-          200: "#DDCFB4",
-          300: "#C9B592",
-          400: "#AE9670",
-          500: "#8F7751",
+          50: "#F9F6F0",
+          100: "#F2EDE3",
+          200: "#E6DECF",
+          300: "#D3C6AE",
+          400: "#B8A583",
+          500: "#998462",
         },
         // Bleu — encre profonde : marque, actions, éléments de confiance
         blue: {
@@ -36,11 +36,11 @@ const config: Config = {
           800: "#25282E",
           700: "#3B3F46",
           600: "#51555D",
-          500: "#676B73",
-          400: "#82858D",
-          300: "#A9ABB2",
-          200: "#CBCCD1",
-          100: "#E3E3E6",
+          500: "#6A6E76",
+          400: "#8B8E95",
+          300: "#B3B5BA",
+          200: "#D6D7DA",
+          100: "#ECECEE",
         },
       },
       fontFamily: {
