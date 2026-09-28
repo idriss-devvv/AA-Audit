@@ -6,9 +6,9 @@ Le code est prêt : il reste à brancher le compte Stripe du cabinet.
 
 | Formule | Prix mensuel HT | Variable Vercel |
 |---|---|---|
-| Starter | 30 € | `STRIPE_PRICE_STARTER` |
-| Pro | 100 € | `STRIPE_PRICE_PRO` |
-| Entreprise | 500 € | `STRIPE_PRICE_ENTREPRISE` |
+| Starter | 29 € | `STRIPE_PRICE_STARTER` |
+| Pro | 99 € | `STRIPE_PRICE_PRO` |
+| Entreprise | 499 € | `STRIPE_PRICE_ENTREPRISE` |
 
 Pour chaque produit : prix récurrent mensuel, puis copier l'identifiant `price_…`.
 

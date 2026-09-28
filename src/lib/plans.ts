@@ -44,7 +44,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   starter: {
     id: "starter",
     label: "Starter",
-    price: 30,
+    price: 29,
     description: "Pour contrôler régulièrement les fiches d'une petite structure.",
     quota: 30,
     quotaPeriod: "month",
@@ -57,7 +57,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   pro: {
     id: "pro",
     label: "Pro",
-    price: 100,
+    price: 99,
     description: "Pour les PME qui suivent leurs salariés dans la durée.",
     quota: 150,
     quotaPeriod: "month",
@@ -70,7 +70,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   entreprise: {
     id: "entreprise",
     label: "Entreprise",
-    price: 500,
+    price: 499,
     description: "Pour les groupes et cabinets qui gèrent plusieurs sociétés.",
     quota: null,
     quotaPeriod: null,

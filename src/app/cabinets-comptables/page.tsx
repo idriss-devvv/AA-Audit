@@ -41,7 +41,7 @@ const content: AudiencePageContent = {
     {
       question: "Combien de clients un cabinet peut-il gérer ?",
       answer:
-        "Autant que nécessaire avec la formule Entreprise (à partir de 500 € / mois) : sociétés et fiches de paie illimitées, avec un onglet Salariés dans chaque société.",
+        "Autant que nécessaire avec la formule Entreprise (à partir de 499 € / mois) : sociétés et fiches de paie illimitées, avec un onglet Salariés dans chaque société.",
     },
     {
       question: "Les données des clients sont-elles séparées ?",

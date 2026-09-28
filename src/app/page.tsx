@@ -136,7 +136,7 @@ const steps = [
   {
     number: "02",
     title: "L'analyse se lance automatiquement",
-    description: "Le moteur de règles compare chaque ligne — brut, net, cotisations, congés — aux valeurs attendues en quelques secondes.",
+    description: "Le moteur de règles compare chaque ligne (brut, net, cotisations, congés) aux valeurs attendues en quelques secondes.",
   },
   {
     number: "03",
@@ -208,7 +208,7 @@ const faqs = [
   {
     question: "A&A Audit convient-il à un cabinet comptable gérant plusieurs clients ?",
     answer:
-      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Entreprise (à partir de 500 € / mois) gère plusieurs sociétés avec des fiches illimitées et un onglet Salariés dans chacune.",
+      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Entreprise (à partir de 499 € / mois) gère plusieurs sociétés avec des fiches illimitées et un onglet Salariés dans chacune.",
   },
 ];
 
@@ -239,7 +239,7 @@ function HeroPreview() {
           <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
           <span className="h-2.5 w-2.5 rounded-full bg-ink-200" />
           <span className="ml-3 truncate rounded-md bg-white px-3 py-1 text-[11px] font-medium text-ink-400 ring-1 ring-ink-100">
-            A&A Audit — Rapport de contrôle
+            A&A Audit · Rapport de contrôle
           </span>
         </div>
         <div className="grid gap-0 text-left md:grid-cols-[1.35fr_1fr]">
@@ -276,7 +276,7 @@ function HeroPreview() {
               <div className="rounded-xl border border-amber-200 bg-white p-4 shadow-soft">
                 <span className="badge bg-amber-50 text-amber-700 ring-amber-200">Avertissement</span>
                 <p className="mt-2.5 text-[13px] font-medium leading-snug text-ink-900">
-                  Vieillesse plafonnée appliquée à 6,50 % — taux légal 6,90 %
+                  Vieillesse plafonnée appliquée à 6,50 % au lieu du taux légal de 6,90 %
                 </p>
                 <p className="mt-1 text-xs text-ink-400">Écart : −11,40 € retenus au salarié</p>
               </div>
@@ -375,9 +375,9 @@ export default function Home() {
               Pourquoi contrôler vos fiches de paie ?
             </h2>
             <p className="mt-6 leading-relaxed text-ink-500">
-              Le bulletin de salaire cumule des dizaines de paramètres — taux de
+              Le bulletin de salaire cumule des dizaines de paramètres (taux de
               cotisations, plafonds de sécurité sociale, primes, heures
-              supplémentaires, congés payés — qui évoluent régulièrement.
+              supplémentaires, congés payés) qui évoluent régulièrement.
               Une seule ligne mal paramétrée dans le logiciel de paie peut se
               répéter chaque mois, pour un ou plusieurs salariés, sans être
               détectée.

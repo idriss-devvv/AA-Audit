@@ -80,7 +80,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAF8F4",
+  themeColor: "#F7F2E9",
   width: "device-width",
   initialScale: 1,
 };
@@ -104,9 +104,9 @@ const structuredData = {
       url: SITE_URL,
       offers: [
         { "@type": "Offer", name: "Free", price: "0", priceCurrency: "EUR", url: `${SITE_URL}/#tarifs` },
-        { "@type": "Offer", name: "Starter", price: "30", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
-        { "@type": "Offer", name: "Pro", price: "100", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
-        { "@type": "Offer", name: "Entreprise", price: "500", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
+        { "@type": "Offer", name: "Starter", price: "29", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
+        { "@type": "Offer", name: "Pro", price: "99", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
+        { "@type": "Offer", name: "Entreprise", price: "499", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
       ],
     },
   ],

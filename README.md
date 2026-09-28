@@ -16,7 +16,7 @@ SaaS qui vérifie et contrôle les fiches de paie pour détecter les anomalies e
 1. **Google OAuth** : dans le Dashboard Supabase → Authentication → Providers → Google,
    activer le provider et renseigner un Client ID / Secret créés sur Google Cloud Console
    (URL de redirection à autoriser : `https://<votre-projet>.supabase.co/auth/v1/callback`).
-2. **Stripe** : créer les produits/prix (Starter 30€, Pro 100€) dans le Dashboard Stripe,
+2. **Stripe** : créer les produits/prix (Starter 29€, Pro 99€) dans le Dashboard Stripe,
    puis remplacer les `priceId` de démonstration dans `src/app/page.tsx` par les vrais
    Price IDs. Renseigner `STRIPE_SECRET_KEY` dans les variables d'environnement Vercel.
 3. **Variables d'environnement Vercel** : `NEXT_PUBLIC_SUPABASE_URL`,

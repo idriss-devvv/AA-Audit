@@ -25,7 +25,7 @@ export function getControls() {
       title: "Salaire minimum conventionnel",
       icon: "scale" as MarketingIconName,
       detail: `Classification lue sur la fiche et comparée à la grille officielle de ${CONVENTION_GRIDS.length} conventions collectives.`,
-      source: "Avenants « salaires » étendus — Légifrance",
+      source: "Avenants « salaires » étendus (Légifrance)",
     },
     {
       title: "SMIC",
