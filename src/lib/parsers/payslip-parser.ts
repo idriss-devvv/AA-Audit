@@ -299,6 +299,20 @@ function detectMandatoryMentions(text: string): Partial<Record<MandatoryMentionK
   return result;
 }
 
+/**
+ * Ligne de complémentaire santé : « Complémentaire santé [base taux] part salariale
+ * [taux] part patronale ». Avec au moins deux montants, le dernier est la part patronale.
+ */
+function extractHealthShares(lines: string[]): { employee: number | null; employer: number | null } {
+  for (const line of lines) {
+    if (!/compl[ée]mentaire\s+sant[ée]|mutuelle|frais\s+de\s+sant[ée]/i.test(line)) continue;
+    const numbers = decimalsInLine(line.slice(line.search(/compl[ée]mentaire|mutuelle|frais/i)));
+    if (numbers.length >= 2) return { employee: numbers[numbers.length - 2], employer: numbers[numbers.length - 1] };
+    if (numbers.length === 1) return { employee: numbers[0], employer: null };
+  }
+  return { employee: null, employer: null };
+}
+
 const NON_SUBJECT_ITEMS =
   /titres?[- ]restaurant|tickets?[- ]restaurant|frais\s+de\s+transport|transport\s+en\s+commun|remboursement|acompte|avance|avantages?\s+en\s+nature|indemnit[ée]s?\s+non\s+soumises?|non\s+soumis|saisie|pr[êe]t|indemnit[ée]s?\s+kilom[ée]triques?/i;
 
@@ -324,6 +338,7 @@ export function parsePayslip(rawContent: string): PayslipData {
     0;
 
   const baseSalaryLine = extractBaseSalary(lines);
+  const health = extractHealthShares(lines);
   const baseHourlyRate = baseSalaryLine?.unit ?? null;
 
   // Libellé suivi de « : » obligatoire, et jamais « Employeur » : sinon un
@@ -353,6 +368,9 @@ export function parsePayslip(rawContent: string): PayslipData {
     classification: extractClassification(text),
     totalEmployeeContributions: firstDecimalOnMatchingLine(lines, /total\s+(?:des\s+)?cotisations/i),
     netBeforeTax: firstDecimalOnMatchingLine(lines, /net\s+(?:(?:à|a)\s+payer\s+)?avant\s+imp[ôo]t/i),
+    netSocial: firstDecimalOnMatchingLine(lines, /(?:montant\s+)?net\s+social/i),
+    employeeHealthContribution: health.employee,
+    employerHealthContribution: health.employer,
     incomeTaxWithheld: lastDecimalOnMatchingLine(
       lines,
       /imp[ôo]t\s+sur\s+le\s+revenu\s+pr[ée]lev[ée]|pr[ée]l[èe]vement\s+(?:à|a)\s+la\s+source/i

@@ -11,6 +11,7 @@ import { baremesParametrablesRules } from "./catalog/baremes-parametrables";
 import { controlesLegauxRules } from "./catalog/controles-legaux";
 import { minimumConventionnelRules } from "./catalog/minimum-conventionnel";
 import { ecartPeriodeRules } from "./catalog/ecart-periode";
+import { netsTranchesRules } from "./catalog/nets-tranches";
 
 export type { AnomalyRule, RuleCategory, RuleFinding, RuleContext, ContributionRateSetting } from "./types";
 export { CATEGORY_LABELS, categoryFromRuleId } from "./types";
@@ -36,6 +37,7 @@ export const RULES: AnomalyRule[] = [
   ...controlesLegauxRules,
   ...minimumConventionnelRules,
   ...ecartPeriodeRules,
+  ...netsTranchesRules,
 ];
 
 export function runAnomalyRules(payslip: PayslipData, context: RuleContext = {}): Anomaly[] {

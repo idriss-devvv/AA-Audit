@@ -27,6 +27,17 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Net imposable, montant net social et tranches de cotisations
+- Net imposable recalculé : net avant impôt + CSG non déductible et CRDS,
+  + part patronale de complémentaire santé, − heures supplémentaires
+  exonérées (CGI art. 79, 81 quater, 83).
+- Montant net social lu sur le bulletin et contrôlé (jamais supérieur au
+  brut, cohérent avec le net avant impôt — décret du 20 novembre 2023).
+- Tranches : bases T1 / vieillesse plafonnée limitées au PMSS, base T2 =
+  brut − 1 PMSS (jusqu'à 8 PMSS), tranche 2 manquante au-dessus du plafond.
+- Lecteur PDF : montant net social, parts salariale et patronale santé.
+- Vérifié sur les 3 bulletins de test : aucun faux positif.
+
 ### Paiement Stripe : prix réels et webhook d'activation
 - Checkout rattaché à l'entreprise (client_reference_id, métadonnées) ;
   visiteur non connecté renvoyé vers l'inscription avec la formule choisie.

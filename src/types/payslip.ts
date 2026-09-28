@@ -66,6 +66,12 @@ export interface PayslipData {
   classification?: string | null;
   totalEmployeeContributions?: number | null;
   netBeforeTax?: number | null;
+  /** « Montant net social » (obligatoire depuis juillet 2023). */
+  netSocial?: number | null;
+  /** Part patronale de complémentaire santé (imposable), dernière valeur de la ligne santé. */
+  employerHealthContribution?: number | null;
+  /** Part salariale de complémentaire santé. */
+  employeeHealthContribution?: number | null;
   incomeTaxWithheld?: number | null;
   hasNonSubjectItems?: boolean;
   mandatoryMentions?: Partial<Record<MandatoryMentionKey, boolean>>;
