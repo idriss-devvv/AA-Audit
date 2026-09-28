@@ -41,6 +41,25 @@ export type MandatoryMentionKey =
   | "congesPayes"
   | "mentionConservation";
 
+/** Arrêt de travail lu sur le bulletin (lignes d'absence, IJSS, complément employeur). */
+export interface SickLeaveInfo {
+  /** Jours d'absence (quantité de la ligne d'absence si elle est en jours). */
+  days: number | null;
+  /** Heures d'absence (quantité de la ligne d'absence si elle est en heures). */
+  hours: number | null;
+  /** Retenue pour absence (valeur absolue). */
+  deduction: number | null;
+  /** Indemnités journalières de la Sécurité sociale portées sur le bulletin (subrogation). */
+  ijss: number | null;
+  /** Nombre d'indemnités journalières, si la ligne IJSS le précise. */
+  ijssDays: number | null;
+  /** Complément / maintien de salaire versé par l'employeur. */
+  employerComplement: number | null;
+  subrogation: boolean;
+  /** Arrêt d'origine professionnelle (accident du travail, maladie professionnelle). */
+  professional: boolean;
+}
+
 export interface PayslipData {
   employeeName: string;
   period: string;
@@ -73,6 +92,7 @@ export interface PayslipData {
   netSocial?: number | null;
   /** Part patronale de complémentaire santé (imposable), dernière valeur de la ligne santé. */
   employerHealthContribution?: number | null;
+  sickLeave?: SickLeaveInfo | null;
   /** Montant de la réduction générale des cotisations patronales (valeur absolue). */
   generalReduction?: number | null;
   /** Part salariale de complémentaire santé. */

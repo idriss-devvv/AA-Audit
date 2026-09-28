@@ -1,10 +1,4 @@
-import type {
-  ContributionLine,
-  MandatoryMentionKey,
-  OvertimeLine,
-  PaidLeaveInfo,
-  PayslipData,
-} from "@/types/payslip";
+import type { ContributionLine, MandatoryMentionKey, OvertimeLine, PaidLeaveInfo, PayslipData, SickLeaveInfo } from "@/types/payslip";
 
 const MONTHS_FR: Record<string, string> = {
   janvier: "01",
@@ -330,6 +324,61 @@ function extractHealthShares(lines: string[]): { employee: number | null; employ
   return { employee: null, employer: null };
 }
 
+/** Arrêt de travail : ligne d'absence (quantité × taux = retenue), IJSS, complément employeur. */
+function extractSickLeave(lines: string[], text: string): SickLeaveInfo | null {
+  const absence = /absence\s+(?:pour\s+)?(?:maladie|accident|arr[êe]t)|arr[êe]t\s+(?:de\s+travail|maladie)|absence\s+a\.?t\.?\b/i;
+  const ijssPattern = /\bijss\b|indemnit[ée]s?\s+journali[èe]res?/i;
+  const complementPattern = /maintien\s+de\s+salaire|compl[ée]ment\s+(?:employeur|de\s+salaire|maladie|ij)|garantie\s+de\s+(?:salaire|ressources)|indemnit[ée]\s+compl[ée]mentaire/i;
+  let days: number | null = null;
+  let hours: number | null = null;
+  let deduction: number | null = null;
+  let ijss: number | null = null;
+  let ijssDays: number | null = null;
+  let employerComplement: number | null = null;
+
+  for (const line of lines) {
+    const numbers = decimalsInLine(line);
+    if (ijssPattern.test(line) && !/net|brut|total/i.test(labelOf(line))) {
+      const triple = findQuantityTriple(numbers);
+      if (triple) {
+        ijss = triple.amount;
+        ijssDays = triple.quantity;
+      } else if (numbers.length > 0) {
+        ijss = Math.abs(numbers[numbers.length - 1]);
+      }
+      continue;
+    }
+    if (complementPattern.test(line) && numbers.length > 0) {
+      employerComplement = Math.abs(numbers[numbers.length - 1]);
+      continue;
+    }
+    if (absence.test(line) && numbers.length > 0) {
+      const triple = findQuantityTriple(numbers);
+      if (triple) {
+        deduction = Math.abs(triple.amount);
+        if (triple.quantity <= 31 && /\bj(?:ours?|rs)?\b|jour/i.test(line)) days = triple.quantity;
+        else if (triple.quantity > 31 || /\bh(?:eures?)?\b/i.test(line)) hours = triple.quantity;
+        else days = triple.quantity;
+      } else {
+        deduction = Math.abs(numbers[numbers.length - 1]);
+      }
+    }
+  }
+
+  const subrogation = /subrogation/i.test(text);
+  if (days === null && hours === null && deduction === null && ijss === null && employerComplement === null && !subrogation) return null;
+  return {
+    days,
+    hours,
+    deduction,
+    ijss,
+    ijssDays,
+    employerComplement,
+    subrogation,
+    professional: /accident\s+du\s+travail|maladie\s+professionnelle|\bat\s*\/\s*mp\b|absence\s+a\.?t\.?\b/i.test(lines.filter((l) => absence.test(l) || ijssPattern.test(l)).join(" ")),
+  };
+}
+
 const NON_SUBJECT_ITEMS =
   /titres?[- ]restaurant|tickets?[- ]restaurant|frais\s+de\s+transport|transport\s+en\s+commun|remboursement|acompte|avance|avantages?\s+en\s+nature|indemnit[ée]s?\s+non\s+soumises?|non\s+soumis|saisie|pr[êe]t|indemnit[ée]s?\s+kilom[ée]triques?/i;
 
@@ -386,6 +435,7 @@ export function parsePayslip(rawContent: string): PayslipData {
     totalEmployeeContributions: firstDecimalOnMatchingLine(lines, /total\s+(?:des\s+)?cotisations/i),
     netBeforeTax: firstDecimalOnMatchingLine(lines, /net\s+(?:(?:à|a)\s+payer\s+)?avant\s+imp[ôo]t/i),
     netSocial: firstDecimalOnMatchingLine(lines, /(?:montant\s+)?net\s+social/i),
+    sickLeave: extractSickLeave(lines, text),
     generalReduction: (() => {
       const value = lastDecimalOnMatchingLine(lines, /r[ée]duction\s+g[ée]n[ée]rale|\brgdu\b|r[ée]duction\s+fillon|all[èe]gement\s+g[ée]n[ée]ral/i);
       return value === null ? null : Math.abs(value);

@@ -13,7 +13,8 @@ export const arretsTravailRules: AnomalyRule[] = [
     category: "arrets-travail",
     description: "Signale une mention d'arrêt de travail, IJSS ou subrogation à vérifier manuellement",
     check: (payslip) => {
-      if (payslip.mentionsArretOuIjss) {
+      const detailed = payslip.sickLeave && (payslip.sickLeave.days !== null || payslip.sickLeave.ijss !== null || payslip.sickLeave.employerComplement !== null);
+      if (payslip.mentionsArretOuIjss && !detailed) {
         return {
           severity: "info",
           message:

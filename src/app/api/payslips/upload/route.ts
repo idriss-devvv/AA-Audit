@@ -8,6 +8,7 @@ import { PLANS, quotaLabel, toPlanId } from "@/lib/plans";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { extractPdfLines } from "@/lib/parsers/pdf-text";
 import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
+import type { ConventionSickPayRule } from "@/lib/rules/types";
 import {
   getCompanyPaySettings,
   listRegulatoryParameters,
@@ -216,7 +217,7 @@ export async function POST(req: NextRequest) {
   if (extracted) {
     // Fiche précédente du même salarié (écart N / N-1) : la plus récente
     // période antérieure, hors fiches supprimées ou non analysées.
-    let previousPayslip: PayslipData | null = null;
+    let previousPayslips: PayslipData[] = [];
     if (employeeRef !== "non-identifie" && /^\d{4}-\d{2}/.test(extracted.period)) {
       const { data: previous } = await supabase
         .from("payslips")
@@ -227,12 +228,24 @@ export async function POST(req: NextRequest) {
         .is("deleted_at", null)
         .lt("period", extracted.period.slice(0, 7))
         .order("period", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      previousPayslip = (previous?.extracted_data as PayslipData | null) ?? null;
+        .limit(3);
+      previousPayslips = ((previous ?? []).map((p) => p.extracted_data).filter(Boolean) as PayslipData[]);
+    }
+    const previousPayslip = previousPayslips[0] ?? null;
+    // Maintien de salaire conventionnel, si la convention de la fiche est intégrée.
+    let conventionSickPay: ConventionSickPayRule[] = [];
+    if (extracted.collectiveAgreementIdcc && extracted.sickLeave) {
+      const { data: sickRows } = await supabase
+        .from("cc_sick_pay")
+        .select("absence_type, categories, seniority_min_months, waiting_days, sequence, duration_days, rate_percent, rate_base, valid_from, valid_to")
+        .eq("idcc_code", String(parseInt(extracted.collectiveAgreementIdcc, 10)));
+      const day = `${extracted.period.slice(0, 7)}-01`;
+      conventionSickPay = ((sickRows ?? []) as (ConventionSickPayRule & { valid_from: string; valid_to: string | null })[])
+        .filter((r) => r.valid_from <= day && (!r.valid_to || r.valid_to > day))
+        .map((r) => ({ ...r, rate_percent: Number(r.rate_percent) }));
     }
     const regulatory = await listRegulatoryParameters();
-    const anomalies = runAnomalyRules(extracted, { ...toRuleContext(paySettings), previousPayslip, regulatory });
+    const anomalies = runAnomalyRules(extracted, { ...toRuleContext(paySettings), previousPayslip, previousPayslips, regulatory, conventionSickPay });
     anomaliesCount = anomalies.length;
     criticalCount = anomalies.filter((a) => a.severity === "critical").length;
 

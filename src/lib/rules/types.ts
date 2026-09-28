@@ -39,6 +39,18 @@ export type ContributionRateSetting = {
   expectedRatePercent: number;
 };
 
+/** Règle conventionnelle de maintien de salaire (table cc_sick_pay). */
+export type ConventionSickPayRule = {
+  absence_type: string;
+  categories: string[] | null;
+  seniority_min_months: number;
+  waiting_days: number;
+  sequence: number | null;
+  duration_days: number;
+  rate_percent: number;
+  rate_base: string;
+};
+
 export type RuleContext = {
   contributionRates?: ContributionRateSetting[];
   csgCrdsNonDeductiblePercent?: number | null;
@@ -51,6 +63,10 @@ export type RuleContext = {
   regulatory?: import("./regulatory").RegulatoryParameter[];
   /** Taux AT/MP notifié à l'entreprise, en %. */
   atMpRatePercent?: number | null;
+  /** Jusqu'à 3 fiches précédentes du même salarié, la plus récente d'abord (IJSS). */
+  previousPayslips?: PayslipData[];
+  /** Maintien de salaire prévu par la convention collective de la fiche. */
+  conventionSickPay?: ConventionSickPayRule[];
 };
 
 export type AnomalyRule = {

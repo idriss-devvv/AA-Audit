@@ -27,6 +27,18 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Cas maladie et contrôle des IJSS
+- Lecture de l'arrêt sur le bulletin : absence (jours / heures, retenue),
+  IJSS (montant, nombre de jours), subrogation, complément employeur,
+  origine professionnelle.
+- IJSS : 50 % du salaire journalier de base (3 derniers salaires bruts du
+  salarié, plafonnés à 1,4 SMIC depuis le 01/04/2025, / 91,25).
+- Maintien de salaire : complément attendu selon l'ancienneté et la durée,
+  minimum légal (90 % puis 66,66 %, carence 7 j) ou règles de la convention
+  collective quand elle est intégrée (table cc_sick_pay) ; niveau du
+  complément comparé au pourcentage garanti.
+- Paramètres IJSS et maintien légal ajoutés à la veille réglementaire datée.
+
 ### Paramètres : onglet « Conventions collectives »
 - Liste des conventions intégrées (IDCC, nom, secteur, effectifs couverts),
   dernier texte de salaires avec sa date d'effet et date de la dernière mise

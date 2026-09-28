@@ -33,6 +33,10 @@ export const DEFAULT_REGULATORY_PARAMETERS: RegulatoryParameter[] = [
   { key: "rgdu.exposant", label: "RGDU : exposant P", value: 1.75, unit: "coefficient", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D241-7" },
   { key: "rgdu.seuil_smic", label: "RGDU : seuil d'éligibilité (nombre de SMIC)", value: 3, unit: "smic", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. L241-13 et D241-7" },
   { key: "rgdu.smic_horaire", label: "RGDU : SMIC horaire retenu pour le calcul", value: 12.02, unit: "euros", valid_from: "2026-01-01", valid_to: null, source: "Code de la sécurité sociale, art. D241-7 (SMIC au 1er janvier 2026)" },
+  { key: "ijss.taux", label: "IJSS maladie : part du salaire journalier de base", value: 50, unit: "pourcent", valid_from: "2015-01-01", valid_to: null, source: "Code de la sécurité sociale, art. R323-5" },
+  { key: "ijss.diviseur", label: "IJSS maladie : diviseur des 3 derniers salaires", value: 91.25, unit: "coefficient", valid_from: "2015-01-01", valid_to: null, source: "Code de la sécurité sociale, art. R323-4" },
+  { key: "ijss.plafond_smic", label: "IJSS maladie : plafond (nombre de SMIC mensuels)", value: 1.8, unit: "smic", valid_from: "2015-01-01", valid_to: "2025-04-01", source: "Code de la sécurité sociale, art. R323-4" },
+  { key: "ijss.plafond_smic", label: "IJSS maladie : plafond (nombre de SMIC mensuels)", value: 1.4, unit: "smic", valid_from: "2025-04-01", valid_to: null, source: "Code de la sécurité sociale, art. R323-4 (décret n° 2025-160 du 20 février 2025)" },
 ];
 
 /** Valeur d'un paramètre en vigueur au premier jour de la période « AAAA-MM ». */
