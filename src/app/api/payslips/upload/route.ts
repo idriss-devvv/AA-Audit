@@ -3,6 +3,7 @@ import { createHash, randomUUID } from "crypto";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { getQuotaUsage } from "@/lib/account";
+import { notifyCompany } from "@/lib/notifications";
 import { PLANS, quotaLabel, toPlanId } from "@/lib/plans";
 import { parsePayslip } from "@/lib/parsers/payslip-parser";
 import { extractPdfLines } from "@/lib/parsers/pdf-text";
@@ -92,8 +93,10 @@ export async function POST(req: NextRequest) {
   // Limite personnalisée par le back-office, sinon celle de la formule.
   const quota = (quotaValue as number | null) ?? null;
   // Les images ne sont pas encore analysées : elles ne comptent pas dans le quota.
+  let usedBefore: number | null = null;
   if (!isStaff && quota !== null && !isImage) {
     const used = await getQuotaUsage(targetCompanyId, plan);
+    usedBefore = used;
     if (used >= quota) {
       return NextResponse.json(
         {
@@ -208,6 +211,7 @@ export async function POST(req: NextRequest) {
   }
 
   let anomaliesCount = 0;
+  let criticalCount = 0;
   if (extracted) {
     // Fiche précédente du même salarié (écart N / N-1) : la plus récente
     // période antérieure, hors fiches supprimées ou non analysées.
@@ -228,6 +232,7 @@ export async function POST(req: NextRequest) {
     }
     const anomalies = runAnomalyRules(extracted, { ...toRuleContext(paySettings), previousPayslip });
     anomaliesCount = anomalies.length;
+    criticalCount = anomalies.filter((a) => a.severity === "critical").length;
 
     if (anomalies.length > 0) {
       await supabase.from("anomalies").insert(
@@ -240,6 +245,30 @@ export async function POST(req: NextRequest) {
       );
     }
   }
+
+  // Alertes essentielles : anomalie critique, fiche illisible, quota presque atteint.
+  const label = `${extracted?.employeeName?.trim() || file.name}${extracted?.period ? ` — ${extracted.period}` : ""}`;
+  const alerts: Promise<void>[] = [];
+  if (status === "error") {
+    alerts.push(notifyCompany(supabase, targetCompanyId, { kind: "fiche_erreur", severity: "warning", title: "Fiche de paie non analysée", body: `${label} : ${errorMessage ?? "lecture impossible"}`, link: `/app/historique/${payslip.id}` }));
+  }
+  if (criticalCount > 0) {
+    alerts.push(notifyCompany(supabase, targetCompanyId, { kind: "anomalie_critique", severity: "critical", title: `${criticalCount} anomalie${criticalCount > 1 ? "s" : ""} critique${criticalCount > 1 ? "s" : ""} détectée${criticalCount > 1 ? "s" : ""}`, body: label, link: `/app/historique/${payslip.id}` }));
+  }
+  if (usedBefore !== null && quota !== null && quota > 0) {
+    const usedAfter = usedBefore + 1;
+    const warnAt = Math.ceil(quota * 0.8);
+    if (usedAfter === quota || (usedAfter === warnAt && warnAt < quota)) {
+      alerts.push(notifyCompany(supabase, targetCompanyId, {
+        kind: "quota",
+        severity: usedAfter === quota ? "warning" : "info",
+        title: usedAfter === quota ? "Limite de fiches atteinte" : "80 % de la limite de fiches atteinte",
+        body: `${usedAfter} fiche${usedAfter > 1 ? "s" : ""} sur ${quotaLabel(plan, quota)}.`,
+        link: "/app/parametres?onglet=abonnement",
+      }));
+    }
+  }
+  await Promise.all(alerts);
 
   return NextResponse.json({
     status,

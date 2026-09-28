@@ -27,6 +27,14 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Notifications intégrées et alertes essentielles
+- Cloche de notifications dans l'en-tête (non lues, tout marquer comme lu,
+  rafraîchie chaque minute) et encart « Alertes » sur le tableau de bord.
+- Alertes créées à l'import : anomalie critique, fiche non analysée, 80 %
+  puis 100 % de la limite de fiches. Destinataires : les utilisateurs de
+  l'entreprise et du cabinet qui la gère (fonction `notify_company`).
+- Table `notifications` (RLS : chacun ne voit que les siennes).
+
 ### Écart N / N-1
 - Nouvelle catégorie de contrôles « Écart N / N-1 » : chaque fiche est
   comparée à la fiche précédente du même salarié — variation du brut et du

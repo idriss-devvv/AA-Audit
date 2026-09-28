@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
 import { SEVERITY_INFO, employeeDisplayName, formatDate, formatPeriod, statusInfo } from "@/lib/payslips";
 import type { PayslipData } from "@/types/payslip";
+import { getNotifications } from "@/lib/notifications";
 
 const SEVERITY_META: Record<string, { label: string; barClassName: string }> = {
   critical: { label: "Critiques", barClassName: "bg-rose-500" },
@@ -49,6 +50,7 @@ export default async function DashboardPage() {
     { count: infoCount },
     { count: payslipsThisMonth },
     { data: recentPayslipsData },
+    notifications,
   ] = await Promise.all([
     supabase.from("payslips").select("id", { count: "exact", head: true }).eq("company_id", companyId).is("deleted_at", null),
     supabase.from("employees").select("id", { count: "exact", head: true }).eq("company_id", companyId),
@@ -68,7 +70,9 @@ export default async function DashboardPage() {
       .is("deleted_at", null)
       .order("uploaded_at", { ascending: false })
       .limit(5),
+    getNotifications(10),
   ]);
+  const alerts = notifications.items.filter((n) => !n.read_at && n.severity !== "info").slice(0, 4);
 
   const critical = criticalCount ?? 0;
   const anomaliesTotal = critical + (warningCount ?? 0) + (infoCount ?? 0);
@@ -99,6 +103,29 @@ export default async function DashboardPage() {
         </div>
         <PayslipUploadButton variant="compact" />
       </div>
+
+      {/* Alertes non lues (notifications) */}
+      {alerts.length > 0 && (
+        <section className="card mt-8 p-5" aria-label="Alertes">
+          <p className="card-title">Alertes</p>
+          <ul className="mt-3 divide-y divide-ink-100">
+            {alerts.map((alert) => (
+              <li key={alert.id} className="flex items-start gap-3 py-2.5">
+                <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${alert.severity === "critical" ? "bg-rose-500" : "bg-amber-400"}`} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-ink-900">{alert.title}</p>
+                  {alert.body && <p className="truncate text-xs text-ink-500">{alert.body}</p>}
+                </div>
+                {alert.link && (
+                  <Link href={alert.link} className="shrink-0 text-xs font-semibold text-blue-700 hover:text-blue-900">
+                    Voir
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Priorité : anomalies critiques */}
       {critical > 0 ? (

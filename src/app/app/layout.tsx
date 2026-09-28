@@ -8,6 +8,8 @@ import { AccountMenu } from "@/components/app/account-menu";
 import { MobileNav, SidebarNav } from "@/components/app/sidebar-nav";
 import { CompanySwitcher } from "@/components/app/company-switcher";
 import { HelpButton } from "@/components/app/help-button";
+import { NotificationsBell } from "@/components/app/notifications-bell";
+import { getNotifications } from "@/lib/notifications";
 import { getSupportContact } from "@/lib/support";
 import { Logo } from "@/components/ui/logo";
 
@@ -21,11 +23,12 @@ export default async function AppLayout({
 }) {
   // Utilisateur, compte et société active chargés en parallèle ; les appels
   // Auth et profil sont partagés (mémoïsés) avec la page.
-  const [user, account, companyContext, supportContact] = await Promise.all([
+  const [user, account, companyContext, supportContact, notifications] = await Promise.all([
     getCurrentUser(),
     getAccountContext(),
     getActiveCompanyContext(),
     getSupportContact(),
+    getNotifications(),
   ]);
 
   if (!user) {
@@ -77,6 +80,7 @@ export default async function AppLayout({
                   activeCompanyId={companyContext.activeCompanyId}
                 />
               )}
+              <NotificationsBell initial={notifications} />
               <HelpButton contact={supportContact} />
               <AccountMenu email={user.email ?? ""} subtitle={accountSubtitle} />
             </div>
