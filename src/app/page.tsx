@@ -602,9 +602,9 @@ export default function Home() {
                       <Link href="/contact-entreprise" className="btn-secondary w-full">
                         Nous contacter
                       </Link>
-                    ) : plan.stripePriceId ? (
+                    ) : plan.stripePriceEnv ? (
                       <SubscribeButton
-                        priceId={plan.stripePriceId}
+                        plan={plan.id}
                         label="S'abonner"
                         variant={plan.highlighted ? "inverse" : "outline"}
                       />

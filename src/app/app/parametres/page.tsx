@@ -194,8 +194,8 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
                 <div className="mt-5">
                   {current ? (
                     <p className="text-center text-xs font-medium text-ink-400">Votre formule actuelle</p>
-                  ) : option.stripePriceId ? (
-                    <SubscribeButton priceId={option.stripePriceId} label={`Passer à ${option.label}`} variant="outline" />
+                  ) : option.stripePriceEnv ? (
+                    <SubscribeButton plan={option.id} label={`Passer à ${option.label}`} variant="outline" />
                   ) : null}
                 </div>
               </div>

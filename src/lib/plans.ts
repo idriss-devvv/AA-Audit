@@ -23,8 +23,8 @@ export type PlanDefinition = {
   /** Résultats d'analyse partiellement masqués. */
   blurredResults: boolean;
   features: string[];
-  /** Identifiant de prix Stripe — à remplacer par les vrais IDs du Dashboard Stripe. */
-  stripePriceId: string | null;
+  /** Variable d'environnement contenant l'identifiant de prix Stripe (null : pas de paiement en ligne). */
+  stripePriceEnv: "STRIPE_PRICE_STARTER" | "STRIPE_PRICE_PRO" | "STRIPE_PRICE_ENTREPRISE" | null;
 };
 
 export const PLANS: Record<PlanId, PlanDefinition> = {
@@ -39,7 +39,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     companiesTab: false,
     blurredResults: true,
     features: ["1 fiche de paie à tester", "Aperçu des anomalies détectées", "Sans carte bancaire"],
-    stripePriceId: null,
+    stripePriceEnv: null,
   },
   starter: {
     id: "starter",
@@ -52,7 +52,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     companiesTab: false,
     blurredResults: false,
     features: ["30 fiches de paie / mois", "Tous les contrôles et leurs sources", "Rapports et exports Excel"],
-    stripePriceId: "price_starter_30",
+    stripePriceEnv: "STRIPE_PRICE_STARTER",
   },
   pro: {
     id: "pro",
@@ -65,7 +65,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     companiesTab: false,
     blurredResults: false,
     features: ["150 fiches de paie / mois", "Onglet Salariés : suivi par salarié", "Tous les contrôles, rapports et exports"],
-    stripePriceId: "price_pro_150",
+    stripePriceEnv: "STRIPE_PRICE_PRO",
   },
   entreprise: {
     id: "entreprise",
@@ -82,7 +82,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
       "Onglet Sociétés : plusieurs sociétés dans un compte",
       "Onglet Salariés dans chaque société",
     ],
-    stripePriceId: "price_entreprise_500",
+    stripePriceEnv: "STRIPE_PRICE_ENTREPRISE",
   },
 };
 

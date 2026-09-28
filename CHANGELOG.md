@@ -27,6 +27,14 @@ sert de socle de départ pour ce dépôt.
 
 ## 2026-09-28
 
+### Paiement Stripe : prix réels et webhook d'activation
+- Checkout rattaché à l'entreprise (client_reference_id, métadonnées) ;
+  visiteur non connecté renvoyé vers l'inscription avec la formule choisie.
+- Prix lus dans les variables `STRIPE_PRICE_STARTER / PRO / ENTREPRISE`.
+- Webhook `/api/stripe/webhook` (signature vérifiée) : activation de la
+  formule après paiement, changement, résiliation, impayé (alerte).
+- Notice de configuration : `docs/STRIPE.md`.
+
 ### Notifications intégrées et alertes essentielles
 - Cloche de notifications dans l'en-tête (non lues, tout marquer comme lu,
   rafraîchie chaque minute) et encart « Alertes » sur le tableau de bord.

@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import type { PlanId } from "@/lib/plans";
 
 export function SubscribeButton({
-  priceId,
+  plan,
   label = "S'abonner",
   variant = "primary",
 }: {
-  priceId: string;
+  plan: PlanId;
   label?: string;
   variant?: "primary" | "outline" | "inverse";
 }) {
@@ -21,9 +22,15 @@ export function SubscribeButton({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan }),
       });
       const data = await res.json().catch(() => ({}));
+
+      // Visiteur non connecté : inscription d'abord, la formule est conservée dans l'URL.
+      if (data.redirect) {
+        window.location.href = data.redirect;
+        return;
+      }
 
       if (!res.ok || !data.url) {
         setError(data.error || "Paiement indisponible pour le moment.");
