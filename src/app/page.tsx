@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingShell } from "@/components/layout/marketing-shell";
-import { SubscribeButton } from "@/components/pricing/subscribe-button";
+import { PricingSection } from "@/components/pricing/pricing-section";
 import { Reveal } from "@/components/ui/reveal";
 import { FaqItem } from "@/components/ui/faq-item";
 import { ControlsSection } from "@/components/marketing/controls-section";
@@ -176,7 +176,6 @@ const audiences = [
 const plans = PLAN_ORDER.filter((id) => id !== "free").map((id) => ({
   ...PLANS[id],
   highlighted: id === "pro",
-  onQuote: id === "entreprise",
 }));
 
 const faqs = [
@@ -208,7 +207,7 @@ const faqs = [
   {
     question: "A&A Audit convient-il à un cabinet comptable gérant plusieurs clients ?",
     answer:
-      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Entreprise (à partir de 499 € / mois) gère plusieurs sociétés avec des fiches illimitées et un onglet Salariés dans chacune.",
+      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Cabinet (249 € / mois) gère plusieurs sociétés avec 300 fiches par mois et un onglet Salariés dans chacune. Au-delà, l'offre Entreprise s'adapte à votre volume sur devis.",
   },
 ];
 
@@ -289,14 +288,6 @@ function HeroPreview() {
         </div>
       </div>
     </div>
-  );
-}
-
-function Check({ className = "text-blue-500" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className={`mt-0.5 h-4 w-4 shrink-0 ${className}`} aria-hidden>
-      <path d="m5 10.5 3 3 7-7" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   );
 }
 
@@ -552,72 +543,7 @@ export default function Home() {
             </p>
           </Reveal>
 
-          <div className="mt-16 grid items-stretch gap-5 md:grid-cols-3">
-            {plans.map((plan, i) => (
-              <Reveal key={plan.id} delay={i * 100} className="h-full">
-                <div
-                  className={`relative flex h-full flex-col overflow-hidden rounded-3xl p-8 transition duration-300 hover:-translate-y-1 ${
-                    plan.highlighted
-                      ? "bg-blue-800 text-beige-50 shadow-lift"
-                      : "border border-ink-200/70 bg-beige-50"
-                  }`}
-                >
-                  {plan.highlighted && (
-                    <>
-                      <div aria-hidden className="bg-grid-light mask-fade-b pointer-events-none absolute inset-0" />
-                      <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-blue-400/30 blur-3xl" />
-                    </>
-                  )}
-                  <div className="relative flex items-center justify-between gap-3">
-                    <h3 className={`text-sm font-semibold uppercase tracking-[0.14em] ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
-                      {plan.label}
-                    </h3>
-                    {plan.highlighted && (
-                      <span className="rounded-full bg-beige-50/10 px-3 py-1 text-[11px] font-semibold text-beige-100 ring-1 ring-inset ring-beige-50/20">
-                        Le plus populaire
-                      </span>
-                    )}
-                  </div>
-                  <p className={`relative mt-6 h-5 text-sm font-medium ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
-                    {plan.onQuote ? "À partir de" : ""}
-                  </p>
-                  <p className={`relative mt-1 font-display text-6xl leading-none ${plan.highlighted ? "text-beige-50" : "text-ink-900"}`}>
-                    {plan.price} €
-                    <span className={`ml-1 font-sans text-sm font-medium ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
-                      / mois
-                    </span>
-                  </p>
-                  <p className={`relative mt-4 text-sm ${plan.highlighted ? "text-blue-100" : "text-ink-500"}`}>
-                    {plan.description}
-                  </p>
-                  <ul className={`relative mt-8 flex-1 space-y-3 border-t pt-6 text-sm ${plan.highlighted ? "border-white/15 text-beige-100" : "border-ink-200/70 text-ink-700"}`}>
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2.5">
-                        <Check className={plan.highlighted ? "text-blue-300" : "text-blue-500"} /> {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="relative mt-8">
-                    {plan.onQuote ? (
-                      <Link href="/contact-entreprise" className="btn-secondary w-full">
-                        Nous contacter
-                      </Link>
-                    ) : plan.stripePriceEnv ? (
-                      <SubscribeButton
-                        plan={plan.id}
-                        label="S'abonner"
-                        variant={plan.highlighted ? "inverse" : "outline"}
-                      />
-                    ) : (
-                      <Link href="/inscription" className="btn-secondary w-full">
-                        Essayer gratuitement
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <PricingSection plans={plans} />
 
         </div>
       </section>

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { PLAN_ORDER, type PlanId } from "@/lib/plans";
+import { PLAN_ORDER, type Billing, type PlanId } from "@/lib/plans";
 import { getStripe, priceIdFor } from "@/lib/stripe";
 
 /**
- * POST /api/checkout — { plan: "starter" | "pro" | "entreprise" }
+ * POST /api/checkout — { plan: "starter" | "pro" | "entreprise", billing?: "monthly" | "annual" }
  * Crée une session Stripe Checkout rattachée à l'entreprise de l'utilisateur
  * connecté (client_reference_id + métadonnées) : le webhook
  * /api/stripe/webhook active ensuite la formule. Visiteur non connecté :
@@ -13,6 +13,7 @@ import { getStripe, priceIdFor } from "@/lib/stripe";
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const plan = body?.plan as PlanId;
+  const billing: Billing = body?.billing === "annual" ? "annual" : "monthly";
   if (!PLAN_ORDER.includes(plan) || plan === "free") {
     return NextResponse.json({ error: "Formule inconnue." }, { status: 400 });
   }
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ redirect: `/inscription?formule=${plan}` });
 
   const stripe = getStripe();
-  const priceId = priceIdFor(plan);
+  const priceId = priceIdFor(plan, billing);
   if (!stripe || !priceId) {
     return NextResponse.json({ error: "Le paiement en ligne n'est pas encore activé. Contactez-nous pour souscrire." }, { status: 503 });
   }

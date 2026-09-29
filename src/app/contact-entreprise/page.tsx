@@ -1,6 +1,17 @@
 import { MarketingShell } from "@/components/layout/marketing-shell";
 
-export default function ContactEntreprisePage() {
+type QuoteParams = { fiches?: string; societes?: string; accompagnement?: string; facturation?: string };
+
+export default function ContactEntreprisePage({ searchParams }: { searchParams: QuoteParams }) {
+  // Valeurs reprises du simulateur Entreprise de la page d'accueil.
+  const fiches = typeof searchParams.fiches === "string" ? searchParams.fiches : "";
+  const volume = /^\d+$/.test(fiches.replace("+", "")) ? fiches.replace("+", "") : undefined;
+  const options = [
+    searchParams.societes === "1" ? "Multi-sociétés" : null,
+    searchParams.accompagnement === "1" ? "Accompagnement dédié" : null,
+    searchParams.facturation === "annuelle" ? "Facturation annuelle" : null,
+  ].filter(Boolean) as string[];
+
   return (
     <MarketingShell>
       <section className="relative overflow-hidden">
@@ -74,9 +85,18 @@ export default function ContactEntreprisePage() {
               type="number"
               min={0}
               required
+              defaultValue={volume}
               className="input"
             />
           </div>
+
+          {options.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <span className="field-label">Options choisies</span>
+              <p className="text-sm text-ink-600">{options.join(" · ")}</p>
+              <input type="hidden" name="options" value={options.join(", ")} />
+            </div>
+          )}
 
           <button
             type="submit"

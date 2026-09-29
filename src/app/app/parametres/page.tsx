@@ -206,7 +206,7 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
           })}
         </div>
         <p className="mt-4 text-xs text-ink-400">
-          Prix HT. La formule Entreprise peut aussi être activée par notre équipe :{" "}
+          Prix HT. Au-delà de 300 fiches par mois, l&apos;offre Entreprise est établie sur devis :{" "}
           <Link href="/contact-entreprise" className="font-semibold text-blue-600 hover:text-blue-800">
             nous contacter
           </Link>

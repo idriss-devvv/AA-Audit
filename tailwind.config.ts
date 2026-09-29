@@ -10,12 +10,12 @@ const config: Config = {
       colors: {
         // Beige — sable doux, fonds et surfaces chaleureuses
         beige: {
-          50: "#F9F6F0",
-          100: "#F2EDE3",
-          200: "#E6DECF",
-          300: "#D3C6AE",
-          400: "#B8A583",
-          500: "#998462",
+          50: "#F7F1E6",
+          100: "#EFE7D6",
+          200: "#E3D8C2",
+          300: "#CFBFA1",
+          400: "#B49F7A",
+          500: "#96805B",
         },
         // Bleu — encre profonde : marque, actions, éléments de confiance
         blue: {

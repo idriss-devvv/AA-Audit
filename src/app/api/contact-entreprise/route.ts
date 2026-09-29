@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 /**
  * POST /api/contact-entreprise
  * Reçoit une demande de devis "Entreprise" (nom, email, téléphone,
- * volume mensuel de fiches de paie).
+ * volume mensuel de fiches de paie, options choisies dans le simulateur).
  * TODO: envoyer un email de notification et/ou stocker le lead en base.
  */
 export async function POST(req: NextRequest) {
@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Le champ facultatif « options » (simulateur) est à joindre à la notification.
   // TODO: brancher un service d'envoi d'email (Resend, Postmark...)
   // et/ou créer un enregistrement "lead" dans Supabase.
 

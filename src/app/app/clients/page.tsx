@@ -26,7 +26,7 @@ export default async function ClientsPage() {
         <div className="mt-8 max-w-2xl">
           <UpgradeNotice
             title={`Gérez plusieurs ${noun.plural}`}
-            text="Regroupez toutes vos sociétés dans un seul compte, avec des fiches de paie illimitées et un onglet Salariés dans chaque société."
+            text="Regroupez toutes vos sociétés dans un seul compte, avec 300 fiches de paie par mois et un onglet Salariés dans chaque société."
             requiredPlan="entreprise"
           />
         </div>

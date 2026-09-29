@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import type { PlanId } from "@/lib/plans";
+import type { Billing, PlanId } from "@/lib/plans";
 
 export function SubscribeButton({
   plan,
   label = "S'abonner",
   variant = "primary",
+  billing = "monthly",
 }: {
   plan: PlanId;
+  billing?: Billing;
   label?: string;
   variant?: "primary" | "outline" | "inverse";
 }) {
@@ -22,7 +24,7 @@ export function SubscribeButton({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, billing }),
       });
       const data = await res.json().catch(() => ({}));
 

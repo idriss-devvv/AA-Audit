@@ -13,7 +13,7 @@ export type PlanDefinition = {
   /** Prix mensuel HT en euros (0 pour free). */
   price: number;
   description: string;
-  /** Fiches autorisées : au total pour free, par mois pour starter / pro ; null = illimité. */
+  /** Fiches autorisées : au total pour free, par mois sinon ; null = illimité. */
   quota: number | null;
   quotaPeriod: "total" | "month" | null;
   /** Onglet « Salariés ». */
@@ -44,7 +44,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   starter: {
     id: "starter",
     label: "Starter",
-    price: 29,
+    price: 49,
     description: "Pour contrôler régulièrement les fiches d'une petite structure.",
     quota: 30,
     quotaPeriod: "month",
@@ -57,7 +57,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   pro: {
     id: "pro",
     label: "Pro",
-    price: 99,
+    price: 149,
     description: "Pour les PME qui suivent leurs salariés dans la durée.",
     quota: 150,
     quotaPeriod: "month",
@@ -69,16 +69,16 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   },
   entreprise: {
     id: "entreprise",
-    label: "Entreprise",
-    price: 499,
-    description: "Pour les groupes et cabinets qui gèrent plusieurs sociétés.",
-    quota: null,
-    quotaPeriod: null,
+    label: "Cabinet",
+    price: 249,
+    description: "Pour les cabinets et groupes qui gèrent plusieurs sociétés.",
+    quota: 300,
+    quotaPeriod: "month",
     employeesTab: true,
     companiesTab: true,
     blurredResults: false,
     features: [
-      "Fiches de paie illimitées",
+      "300 fiches de paie / mois",
       "Onglet Sociétés : plusieurs sociétés dans un compte",
       "Onglet Salariés dans chaque société",
     ],
@@ -97,6 +97,51 @@ export function quotaLabel(plan: PlanDefinition, quota: number | null = plan.quo
   if (quota === null) return "Fiches illimitées";
   const unit = quota > 1 ? "fiches" : "fiche";
   return plan.id === "free" ? `${quota} ${unit} au total` : `${quota} ${unit} / mois`;
+}
+
+/** Facturation annuelle : 2 mois offerts (10 mois payés sur 12). */
+export const ANNUAL_MONTHS_BILLED = 10;
+
+export type Billing = "monthly" | "annual";
+
+/** Prix mensuel affiché : équivalent mensuel arrondi à l'euro en annuel. */
+export function monthlyPrice(price: number, billing: Billing): number {
+  return billing === "annual" ? Math.round((price * ANNUAL_MONTHS_BILLED) / 12) : price;
+}
+
+/**
+ * Offre Entreprise (sur devis, au-delà de la formule Cabinet) : simulateur de
+ * la page d'accueil. Prix par fiche dégressif, appliqué par tranche.
+ */
+export const ENTERPRISE_QUOTE = {
+  min: 300,
+  max: 5000,
+  step: 50,
+  tiers: [
+    { upTo: 1000, perPayslip: 0.9 },
+    { upTo: 2500, perPayslip: 0.7 },
+    { upTo: 5000, perPayslip: 0.5 },
+  ],
+  /** Options mensuelles (HT). */
+  multiCompanies: 99,
+  dedicatedSupport: 149,
+} as const;
+
+/** Prix mensuel HT estimé de l'offre Entreprise pour un volume de fiches donné. */
+export function enterpriseMonthlyPrice(
+  payslips: number,
+  options: { multiCompanies: boolean; dedicatedSupport: boolean },
+): number {
+  let total = 0;
+  let from = 0;
+  for (const tier of ENTERPRISE_QUOTE.tiers) {
+    const count = Math.max(0, Math.min(payslips, tier.upTo) - from);
+    total += count * tier.perPayslip;
+    from = tier.upTo;
+  }
+  if (options.multiCompanies) total += ENTERPRISE_QUOTE.multiCompanies;
+  if (options.dedicatedSupport) total += ENTERPRISE_QUOTE.dedicatedSupport;
+  return Math.round(total);
 }
 
 export const ROLE_LABELS: Record<AppRole, string> = {

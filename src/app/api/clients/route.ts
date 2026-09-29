@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
   if (!canManage || !profile?.company_id) {
     return NextResponse.json(
-      { error: "La gestion de plusieurs sociétés est réservée à la formule Entreprise." },
+      { error: "La gestion de plusieurs sociétés est réservée à la formule Cabinet." },
       { status: 403 }
     );
   }

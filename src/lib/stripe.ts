@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { PLANS, PLAN_ORDER, type PlanId } from "@/lib/plans";
+import { PLANS, PLAN_ORDER, type Billing, type PlanId } from "@/lib/plans";
 
 /** Client Stripe, ou null tant que STRIPE_SECRET_KEY n'est pas configurée. */
 export function getStripe(): Stripe | null {
@@ -11,16 +11,18 @@ export function getStripe(): Stripe | null {
  * Identifiant de prix Stripe d'une formule, lu dans les variables
  * d'environnement (STRIPE_PRICE_STARTER, STRIPE_PRICE_PRO,
  * STRIPE_PRICE_ENTREPRISE) : les prix se créent dans le Dashboard Stripe.
+ * Facturation annuelle : même nom suffixé de _ANNUAL.
  */
-export function priceIdFor(plan: PlanId): string | null {
+export function priceIdFor(plan: PlanId, billing: Billing = "monthly"): string | null {
   const env = PLANS[plan].stripePriceEnv;
-  return env ? process.env[env]?.trim() || null : null;
+  if (!env) return null;
+  return process.env[billing === "annual" ? `${env}_ANNUAL` : env]?.trim() || null;
 }
 
 /** Formule correspondant à un prix Stripe (webhook). */
 export function planForPrice(priceId: string | null | undefined): PlanId | null {
   if (!priceId) return null;
-  return PLAN_ORDER.find((plan) => priceIdFor(plan) === priceId) ?? null;
+  return PLAN_ORDER.find((plan) => priceIdFor(plan) === priceId || priceIdFor(plan, "annual") === priceId) ?? null;
 }
 
 /** Statut Stripe → statut de la table subscriptions. */
