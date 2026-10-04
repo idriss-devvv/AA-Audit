@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { SubscribeButton } from "@/components/pricing/subscribe-button";
 import { Reveal } from "@/components/ui/reveal";
 import {
   ANNUAL_MONTHS_BILLED,
@@ -85,12 +84,17 @@ export function PricingSection({ plans }: { plans: PricingPlan[] }) {
                 ))}
               </ul>
               <div className="relative mt-8">
-                <SubscribeButton
-                  plan={plan.id}
-                  billing={billing}
-                  label="S'abonner"
-                  variant={plan.highlighted ? "inverse" : "outline"}
-                />
+                {/* Essai d'abord : le paiement se fait depuis l'app, après la première fiche testée. */}
+                <Link
+                  href="/inscription"
+                  className={
+                    plan.highlighted
+                      ? "btn w-full bg-beige-50 px-6 py-3 text-blue-800 hover:bg-white active:scale-[0.98]"
+                      : "btn-secondary w-full"
+                  }
+                >
+                  Essayer gratuitement
+                </Link>
               </div>
             </div>
           </Reveal>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Reveal } from "@/components/ui/reveal";
 import { MarketingIcon, type MarketingIconName } from "@/components/marketing/icons";
 
@@ -258,6 +259,18 @@ export function StepsSection({ steps, id }: { steps: Step[]; id?: string }) {
             );
           })}
         </div>
+        <Reveal className="mt-14 flex flex-col items-center gap-3 text-center">
+          <Link
+            href="/inscription"
+            className="btn group bg-beige-50 px-7 py-3 text-ink-900 shadow-lift hover:bg-white active:scale-[0.98]"
+          >
+            Essayer gratuitement
+            <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden>
+              <path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
+          <p className="text-xs text-ink-400">Première fiche analysée gratuitement, sans carte bancaire.</p>
+        </Reveal>
       </div>
     </section>
   );
