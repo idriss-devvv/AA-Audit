@@ -317,11 +317,11 @@ export default function Home() {
           </p>
           <div className="mt-10 flex w-full animate-fade-in-up flex-col gap-3 [animation-delay:240ms] sm:w-auto sm:flex-row">
             <Link href="/inscription" className="btn-primary group px-7">
-              Essayer A&A Audit
+              Essayer gratuitement
               <ArrowRight />
             </Link>
             <Link href="/contact" className="btn-secondary px-7">
-              Demander une démo
+              Contactez-nous
             </Link>
           </div>
 
