@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { HOME_STEPS } from "@/components/marketing/steps-section";
 import { AudiencePage, type AudiencePageContent } from "@/components/marketing/audience-page";
 
 const content: AudiencePageContent = {
@@ -32,11 +33,7 @@ const content: AudiencePageContent = {
       text: "Le solde affiché est comparé aux jours acquis et aux jours pris indiqués sur le bulletin.",
     },
   ],
-  steps: [
-    { icon: "users", title: "Créez votre compte", text: "Choisissez « Particulier » à l'inscription : votre espace est créé à votre nom." },
-    { icon: "document", title: "Importez votre bulletin", text: "Déposez le PDF de votre fiche de paie, tel que fourni par votre employeur." },
-    { icon: "search", title: "Lisez le rapport", text: "Chaque anomalie est expliquée, avec le montant attendu et la source officielle." },
-  ],
+  steps: HOME_STEPS,
   faqs: [
     {
       question: "Comment vérifier sa fiche de paie ?",

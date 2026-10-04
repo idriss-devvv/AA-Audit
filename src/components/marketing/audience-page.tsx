@@ -3,7 +3,7 @@ import { MarketingShell } from "@/components/layout/marketing-shell";
 import { FaqItem } from "@/components/ui/faq-item";
 import { Reveal } from "@/components/ui/reveal";
 import { CountUp } from "@/components/ui/count-up";
-import { StepsSection } from "@/components/marketing/steps-section";
+import { StepsSection, type Step } from "@/components/marketing/steps-section";
 import { ControlsSection, LEGAL_VALUES_CHECKED_AT, getControls } from "@/components/marketing/controls-section";
 import { HeroVisual, type HeroVisualKind } from "@/components/marketing/hero-visuals";
 import { MarketingIcon, type MarketingIconName } from "@/components/marketing/icons";
@@ -22,7 +22,7 @@ export type AudiencePageContent = {
   visual: HeroVisualKind;
   questionsTitle: string;
   questions: { title: string; text: string; icon: MarketingIconName }[];
-  steps: { title: string; text: string; icon: MarketingIconName }[];
+  steps: Step[];
   faqs: { question: string; answer: string }[];
   cta: string;
 };

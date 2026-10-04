@@ -5,7 +5,7 @@ import { PricingSection } from "@/components/pricing/pricing-section";
 import { Reveal } from "@/components/ui/reveal";
 import { FaqItem } from "@/components/ui/faq-item";
 import { ControlsSection } from "@/components/marketing/controls-section";
-import { StepsSection, type Step } from "@/components/marketing/steps-section";
+import { HOME_STEPS, StepsSection } from "@/components/marketing/steps-section";
 import { PLANS, PLAN_ORDER } from "@/lib/plans";
 
 export const metadata: Metadata = {
@@ -125,25 +125,6 @@ const features = [
     title: "Sécurité des données",
     description:
       "Vos fiches de paie sont chiffrées, stockées de façon isolée par utilisateur et ne sont jamais partagées avec des tiers.",
-  },
-];
-
-const steps: Step[] = [
-  {
-    icon: "users",
-    scene: "signup",
-    title: "Créez votre compte gratuitement",
-    text: "Inscription en une minute, sans carte bancaire : votre première fiche est offerte.",
-  },
-  {
-    icon: "document",
-    title: "Importez vos fiches de paie",
-    text: "Déposez les PDF générés par votre logiciel de paie : l'analyse se lance automatiquement.",
-  },
-  {
-    icon: "search",
-    title: "Vos anomalies s'affichent",
-    text: "Chaque écart est trié par gravité et expliqué, avec le montant attendu et sa source officielle.",
   },
 ];
 
@@ -446,7 +427,7 @@ export default function Home() {
       <ControlsSection />
 
       {/* How it works */}
-      <StepsSection id="comment-ca-marche" steps={steps} />
+      <StepsSection id="comment-ca-marche" steps={HOME_STEPS} />
 
       {/* Pour qui */}
       <section className="bg-gradient-to-br from-beige-50 via-beige-100/40 to-beige-50 py-24 md:py-32">

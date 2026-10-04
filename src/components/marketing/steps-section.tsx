@@ -4,6 +4,26 @@ import { MarketingIcon, type MarketingIconName } from "@/components/marketing/ic
 export type SceneName = "settings" | "account" | "signup" | "import" | "results" | "anomalies";
 export type Step = { icon: MarketingIconName; title: string; text: string; /** Mini-animation (par défaut : déduite de l'icône). */ scene?: SceneName };
 
+/** Étapes de la page d'accueil, reprises sur la page « Vérifier ma fiche de paie ». */
+export const HOME_STEPS: Step[] = [
+  {
+    icon: "users",
+    scene: "signup",
+    title: "Créez votre compte gratuitement",
+    text: "Inscription en une minute, sans carte bancaire : votre première fiche est offerte.",
+  },
+  {
+    icon: "document",
+    title: "Importez vos fiches de paie",
+    text: "Déposez les PDF générés par votre logiciel de paie : l'analyse se lance automatiquement.",
+  },
+  {
+    icon: "search",
+    title: "Vos anomalies s'affichent",
+    text: "Chaque écart est trié par gravité et expliqué, avec le montant attendu et sa source officielle.",
+  },
+];
+
 /** Durée d'un cycle d'animation : chaque étape s'illumine à son tour. */
 const CYCLE_S = 4.8;
 
