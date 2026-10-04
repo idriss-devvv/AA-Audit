@@ -2,6 +2,8 @@ import { PMSS_BY_YEAR, SMIC_HOURLY } from "@/lib/rules/referentiels/legal";
 import { CONVENTION_GRIDS } from "@/lib/rules/referentiels/grilles-conventionnelles";
 import { Reveal } from "@/components/ui/reveal";
 import { MarketingIcon, type MarketingIconName } from "@/components/marketing/icons";
+import { ConventionExplorer } from "@/components/marketing/convention-explorer";
+import { listPublicConventions } from "@/lib/public-conventions";
 
 /** Date de la dernière vérification des valeurs légales du référentiel. */
 export const LEGAL_VALUES_CHECKED_AT = "24 septembre 2026";
@@ -83,8 +85,9 @@ export function getConventionNames() {
   return CONVENTION_GRIDS.map((grid) => grid.label.split(" — ")[0]);
 }
 
-export function ControlsSection({ id = "controles" }: { id?: string }) {
+export async function ControlsSection({ id = "controles" }: { id?: string }) {
   const controls = getControls();
+  const conventions = await listPublicConventions();
   return (
     <section id={id} className="relative overflow-hidden border-t border-ink-200/60 bg-white py-24 md:py-32">
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-72 w-[720px] -translate-x-1/2 rounded-full bg-blue-50/80 blur-3xl" />
@@ -122,6 +125,9 @@ export function ControlsSection({ id = "controles" }: { id?: string }) {
         </dl>
 
         <Reveal className="mt-10">
+          {conventions.length > 0 ? (
+            <ConventionExplorer conventions={conventions} />
+          ) : (
           <div className="rounded-3xl border border-ink-200/70 bg-gradient-to-br from-beige-50 to-white p-7 text-center">
             <p className="text-sm font-semibold text-ink-900">Grilles de salaires minimums intégrées</p>
             <ul className="mt-5 flex flex-wrap justify-center gap-2">
@@ -139,6 +145,7 @@ export function ControlsSection({ id = "controles" }: { id?: string }) {
               La convention collective est détectée automatiquement sur chaque bulletin (numéro IDCC ou libellé).
             </p>
           </div>
+          )}
         </Reveal>
       </div>
     </section>
