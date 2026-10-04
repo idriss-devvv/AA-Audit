@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingShell } from "@/components/layout/marketing-shell";
 import { PricingSection } from "@/components/pricing/pricing-section";
+import { Quill } from "@/components/marketing/quill";
 import { Reveal } from "@/components/ui/reveal";
 import { FaqItem } from "@/components/ui/faq-item";
 import { ControlsSection } from "@/components/marketing/controls-section";
@@ -307,6 +308,7 @@ export default function Home() {
           <h1 className="heading-display mt-8 max-w-4xl animate-fade-in-up text-[2.9rem] [animation-delay:80ms] sm:text-6xl md:text-[5.25rem]">
             Vérifiez chaque fiche de paie,{" "}
             <em className="italic text-blue-600">sans rien laisser passer</em>
+            <Quill className="anim-quill ml-[0.06em] inline-block h-[0.9em] w-auto align-[-0.08em] drop-shadow-[0_6px_10px_rgba(219,39,119,0.18)]" />
           </h1>
           <p className="mt-7 max-w-xl animate-fade-in-up text-base leading-relaxed text-ink-500 [animation-delay:160ms] md:text-lg">
             A&A Audit détecte automatiquement les anomalies et erreurs sur vos
