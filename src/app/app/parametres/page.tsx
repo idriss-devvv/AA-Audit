@@ -30,6 +30,7 @@ const AUTOMATIC_CONTROLS = [
   "Convention collective détectée sur chaque fiche (IDCC ou libellé)",
   `Salaires minimaux conventionnels de ${CONVENTION_GRIDS.length} conventions`,
   "Heures supplémentaires, mentions obligatoires, net à payer, congés payés",
+  "Réduction générale des cotisations patronales (RGDU 2026)",
 ];
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
@@ -220,7 +221,7 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
 async function BaremesTab({ companyId, companyName }: { companyId: string | null; companyName: string | null }) {
   const paySettings = companyId
     ? await getCompanyPaySettings(companyId)
-    : { csgCrdsNonDeductiblePercent: null, salaireMinimumConventionnel: null, contributionRates: [], tolerances: {}, atMpRatePercent: null };
+    : { csgCrdsNonDeductiblePercent: null, salaireMinimumConventionnel: null, contributionRates: [], tolerances: {}, atMpRatePercent: null, fnalRatePercent: null };
 
   return (
     <div className="mt-6 grid max-w-2xl gap-6">
@@ -252,6 +253,7 @@ async function BaremesTab({ companyId, companyName }: { companyId: string | null
           initialCsgCrds={paySettings.csgCrdsNonDeductiblePercent}
           initialSalaireMinimum={paySettings.salaireMinimumConventionnel}
           initialAtMp={paySettings.atMpRatePercent}
+          initialFnal={paySettings.fnalRatePercent}
         />
       </section>
 

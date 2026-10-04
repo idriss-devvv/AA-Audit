@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { RuleContext } from "@/lib/rules/anomaly-rules";
 import { sanitizeTolerances, type Tolerances } from "@/lib/rules/tolerances";
 import type { RegulatoryParameter } from "@/lib/rules/regulatory";
+import { normalizeFnalRate, type FnalRate } from "@/lib/rules/reduction-generale";
 
 export type ContributionRateRow = {
   id: string;
@@ -25,6 +26,8 @@ export type CompanyPaySettings = {
   tolerances: Partial<Tolerances>;
   /** Taux AT/MP notifié par la CARSAT, en %. */
   atMpRatePercent: number | null;
+  /** Taux FNAL (0,10 % sous 50 salariés, 0,50 % au-delà) : réduction générale exacte. */
+  fnalRatePercent: FnalRate | null;
 };
 
 /**
@@ -90,7 +93,7 @@ export async function getCompanyPaySettings(companyId: string): Promise<CompanyP
     supabase
       .from("company_pay_settings")
       .select(
-"csg_crds_non_deductible_percent, salaire_minimum_conventionnel, tolerances, at_mp_rate_percent"
+"csg_crds_non_deductible_percent, salaire_minimum_conventionnel, tolerances, at_mp_rate_percent, fnal_rate_percent"
       )
       .eq("company_id", companyId)
       .maybeSingle(),
@@ -107,6 +110,7 @@ export async function getCompanyPaySettings(companyId: string): Promise<CompanyP
     contributionRates: (rates as ContributionRateRow[] | null) ?? [],
     tolerances: sanitizeTolerances(settings?.tolerances),
     atMpRatePercent: settings?.at_mp_rate_percent != null ? Number(settings.at_mp_rate_percent) : null,
+    fnalRatePercent: normalizeFnalRate(settings?.fnal_rate_percent),
   };
 }
 
@@ -133,5 +137,6 @@ export function toRuleContext(settings: CompanyPaySettings): RuleContext {
     })),
     tolerances: settings.tolerances,
     atMpRatePercent: settings.atMpRatePercent,
+    fnalRatePercent: settings.fnalRatePercent,
   };
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
+import { normalizeFnalRate } from "@/lib/rules/reduction-generale";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,10 @@ export async function POST(req: NextRequest) {
   if (atMpRatePercent !== null && (atMpRatePercent < 0 || atMpRatePercent > 100)) {
     return NextResponse.json({ error: "Taux AT/MP invalide." }, { status: 400 });
   }
+  const fnalRatePercent = normalizeFnalRate(body.fnalRatePercent);
+  if (fnalRatePercent === null && body.fnalRatePercent != null && body.fnalRatePercent !== "") {
+    return NextResponse.json({ error: "Taux FNAL invalide." }, { status: 400 });
+  }
 
   const { error } = await supabase.from("company_pay_settings").upsert(
     {
@@ -39,6 +44,7 @@ export async function POST(req: NextRequest) {
       csg_crds_non_deductible_percent: csgCrdsNonDeductiblePercent,
       salaire_minimum_conventionnel: salaireMinimumConventionnel,
       at_mp_rate_percent: atMpRatePercent,
+      fnal_rate_percent: fnalRatePercent,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "company_id" }

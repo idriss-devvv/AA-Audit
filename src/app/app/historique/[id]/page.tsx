@@ -12,6 +12,10 @@ import { AGREEMENT_UNAVAILABLE_MESSAGE } from "@/lib/collective-agreement-detect
 import { employeeDisplayName, statusExplanation, statusInfo } from "@/lib/payslips";
 import { PayslipFileFrame } from "@/components/payslips/payslip-preview";
 import { DeletePayslipButton } from "@/components/payslips/delete-payslip-button";
+import { GeneralReductionDetail } from "@/components/app/general-reduction-detail";
+import { computeGeneralReduction } from "@/lib/rules/reduction-generale";
+import { tolerancesFor } from "@/lib/rules/tolerances";
+import { getCompanyPaySettings, listRegulatoryParameters, toRuleContext } from "@/lib/pay-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -89,7 +93,7 @@ export default async function RapportControlePage({
   const payslip = payslipData as unknown as PayslipDetail | null;
   if (!payslip || payslip.deleted_at) notFound();
 
-  const [{ data: anomaliesData }, locked] = await Promise.all([
+  const [{ data: anomaliesData }, locked, paySettings, regulatory] = await Promise.all([
     supabase
       .from("anomalies")
       .select("id, rule_id, severity, message, detected_at")
@@ -97,6 +101,8 @@ export default async function RapportControlePage({
       .order("detected_at", { ascending: false }),
     // Formule Free : seule la première anomalie est montrée en clair.
     areResultsLocked(payslip.company_id),
+    getCompanyPaySettings(payslip.company_id),
+    listRegulatoryParameters(),
   ]);
 
   const anomalies = (anomaliesData as unknown as AnomalyDetail[] | null) ?? [];
@@ -105,6 +111,19 @@ export default async function RapportControlePage({
   const explanation = statusExplanation(payslip.status, payslip.mime_type, payslip.error_message);
   const extracted = payslip.extracted_data;
   const generatedAt = new Date().toLocaleString("fr-FR");
+
+  // Détail de la réduction générale, recalculé à partir des données lues sur la fiche.
+  const ruleContext = { ...toRuleContext(paySettings), regulatory };
+  const reduction = extracted
+    ? computeGeneralReduction(
+        { ...extracted, period: extracted.period ?? payslip.period ?? undefined, grossPay: extracted.grossPay || payslip.gross_pay || 0 },
+        ruleContext,
+      )
+    : null;
+  const reductionTolerances = tolerancesFor(ruleContext);
+  const reductionMargin = reduction
+    ? Math.max(reduction.expectedMax * (reductionTolerances.relativePercent / 100), reductionTolerances.relativeMinEuros)
+    : 0;
 
   const severityCounts = anomalies.reduce(
     (acc, a) => {
@@ -256,6 +275,8 @@ export default async function RapportControlePage({
             </div>
           </div>
         )}
+
+        {reduction && !locked && <GeneralReductionDetail calc={reduction} margin={reductionMargin} />}
 
         <div className="mt-8 border-t border-ink-200/70 pt-6">
           <div className="flex items-center justify-between">

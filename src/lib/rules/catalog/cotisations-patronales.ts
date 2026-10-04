@@ -2,6 +2,7 @@ import type { ContributionLine, PayslipData } from "@/types/payslip";
 import type { AnomalyRule, RuleContext } from "../types";
 import { tolerancesFor } from "../tolerances";
 import { regulatoryValue } from "../regulatory";
+import { computeGeneralReduction } from "../reduction-generale";
 import { LEGAL_MONTHLY_HOURS, smicHourlyFor } from "../referentiels/legal";
 
 /**
@@ -82,21 +83,6 @@ function atMpRate(context: RuleContext): number | null {
   return rate !== null && rate > 0 ? rate : null;
 }
 
-/** Réduction générale dégressive unique (2026) : coefficient mensuel indicatif, régularisé sur l'année. */
-function rgduCoefficient(context: RuleContext, payslip: PayslipData, tdelta: number): { coefficient: number; limit: number } | null {
-  const tmin = regulatoryValue(context, "rgdu.tmin", payslip.period);
-  const p = regulatoryValue(context, "rgdu.exposant", payslip.period);
-  const seuil = regulatoryValue(context, "rgdu.seuil_smic", payslip.period);
-  const smic = regulatoryValue(context, "rgdu.smic_horaire", payslip.period);
-  if (!tmin || !p || !seuil || !smic || payslip.grossPay <= 0) return null;
-  const smicMonth = smic.value * hoursOf(payslip);
-  const limit = seuil.value * smicMonth;
-  if (payslip.grossPay >= limit) return { coefficient: 0, limit };
-  const inner = 0.5 * (limit / payslip.grossPay - 1);
-  const coefficient = Math.min(tmin.value + tdelta, Math.round((tmin.value + tdelta * Math.pow(inner, p.value)) * 10000) / 10000);
-  return { coefficient, limit };
-}
-
 export const cotisationsPatronalesRules: AnomalyRule[] = [
   reducedRateRule("cotisations.maladie-taux", "maladie", /maladie/i, "Cotisation patronale d'assurance maladie"),
   reducedRateRule("cotisations.famille-taux", "famille", /allocations?\s+familiales|\bfamille\b/i, "Cotisation d'allocations familiales"),
@@ -105,38 +91,35 @@ export const cotisationsPatronalesRules: AnomalyRule[] = [
     category: "cotisations",
     description: "Réduction générale dégressive unique (2026) : présence sous 3 SMIC et montant cohérent avec la formule de l'article D241-7",
     check: (payslip, context) => {
-      const t010 = regulatoryValue(context, "rgdu.tdelta_fnal_010", payslip.period);
-      const t050 = regulatoryValue(context, "rgdu.tdelta_fnal_050", payslip.period);
-      if (!t010 || !t050) return null;
-      const low = rgduCoefficient(context, payslip, t010.value);
-      const high = rgduCoefficient(context, payslip, t050.value);
-      if (!low || !high) return null;
-      const amount = payslip.generalReduction ?? null;
+      const calc = computeGeneralReduction(payslip, context);
+      if (!calc) return null;
+      const amount = calc.actual;
       const minEuros = tolerancesFor(context).relativeMinEuros;
-      if (low.coefficient === 0) {
+      if (!calc.eligible) {
         if (amount !== null && amount > minEuros) {
           return {
             severity: "critical",
-            message: `Réduction générale de ${EURO(amount)} alors que le brut (${EURO(payslip.grossPay)}) atteint ou dépasse 3 SMIC (${EURO(low.limit)} pour ${hoursOf(payslip).toLocaleString("fr-FR")} h) : aucune réduction n'est due (${t010.source}).`,
+            message: `Réduction générale de ${EURO(amount)} alors que le brut (${EURO(calc.grossPay)}) atteint ou dépasse ${calc.thresholdSmic.toLocaleString("fr-FR")} SMIC (${EURO(calc.limit)} pour ${calc.hours.toLocaleString("fr-FR")} h) : aucune réduction n'est due (${calc.source}).`,
           };
         }
         return null;
       }
-      const expectedMin = low.coefficient * payslip.grossPay;
-      const expectedMax = high.coefficient * payslip.grossPay;
+      const coefficients = calc.scenarios.map((s) => s.coefficient.toLocaleString("fr-FR", { maximumFractionDigits: 4 }));
+      const coefficientText = coefficients.length === 1 ? `coefficient ${coefficients[0]}` : `coefficient ${coefficients[0]} à ${coefficients[1]} selon le taux FNAL`;
+      const expectedText = calc.expectedMin === calc.expectedMax ? EURO(calc.expectedMin) : `${EURO(calc.expectedMin)} à ${EURO(calc.expectedMax)}`;
       if (amount === null) {
         const showsEmployer = (payslip.contributionLines ?? []).some((l) => l.employerRatePercent != null);
         if (!showsEmployer) return null;
         return {
           severity: "warning",
-          message: `Aucune ligne de réduction générale lue alors que le brut (${EURO(payslip.grossPay)}) est inférieur à 3 SMIC : réduction attendue d'environ ${EURO(expectedMin)} à ${EURO(expectedMax)} ce mois-ci (coefficient ${low.coefficient.toLocaleString("fr-FR")} à ${high.coefficient.toLocaleString("fr-FR")} selon le taux FNAL — ${t010.source}).`,
+          message: `Aucune ligne de réduction générale lue alors que le brut (${EURO(calc.grossPay)}) est inférieur à ${calc.thresholdSmic.toLocaleString("fr-FR")} SMIC : réduction attendue d'environ ${expectedText} ce mois-ci (${coefficientText}, ${calc.source}).`,
         };
       }
-      const margin = Math.max(expectedMax * (tolerancesFor(context).relativePercent / 100), minEuros);
-      if (amount < expectedMin - margin || amount > expectedMax + margin) {
+      const margin = Math.max(calc.expectedMax * (tolerancesFor(context).relativePercent / 100), minEuros);
+      if (amount < calc.expectedMin - margin || amount > calc.expectedMax + margin) {
         return {
           severity: "info",
-          message: `Réduction générale de ${EURO(amount)} éloignée du montant mensuel attendu (${EURO(expectedMin)} à ${EURO(expectedMax)}, coefficient ${low.coefficient.toLocaleString("fr-FR")} à ${high.coefficient.toLocaleString("fr-FR")}). Le calcul est annuel et régularisé chaque mois (heures supplémentaires, absences, primes) : vérifier le cumul annuel.`,
+          message: `Réduction générale de ${EURO(amount)} éloignée du montant mensuel attendu (${expectedText}, ${coefficientText}). Le calcul est annuel et régularisé chaque mois (heures supplémentaires, absences, primes) : vérifier le cumul annuel.`,
         };
       }
       return null;

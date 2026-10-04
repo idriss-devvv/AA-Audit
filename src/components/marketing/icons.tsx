@@ -20,6 +20,12 @@ const PATHS = {
       <circle cx="17" cy="17" r="2.5" />
     </>
   ),
+  trendDown: (
+    <>
+      <path d="M3 7l6 6 4-4 8 8" />
+      <path d="M15 17h6v-6" />
+    </>
+  ),
   calendar: (
     <>
       <rect x="3" y="5" width="18" height="16" rx="2" />

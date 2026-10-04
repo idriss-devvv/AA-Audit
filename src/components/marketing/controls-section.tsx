@@ -40,6 +40,12 @@ export function getControls() {
       source: "Urssaf · Agirc-Arrco",
     },
     {
+      title: "Réduction générale",
+      icon: "trendDown" as MarketingIconName,
+      detail: "Réduction des cotisations patronales recalculée : présente sous 3 SMIC, absente au-delà, montant comparé à la formule 2026.",
+      source: "Code de la sécurité sociale, art. L241-13 et D241-7",
+    },
+    {
       title: "Plafond de la Sécurité sociale",
       icon: "ceiling" as MarketingIconName,
       detail: `Base des cotisations plafonnées comparée au PMSS : ${EURO(PMSS_BY_YEAR[pmssYear])} € par mois en ${pmssYear}.`,
@@ -96,9 +102,9 @@ export function ControlsSection({ id = "controles" }: { id?: string }) {
           </p>
         </Reveal>
 
-        <dl className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {controls.map((control, i) => (
-            <Reveal key={control.title} delay={(i % 4) * 80} className="h-full">
+            <Reveal key={control.title} delay={(i % 3) * 80} className="h-full">
               <div className="group flex h-full flex-col rounded-2xl border border-ink-200/70 bg-beige-50/70 p-6 transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-lift">
                 <dt>
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-ink-200/70 bg-white text-blue-600 transition duration-300 group-hover:border-blue-600 group-hover:bg-blue-600 group-hover:text-beige-50">

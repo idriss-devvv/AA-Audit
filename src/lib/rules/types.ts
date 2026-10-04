@@ -97,6 +97,8 @@ export type RuleContext = {
   regulatory?: import("./regulatory").RegulatoryParameter[];
   /** Taux AT/MP notifié à l'entreprise, en %. */
   atMpRatePercent?: number | null;
+  /** Taux FNAL de l'entreprise (0,10 % sous 50 salariés, 0,50 % au-delà), pour la réduction générale. */
+  fnalRatePercent?: number | null;
   /** Jusqu'à 3 fiches précédentes du même salarié, la plus récente d'abord (IJSS). */
   previousPayslips?: PayslipData[];
   /** Maintien de salaire prévu par la convention collective de la fiche. */

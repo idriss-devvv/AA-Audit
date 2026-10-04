@@ -7,15 +7,18 @@ export function PaySettingsForm({
   initialCsgCrds,
   initialSalaireMinimum,
   initialAtMp,
+  initialFnal,
 }: {
   initialCsgCrds: number | null;
   initialSalaireMinimum: number | null;
   initialAtMp: number | null;
+  initialFnal: number | null;
 }) {
   const router = useRouter();
   const [csgCrds, setCsgCrds] = useState(initialCsgCrds?.toString() ?? "");
   const [salaireMinimum, setSalaireMinimum] = useState(initialSalaireMinimum?.toString() ?? "");
   const [atMp, setAtMp] = useState(initialAtMp?.toString() ?? "");
+  const [fnal, setFnal] = useState(initialFnal != null ? String(initialFnal) : "");
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +36,7 @@ export function PaySettingsForm({
         csgCrdsNonDeductiblePercent: csgCrds || null,
         salaireMinimumConventionnel: salaireMinimum || null,
         atMpRatePercent: atMp || null,
+        fnalRatePercent: fnal || null,
       }),
     });
 
@@ -95,6 +99,18 @@ export function PaySettingsForm({
           />
           <p className="text-xs text-ink-400">
             Taux AT/MP de l&apos;année, figurant sur la notification de la CARSAT (compte AT/MP sur net-entreprises.fr).
+          </p>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="fnal-rate" className="field-label">Effectif de l&apos;entreprise (taux FNAL)</label>
+          <select id="fnal-rate" value={fnal} onChange={(e) => setFnal(e.target.value)} className="input">
+            <option value="">Non renseigné</option>
+            <option value="0.1">Moins de 50 salariés (FNAL 0,10 %)</option>
+            <option value="0.5">50 salariés et plus (FNAL 0,50 %)</option>
+          </select>
+          <p className="text-xs text-ink-400">
+            Sert au calcul de la réduction générale : renseigné, le montant attendu est exact ; sinon il est
+            encadré entre les deux taux.
           </p>
         </div>
       </div>
