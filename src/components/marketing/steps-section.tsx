@@ -225,7 +225,7 @@ export function StepsSection({ steps, id }: { steps: Step[]; id?: string }) {
       <div aria-hidden className="pointer-events-none absolute -right-40 -top-40 h-[420px] w-[420px] rounded-full bg-blue-500/25 blur-3xl" />
       <div className="container-page relative">
         <Reveal className="max-w-2xl">
-          <span className="eyebrow text-ink-400">
+          <span className="eyebrow eyebrow-dark">
             En {steps.length} étapes
           </span>
           <h2 className="heading-display mt-5 text-4xl text-beige-50 md:text-5xl">Comment ça marche</h2>

@@ -40,8 +40,20 @@ body {
   }
 
   /* Petit sur-titre en capitales */
+  /* Sur-titre de section : tag bleu en pastille, avec un point. */
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500;
+    @apply inline-flex items-center gap-2 rounded-full bg-blue-100 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-800 shadow-[0_1px_2px_rgba(31,63,110,0.10)] ring-1 ring-inset ring-blue-300/70;
+  }
+  .eyebrow::before {
+    content: "";
+    @apply h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600;
+  }
+  /* Variante sur fond sombre. */
+  .eyebrow-dark {
+    @apply bg-blue-500/20 text-blue-100 ring-blue-400/40;
+  }
+  .eyebrow-dark::before {
+    @apply bg-blue-300;
   }
 
   /* Boutons */
