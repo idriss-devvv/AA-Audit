@@ -173,6 +173,15 @@ body {
   14%, 86% { transform: translateX(0); opacity: 1; }
   100% { transform: translateX(0); opacity: 0; }
 }
+@keyframes step-type {
+  0%, 8% { max-width: 0; }
+  45%, 92% { max-width: 9rem; }
+  100% { max-width: 0; }
+}
+@keyframes step-press {
+  0%, 50%, 62%, 100% { transform: scale(1); filter: brightness(1); }
+  55% { transform: scale(0.95); filter: brightness(1.25); }
+}
 @keyframes step-bounce {
   0%, 60%, 100% { transform: translateY(0); }
   70% { transform: translateY(3px); }
@@ -191,6 +200,8 @@ body {
   .anim-step-pop { animation: step-pop 4.8s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
   .anim-step-row { animation: step-row 4.8s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
   .anim-step-bounce { animation: step-bounce 2.4s ease-in-out infinite; }
+  .anim-step-type { max-width: 9rem; animation: step-type 4.8s steps(18, end) infinite; }
+  .anim-step-press { animation: step-press 4.8s ease-in-out infinite; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,7 +1,8 @@
 import { Reveal } from "@/components/ui/reveal";
 import { MarketingIcon, type MarketingIconName } from "@/components/marketing/icons";
 
-export type Step = { icon: MarketingIconName; title: string; text: string };
+export type SceneName = "settings" | "account" | "signup" | "import" | "results" | "anomalies";
+export type Step = { icon: MarketingIconName; title: string; text: string; /** Mini-animation (par défaut : déduite de l'icône). */ scene?: SceneName };
 
 /** Durée d'un cycle d'animation : chaque étape s'illumine à son tour. */
 const CYCLE_S = 4.8;
@@ -70,6 +71,32 @@ function AccountScene() {
   );
 }
 
+/** Étape « Créer un compte gratuitement » : l'e-mail se saisit, le bouton valide, le compte est prêt. */
+function SignupScene() {
+  return (
+    <Scene>
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] text-ink-300">Nouveau compte</span>
+        <span className="anim-step-pop rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
+          Gratuit
+        </span>
+      </div>
+      <div className="mt-2 flex items-center rounded-md border border-white/15 bg-white/[0.05] px-2 py-1.5 text-[10px] text-beige-100">
+        <span className="overflow-hidden whitespace-nowrap">
+          <span className="anim-step-type inline-block overflow-hidden align-bottom">vous@entreprise.fr</span>
+        </span>
+        <span className="anim-step-caret ml-px inline-block h-2.5 w-px bg-blue-200" />
+      </div>
+      <div className="anim-step-press mt-2 flex items-center justify-center gap-1 rounded-md bg-blue-500 py-1.5 text-[10px] font-semibold text-white">
+        Créer mon compte
+        <svg viewBox="0 0 20 20" fill="none" className="h-2.5 w-2.5">
+          <path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+    </Scene>
+  );
+}
+
 /** Étape « Importer » : un PDF tombe dans la zone de dépôt, la barre se remplit. */
 function ImportScene() {
   return (
@@ -124,12 +151,49 @@ function ResultsScene() {
   );
 }
 
-const SCENES: Partial<Record<MarketingIconName, () => JSX.Element>> = {
-  percent: SettingsScene,
-  users: AccountScene,
-  document: ImportScene,
-  download: ResultsScene,
-  search: ResultsScene,
+/** Étape « Anomalies » : les écarts s'affichent un à un, avec leur gravité. */
+function AnomaliesScene() {
+  const rows = [
+    { label: "Critique", badge: "bg-rose-500/15 text-rose-300 ring-rose-400/30", text: "Vieillesse", amount: "−11,40 €" },
+    { label: "Avertissement", badge: "bg-amber-500/15 text-amber-300 ring-amber-400/30", text: "Ancienneté", amount: "−32,00 €" },
+    { label: "Conforme", badge: "bg-emerald-500/15 text-emerald-300 ring-emerald-400/30", text: "Net à payer", amount: "OK" },
+  ];
+  return (
+    <Scene>
+      <div className="space-y-1.5">
+        {rows.map((row, i) => (
+          <div
+            key={row.label}
+            className="anim-step-row flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.04] px-1.5 py-1"
+            style={{ animationDelay: `${i * 0.35}s` }}
+          >
+            <span className={`w-[4.6rem] shrink-0 rounded px-1 py-px text-center text-[8px] font-semibold ring-1 ring-inset ${row.badge}`}>
+              {row.label}
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[9px] text-ink-300">{row.text}</span>
+            <span className="text-[9px] font-semibold tabular-nums text-beige-100">{row.amount}</span>
+          </div>
+        ))}
+      </div>
+    </Scene>
+  );
+}
+
+const SCENES: Record<SceneName, () => JSX.Element> = {
+  settings: SettingsScene,
+  account: AccountScene,
+  signup: SignupScene,
+  import: ImportScene,
+  results: ResultsScene,
+  anomalies: AnomaliesScene,
+};
+
+const SCENE_BY_ICON: Partial<Record<MarketingIconName, SceneName>> = {
+  percent: "settings",
+  users: "account",
+  document: "import",
+  download: "results",
+  search: "anomalies",
 };
 
 /** Section sombre « Comment ça marche » en 3 étapes, avec une mini-animation par étape. */
@@ -154,7 +218,8 @@ export function StepsSection({ steps, id }: { steps: Step[]; id?: string }) {
             </div>
           </Reveal>
           {steps.map((step, i) => {
-            const SceneComponent = SCENES[step.icon];
+            const sceneName = step.scene ?? SCENE_BY_ICON[step.icon];
+            const SceneComponent = sceneName ? SCENES[sceneName] : null;
             return (
               <Reveal key={step.title} delay={i * 150} className="relative text-center">
                 <span

@@ -129,9 +129,22 @@ const features = [
 ];
 
 const steps: Step[] = [
-  { icon: "percent", title: "Paramétrez votre entreprise", text: "Renseignez vos taux propres (accident du travail, mutuelle…) : le reste est automatique." },
-  { icon: "document", title: "Importez les bulletins", text: "Déposez les PDF générés par votre logiciel de paie." },
-  { icon: "download", title: "Exploitez les résultats", text: "Anomalies triées par gravité, rapport imprimable par fiche et exports Excel." },
+  {
+    icon: "users",
+    scene: "signup",
+    title: "Créez votre compte gratuitement",
+    text: "Inscription en une minute, sans carte bancaire : votre première fiche est offerte.",
+  },
+  {
+    icon: "document",
+    title: "Importez vos fiches de paie",
+    text: "Déposez les PDF générés par votre logiciel de paie : l'analyse se lance automatiquement.",
+  },
+  {
+    icon: "search",
+    title: "Vos anomalies s'affichent",
+    text: "Chaque écart est trié par gravité et expliqué, avec le montant attendu et sa source officielle.",
+  },
 ];
 
 const audiences = [
