@@ -342,7 +342,6 @@ export default function Home() {
         <div className="container-page grid gap-14 md:grid-cols-[1.1fr_1fr] md:items-center">
           <Reveal>
             <span className="eyebrow">
-              <span className="h-px w-6 bg-blue-500" />
               Enjeux
             </span>
             <h2 className="heading-display mt-5 text-4xl md:text-5xl">
@@ -390,9 +389,7 @@ export default function Home() {
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
             <span className="eyebrow">
-              <span className="h-px w-6 bg-blue-500" />
               Fonctionnalités
-              <span className="h-px w-6 bg-blue-500" />
             </span>
             <h2 className="heading-display mt-5 text-4xl md:text-5xl">
               Une vérification pensée pour la fiabilité
@@ -434,9 +431,7 @@ export default function Home() {
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
             <span className="eyebrow">
-              <span className="h-px w-6 bg-blue-500" />
               Pour qui
-              <span className="h-px w-6 bg-blue-500" />
             </span>
             <h2 className="heading-display mt-5 text-4xl md:text-5xl">Conçu pour tous les profils</h2>
             <p className="mt-5 text-ink-500">
@@ -475,9 +470,7 @@ export default function Home() {
         <div className="container-page">
           <Reveal className="mx-auto max-w-2xl text-center">
             <span className="eyebrow">
-              <span className="h-px w-6 bg-blue-500" />
               Tarifs
-              <span className="h-px w-6 bg-blue-500" />
             </span>
             <h2 className="heading-display mt-5 text-4xl md:text-5xl">
               Des tarifs simples et transparents
@@ -498,7 +491,6 @@ export default function Home() {
         <div className="container-page grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
           <Reveal className="lg:sticky lg:top-28 lg:self-start">
             <span className="eyebrow">
-              <span className="h-px w-6 bg-blue-500" />
               FAQ
             </span>
             <h2 className="heading-display mt-5 text-4xl md:text-5xl">Questions fréquentes</h2>

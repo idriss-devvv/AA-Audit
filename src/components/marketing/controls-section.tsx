@@ -94,9 +94,7 @@ export async function ControlsSection({ id = "controles" }: { id?: string }) {
       <div className="container-page relative">
         <Reveal className="mx-auto max-w-2xl text-center">
           <span className="eyebrow">
-            <span className="h-px w-6 bg-blue-500" />
             Contrôles
-            <span className="h-px w-6 bg-blue-500" />
           </span>
           <h2 className="heading-display mt-5 text-4xl md:text-5xl">Ce que nous vérifions</h2>
           <p className="mt-5 text-ink-500">
