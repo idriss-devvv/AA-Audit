@@ -120,3 +120,80 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ───────── Animations « Comment ça marche » ─────────
+   Valeurs de base = état final : sans animation (mouvement réduit), chaque
+   mini-scène reste lisible. Cycle commun de 4,8 s, décalé par étape. */
+@keyframes step-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(91, 127, 178, 0); border-color: rgba(255, 255, 255, 0.15); }
+  8%, 26% { box-shadow: 0 0 0 6px rgba(91, 127, 178, 0.18), 0 0 28px rgba(91, 127, 178, 0.35); border-color: rgba(141, 167, 204, 0.7); }
+  36% { box-shadow: 0 0 0 0 rgba(91, 127, 178, 0); border-color: rgba(255, 255, 255, 0.15); }
+}
+@keyframes step-travel {
+  0% { left: 0%; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes step-knob {
+  0%, 25% { transform: translateX(0); }
+  40%, 85% { transform: translateX(14px); }
+  100% { transform: translateX(0); }
+}
+@keyframes step-track {
+  0%, 25% { background-color: rgba(255, 255, 255, 0.15); }
+  40%, 85% { background-color: #5b7fb2; }
+  100% { background-color: rgba(255, 255, 255, 0.15); }
+}
+@keyframes step-slider {
+  0%, 10% { width: 18%; }
+  50%, 85% { width: 68%; }
+  100% { width: 18%; }
+}
+@keyframes step-caret {
+  50% { opacity: 0; }
+}
+@keyframes step-drop {
+  0% { transform: translateY(-26px) rotate(-6deg); opacity: 0; }
+  12% { opacity: 1; }
+  30%, 88% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+@keyframes step-progress {
+  0%, 30% { width: 0%; }
+  70%, 100% { width: 100%; }
+}
+@keyframes step-pop {
+  0%, 68% { transform: scale(0.4); opacity: 0; }
+  76%, 92% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+@keyframes step-row {
+  0% { transform: translateX(-10px); opacity: 0; }
+  14%, 86% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(0); opacity: 0; }
+}
+@keyframes step-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  70% { transform: translateY(3px); }
+  80% { transform: translateY(-2px); }
+}
+
+@layer utilities {
+  .anim-step-glow { animation: step-glow 4.8s ease-in-out infinite; }
+  .anim-step-travel { animation: step-travel 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+  .anim-step-knob { animation: step-knob 4.8s ease-in-out infinite; }
+  .anim-step-track { animation: step-track 4.8s ease-in-out infinite; }
+  .anim-step-slider { animation: step-slider 4.8s ease-in-out infinite; }
+  .anim-step-caret { animation: step-caret 1s steps(1) infinite; }
+  .anim-step-drop { animation: step-drop 4.8s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+  .anim-step-progress { animation: step-progress 4.8s ease-in-out infinite; }
+  .anim-step-pop { animation: step-pop 4.8s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+  .anim-step-row { animation: step-row 4.8s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+  .anim-step-bounce { animation: step-bounce 2.4s ease-in-out infinite; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="anim-step-"] { animation: none !important; }
+  .anim-step-travel { display: none; }
+}

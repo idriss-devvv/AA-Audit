@@ -5,6 +5,7 @@ import { PricingSection } from "@/components/pricing/pricing-section";
 import { Reveal } from "@/components/ui/reveal";
 import { FaqItem } from "@/components/ui/faq-item";
 import { ControlsSection } from "@/components/marketing/controls-section";
+import { StepsSection, type Step } from "@/components/marketing/steps-section";
 import { PLANS, PLAN_ORDER } from "@/lib/plans";
 
 export const metadata: Metadata = {
@@ -127,22 +128,10 @@ const features = [
   },
 ];
 
-const steps = [
-  {
-    number: "01",
-    title: "Importez vos fiches de paie",
-    description: "Glissez vos bulletins au format PDF (export de votre logiciel de paie) en un clic, sans configuration préalable.",
-  },
-  {
-    number: "02",
-    title: "L'analyse se lance automatiquement",
-    description: "Le moteur de règles compare chaque ligne (brut, net, cotisations, congés) aux valeurs attendues en quelques secondes.",
-  },
-  {
-    number: "03",
-    title: "Consultez les anomalies détaillées",
-    description: "Retrouvez les écarts détectés, triés par gravité, et affichez le bulletin d'origine à côté de son rapport de contrôle.",
-  },
+const steps: Step[] = [
+  { icon: "percent", title: "Paramétrez votre entreprise", text: "Renseignez vos taux propres (accident du travail, mutuelle…) : le reste est automatique." },
+  { icon: "document", title: "Importez les bulletins", text: "Déposez les PDF générés par votre logiciel de paie." },
+  { icon: "download", title: "Exploitez les résultats", text: "Anomalies triées par gravité, rapport imprimable par fiche et exports Excel." },
 ];
 
 const audiences = [
@@ -444,45 +433,7 @@ export default function Home() {
       <ControlsSection />
 
       {/* How it works */}
-      <section id="comment-ca-marche" className="relative overflow-hidden bg-ink-900 py-24 text-beige-50 md:py-32">
-        <div aria-hidden className="bg-grid-light mask-radial pointer-events-none absolute inset-0" />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-40 -top-40 h-[420px] w-[420px] rounded-full bg-blue-500/25 blur-3xl"
-        />
-        <div className="container-page relative">
-          <Reveal className="max-w-2xl">
-            <span className="eyebrow text-ink-400">
-              <span className="h-px w-6 bg-blue-300" />
-              Méthode
-            </span>
-            <h2 className="heading-display mt-5 text-4xl text-beige-50 md:text-5xl">
-              Comment ça marche
-            </h2>
-            <p className="mt-5 max-w-lg text-ink-300">
-              Trois étapes suffisent pour passer d&apos;un PDF de paie à une
-              analyse complète.
-            </p>
-          </Reveal>
-          <div className="mt-16 grid gap-6 md:grid-cols-3">
-            {steps.map((step, i) => (
-              <Reveal key={step.number} delay={i * 120} className="h-full">
-                <div className="relative h-full rounded-2xl border border-white/10 bg-white/[0.04] p-8 shadow-inner-top backdrop-blur transition duration-300 hover:border-white/20 hover:bg-white/[0.07]">
-                  <span className="font-display text-5xl italic leading-none text-beige-300">
-                    {step.number}
-                  </span>
-                  <h3 className="mt-8 text-lg font-semibold tracking-tight text-beige-50">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2.5 text-sm leading-relaxed text-ink-300">
-                    {step.description}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      <StepsSection id="comment-ca-marche" steps={steps} />
 
       {/* Pour qui */}
       <section className="bg-gradient-to-br from-beige-50 via-beige-100/40 to-beige-50 py-24 md:py-32">

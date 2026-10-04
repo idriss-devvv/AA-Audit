@@ -3,6 +3,7 @@ import { MarketingShell } from "@/components/layout/marketing-shell";
 import { FaqItem } from "@/components/ui/faq-item";
 import { Reveal } from "@/components/ui/reveal";
 import { CountUp } from "@/components/ui/count-up";
+import { StepsSection } from "@/components/marketing/steps-section";
 import { ControlsSection, LEGAL_VALUES_CHECKED_AT, getControls } from "@/components/marketing/controls-section";
 import { HeroVisual, type HeroVisualKind } from "@/components/marketing/hero-visuals";
 import { MarketingIcon, type MarketingIconName } from "@/components/marketing/icons";
@@ -161,38 +162,7 @@ export function AudiencePage({ content }: { content: AudiencePageContent }) {
       <ControlsSection />
 
       {/* ───────── Étapes ───────── */}
-      <section className="relative overflow-hidden bg-ink-900 py-24 text-beige-50 md:py-28">
-        <div aria-hidden className="bg-grid-light mask-radial pointer-events-none absolute inset-0" />
-        <div aria-hidden className="pointer-events-none absolute -right-40 -top-40 h-[420px] w-[420px] rounded-full bg-blue-500/25 blur-3xl" />
-        <div className="container-page relative">
-          <Reveal className="max-w-2xl">
-            <span className="eyebrow text-ink-400">
-              <span className="h-px w-6 bg-blue-300" />
-              En 3 étapes
-            </span>
-            <h2 className="heading-display mt-5 text-4xl text-beige-50 md:text-5xl">Comment ça marche</h2>
-          </Reveal>
-          <div className="relative mt-16 grid gap-10 md:grid-cols-3 md:gap-6">
-            <Reveal className="pointer-events-none absolute left-[16%] right-[16%] top-7 hidden md:block">
-              <div aria-hidden className="h-px origin-left animate-grow-x bg-gradient-to-r from-blue-400/60 via-white/25 to-blue-400/60 [animation-delay:300ms]" />
-            </Reveal>
-            {content.steps.map((step, i) => (
-              <Reveal key={step.title} delay={i * 150} className="relative text-center">
-                <div>
-                  <span className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-ink-800 text-blue-300 shadow-inner-top">
-                    <MarketingIcon name={step.icon} className="h-6 w-6" />
-                    <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-[11px] font-bold text-white">
-                      {i + 1}
-                    </span>
-                  </span>
-                  <h3 className="mt-6 text-lg font-semibold text-beige-50">{step.title}</h3>
-                  <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-300">{step.text}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      <StepsSection steps={content.steps} />
 
       {/* ───────── FAQ ───────── */}
       <section className="bg-beige-50 py-24 md:py-28">
