@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { PublicConvention } from "@/lib/public-conventions";
+import { ConventionSelect } from "@/components/marketing/convention-select";
 
 const frenchDate = (value: string | null) => {
   if (!value) return "Non renseignée";
@@ -33,22 +34,7 @@ export function ConventionExplorer({ conventions }: { conventions: PublicConvent
         <p className="mt-1 text-xs text-ink-500">
           Choisissez une convention pour voir ce que nous contrôlons et la date de dernière mise à jour.
         </p>
-        <label htmlFor="convention-select" className="sr-only">
-          Convention collective
-        </label>
-        <select
-          id="convention-select"
-          value={selected}
-          onChange={(e) => setSelected(e.target.value)}
-          className="input mt-5 w-full cursor-pointer bg-white text-sm"
-        >
-          <option value="">Sélectionner une convention collective…</option>
-          {conventions.map((c) => (
-            <option key={c.idcc_code} value={c.idcc_code}>
-              IDCC {c.idcc_code} · {c.name}
-            </option>
-          ))}
-        </select>
+        <ConventionSelect conventions={conventions} value={selected} onChange={setSelected} />
       </div>
 
       {convention && (
