@@ -7,6 +7,7 @@ import { GoogleIcon } from "./google-icon";
 import { hideNavigationLoader, showNavigationLoader } from "@/components/ui/navigation-loader";
 import { EmailCodeStep } from "./email-code-step";
 import { PasswordInput } from "./password-input";
+import { DEMO_MESSAGE, DEMO_MODE } from "@/lib/demo";
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [email, setEmail] = useState("");
@@ -21,6 +22,10 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
   async function handleGoogle() {
     setError(null);
+    if (DEMO_MODE) {
+      setMessage(DEMO_MESSAGE);
+      return;
+    }
     showNavigationLoader();
     const supabase = createClient();
     const { error } = await supabase.auth
@@ -39,6 +44,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (DEMO_MODE) {
+      setError(null);
+      setMessage(DEMO_MESSAGE);
+      return;
+    }
     setLoading(true);
     setError(null);
     setMessage(null);
@@ -158,7 +168,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             <label htmlFor="auth-password" className="field-label">
               Mot de passe
             </label>
-            {mode === "login" && (
+            {mode === "login" && !DEMO_MODE && (
               <Link
                 href="/mot-de-passe-oublie"
                 className="text-xs font-semibold text-blue-600 underline-offset-4 hover:underline"
