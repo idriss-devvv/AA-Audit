@@ -139,7 +139,7 @@ const audiences = [
   },
   {
     icon: IconUsers,
-    title: "Services RH & PME",
+    title: "Société (TPE & PME)",
     href: "/entreprises",
     description:
       "Fiabilisez la paie en interne sans embaucher un expert dédié, et gagnez un temps précieux chaque fin de mois.",
