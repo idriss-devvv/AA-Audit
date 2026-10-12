@@ -313,7 +313,7 @@ export default function Home() {
           <p className="mt-7 max-w-xl animate-fade-in-up text-base leading-relaxed text-ink-500 [animation-delay:160ms] md:text-lg">
             A&A Audit détecte automatiquement les anomalies et erreurs sur vos
             fiches de paie : cotisations, plafonds, heures, primes, convention
-            collective et congés payés.
+            collective et congés payés...
           </p>
           <div className="mt-10 flex w-full animate-fade-in-up flex-col gap-3 [animation-delay:240ms] sm:w-auto sm:flex-row">
             <Link href="/inscription" className="btn-primary group px-7">
@@ -350,18 +350,11 @@ export default function Home() {
               Pourquoi contrôler vos fiches de paie ?
             </h2>
             <p className="mt-6 leading-relaxed text-ink-500">
-              Le bulletin de salaire cumule des dizaines de paramètres qui
-              évoluent régulièrement : taux de cotisations, plafonds de sécurité
-              sociale, primes, heures supplémentaires et congés payés.
-              Une seule ligne mal paramétrée dans le logiciel de paie peut se
-              répéter chaque mois, pour un ou plusieurs salariés, sans être
-              détectée.
-            </p>
-            <p className="mt-4 leading-relaxed text-ink-500">
-              A&A Audit automatise cette vérification pour repérer les écarts
-              avant qu&apos;ils ne deviennent un vrai problème : redressement
-              URSSAF, litige prud&apos;homal ou simple perte de confiance des
-              salariés.
+              Le bulletin de salaire cumule des dizaines de paramètres (taux de
+              cotisations, plafonds de sécurité sociale, primes, heures
+              supplémentaires, congés payés) qui évoluent régulièrement. A&A
+              Audit automatise cette vérification pour repérer les écarts avant
+              qu&apos;ils ne deviennent un vrai problème.
             </p>
           </Reveal>
           <div className="overflow-hidden rounded-3xl border border-ink-200/70 bg-beige-50">
