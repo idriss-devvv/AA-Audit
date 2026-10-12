@@ -361,7 +361,7 @@ export default function Home() {
             {[
               { title: "Erreurs de cotisations", desc: "Taux erronés, plafonds mal appliqués, lignes manquantes." },
               { title: "Incohérences brut / net", desc: "Écarts inexpliqués entre le salaire brut et le net à payer." },
-              { title: "Congés payés mal suivis", desc: "Soldes de congés incohérents d'un mois sur l'autre." },
+              { title: "Mauvais suivi des compteurs de congés", desc: "Soldes de congés incohérents d'un mois sur l'autre." },
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 100}>
                 <div className={`flex items-start gap-5 p-6 md:p-7 ${i > 0 ? "border-t border-ink-200/70" : ""}`}>
