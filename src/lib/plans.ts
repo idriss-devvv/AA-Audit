@@ -122,15 +122,14 @@ export const ENTERPRISE_QUOTE = {
     { upTo: 2500, perPayslip: 0.7 },
     { upTo: 5000, perPayslip: 0.5 },
   ],
-  /** Options mensuelles (HT). */
+  /** Option mensuelle (HT). L'accompagnement dédié est chiffré sur devis. */
   multiCompanies: 99,
-  dedicatedSupport: 149,
 } as const;
 
 /** Prix mensuel HT estimé de l'offre Entreprise pour un volume de fiches donné. */
 export function enterpriseMonthlyPrice(
   payslips: number,
-  options: { multiCompanies: boolean; dedicatedSupport: boolean },
+  options: { multiCompanies: boolean },
 ): number {
   let total = 0;
   let from = 0;
@@ -140,7 +139,6 @@ export function enterpriseMonthlyPrice(
     from = tier.upTo;
   }
   if (options.multiCompanies) total += ENTERPRISE_QUOTE.multiCompanies;
-  if (options.dedicatedSupport) total += ENTERPRISE_QUOTE.dedicatedSupport;
   return Math.round(total);
 }
 

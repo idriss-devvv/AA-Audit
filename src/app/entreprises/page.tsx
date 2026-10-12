@@ -33,7 +33,7 @@ const content: AudiencePageContent = {
     },
   ],
   steps: [
-    { icon: "percent", title: "Paramétrez votre entreprise", text: "Renseignez vos taux propres (accident du travail, mutuelle…) : le reste est automatique." },
+    { icon: "percent", title: "Paramétrez votre entreprise", text: "Renseignez vos taux propres, comme l'accident du travail ou la mutuelle : le reste est automatique." },
     { icon: "document", title: "Importez les bulletins", text: "Déposez les PDF générés par votre logiciel de paie." },
     { icon: "download", title: "Exploitez les résultats", text: "Anomalies triées par gravité, rapport imprimable par fiche et exports Excel." },
   ],

@@ -38,7 +38,7 @@ export function getControls() {
     {
       title: "Taux de cotisations",
       icon: "percent" as MarketingIconName,
-      detail: "Chaque ligne de cotisation salariale (vieillesse, CSG/CRDS, retraite complémentaire…) comparée au barème officiel de la période.",
+      detail: "Chaque ligne de cotisation salariale, de la vieillesse à la CSG/CRDS et à la retraite complémentaire, comparée au barème officiel de la période.",
       source: "Urssaf · Agirc-Arrco",
     },
     {
@@ -62,7 +62,7 @@ export function getControls() {
     {
       title: "Mentions obligatoires",
       icon: "list" as MarketingIconName,
-      detail: "Présence des mentions exigées : employeur, SIRET, convention, emploi, net social, net imposable…",
+      detail: "Présence des mentions exigées : employeur, SIRET, convention, emploi, net social et net imposable.",
       source: "Code du travail, art. R3243-1",
     },
     {

@@ -114,7 +114,7 @@ function EnterpriseCard({ billing }: { billing: Billing }) {
   const [dedicatedSupport, setDedicatedSupport] = useState(false);
 
   const over = volume > ENTERPRISE_QUOTE.max;
-  const price = monthlyPrice(enterpriseMonthlyPrice(volume, { multiCompanies, dedicatedSupport }), billing);
+  const price = monthlyPrice(enterpriseMonthlyPrice(volume, { multiCompanies }), billing);
   const progress = ((volume - ENTERPRISE_QUOTE.min) / (SLIDER_OVER - ENTERPRISE_QUOTE.min)) * 100;
 
   const quoteParams = new URLSearchParams({
@@ -181,7 +181,7 @@ function EnterpriseCard({ billing }: { billing: Billing }) {
                 onChange={(e) => setDedicatedSupport(e.target.checked)}
                 className="h-4 w-4 accent-blue-400"
               />
-              Accompagnement dédié (+{ENTERPRISE_QUOTE.dedicatedSupport} € / mois)
+              Accompagnement dédié · sur devis
             </label>
           </div>
         </div>
@@ -203,8 +203,9 @@ function EnterpriseCard({ billing }: { billing: Billing }) {
               {over
                 ? "Tarif personnalisé au-delà de 5 000 fiches par mois."
                 : billing === "annual"
-                  ? "Prix HT, facturation annuelle (2 mois offerts)."
+                  ? "Prix HT, facturation annuelle avec 2 mois offerts."
                   : "Prix HT, facturation mensuelle."}
+              {!over && dedicatedSupport && " Accompagnement dédié chiffré dans le devis."}
             </p>
             <ul className="mt-6 space-y-2.5 text-sm text-beige-100">
               <li className="flex items-start gap-2.5">

@@ -350,9 +350,9 @@ export default function Home() {
               Pourquoi contrôler vos fiches de paie ?
             </h2>
             <p className="mt-6 leading-relaxed text-ink-500">
-              Le bulletin de salaire cumule des dizaines de paramètres (taux de
-              cotisations, plafonds de sécurité sociale, primes, heures
-              supplémentaires, congés payés) qui évoluent régulièrement.
+              Le bulletin de salaire cumule des dizaines de paramètres qui
+              évoluent régulièrement : taux de cotisations, plafonds de sécurité
+              sociale, primes, heures supplémentaires et congés payés.
               Une seule ligne mal paramétrée dans le logiciel de paie peut se
               répéter chaque mois, pour un ou plusieurs salariés, sans être
               détectée.

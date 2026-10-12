@@ -51,7 +51,7 @@ const content: AudiencePageContent = {
     {
       question: "Quelles conventions collectives sont couvertes ?",
       answer:
-        "Toutes sont détectées ; les grilles de salaires minimums sont intégrées pour les principales conventions (Syntec, Métallurgie, HCR, commerce, propreté, banque…). Pour les autres, un minimum peut être renseigné manuellement.",
+        "Toutes sont détectées ; les grilles de salaires minimums sont intégrées pour les principales conventions, comme Syntec, la Métallurgie, les HCR, le commerce, la propreté ou la banque. Pour les autres, un minimum peut être renseigné manuellement.",
     },
     {
       question: "Plusieurs collaborateurs du cabinet peuvent-ils utiliser le même compte ?",
