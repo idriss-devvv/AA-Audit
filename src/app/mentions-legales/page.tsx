@@ -28,8 +28,12 @@ export default function MentionsLegalesPage() {
 
       <h2>Hébergement</h2>
       <p>
-        Ce site est déployé sur Vercel Inc., 340 S Lemon Ave #4133, Walnut,
-        CA 91789, États-Unis.
+        Ce site est hébergé sur des serveurs situés à Paris (France), dans la
+        région Europe de Vercel. Hébergeur : Vercel Inc., 340 S Lemon Ave
+        #4133, Walnut, CA 91789, États-Unis.
+        <br />
+        Les données (comptes et fiches de paie) sont stockées à Paris (France)
+        par Supabase.
       </p>
 
       <h2>Propriété intellectuelle</h2>
