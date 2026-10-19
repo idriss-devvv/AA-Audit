@@ -48,22 +48,6 @@ function IconGrid() {
     </svg>
   );
 }
-function IconBook() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
-    </svg>
-  );
-}
-function IconSun() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-    </svg>
-  );
-}
 function IconBuilding() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7">
@@ -108,18 +92,6 @@ const features = [
     title: "Suivi centralisé",
     description:
       "Toutes vos fiches au même endroit, filtrées par salarié, par période ou par gravité, avec l'aperçu de chaque bulletin en un clic.",
-  },
-  {
-    icon: IconBook,
-    title: "Convention collective",
-    description:
-      "A&A Audit repère la convention collective applicable sur chaque bulletin pour préparer des contrôles adaptés à votre secteur d'activité.",
-  },
-  {
-    icon: IconSun,
-    title: "Congés payés & ancienneté",
-    description:
-      "Jours acquis, jours pris, solde restant et date d'entrée sont extraits automatiquement pour fiabiliser le suivi des droits de vos salariés.",
   },
   {
     icon: IconShield,
@@ -191,7 +163,7 @@ const faqs = [
   {
     question: "A&A Audit convient-il à un cabinet comptable gérant plusieurs clients ?",
     answer:
-      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Cabinet (249 € / mois) gère plusieurs sociétés avec 300 fiches par mois et un onglet Salariés dans chacune. Au-delà, l'offre Entreprise s'adapte à votre volume sur devis.",
+      "Oui : un compte cabinet gère plusieurs entreprises clientes et bascule de l'une à l'autre, avec des fiches, anomalies et paramètres séparés. La formule Cabinet (249,99 € / mois) gère plusieurs sociétés avec 300 fiches par mois et un onglet Salariés dans chacune. Au-delà, l'offre Entreprise s'adapte à votre volume sur devis.",
   },
 ];
 
@@ -361,7 +333,7 @@ export default function Home() {
             {[
               { title: "Erreurs de cotisations", desc: "Taux erronés, plafonds mal appliqués, lignes manquantes." },
               { title: "Incohérences brut / net", desc: "Écarts inexpliqués entre le salaire brut et le net à payer." },
-              { title: "Mauvais suivi des compteurs de congés", desc: "Soldes de congés incohérents d'un mois sur l'autre." },
+              { title: "Suivi des compteurs de congés", desc: "Soldes de congés incohérents d'un mois sur l'autre." },
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 100}>
                 <div className={`flex items-start gap-5 p-6 md:p-7 ${i > 0 ? "border-t border-ink-200/70" : ""}`}>
@@ -395,9 +367,9 @@ export default function Home() {
             </p>
           </Reveal>
           <div className="mt-16 overflow-hidden rounded-3xl border border-ink-200/70 bg-white shadow-soft">
-          <div className="-mb-px -mr-px grid md:grid-cols-2 lg:grid-cols-3">
+          <div className="-mb-px -mr-px grid md:grid-cols-2">
             {features.map((feature, i) => (
-              <Reveal key={feature.title} delay={(i % 3) * 90} className="h-full border-b border-r border-ink-200/70">
+              <Reveal key={feature.title} delay={(i % 2) * 90} className="h-full border-b border-r border-ink-200/70">
                 <div className="group h-full p-8 transition duration-300 hover:bg-beige-50 md:p-9">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-ink-200/70 bg-beige-50 text-blue-600 transition duration-300 group-hover:border-blue-600 group-hover:bg-blue-600 group-hover:text-beige-50 [&_svg]:h-5 [&_svg]:w-5">
                     <feature.icon />
