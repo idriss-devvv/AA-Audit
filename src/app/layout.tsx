@@ -104,9 +104,9 @@ const structuredData = {
       url: SITE_URL,
       offers: [
         { "@type": "Offer", name: "Free", price: "0", priceCurrency: "EUR", url: `${SITE_URL}/#tarifs` },
-        { "@type": "Offer", name: "Starter", price: "49", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
-        { "@type": "Offer", name: "Pro", price: "149", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
-        { "@type": "Offer", name: "Cabinet", price: "249", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
+        { "@type": "Offer", name: "Starter", price: "49.99", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
+        { "@type": "Offer", name: "Pro", price: "149.99", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
+        { "@type": "Offer", name: "Cabinet", price: "249.99", priceCurrency: "EUR", priceValidUntil: "2027-12-31", url: `${SITE_URL}/#tarifs` },
       ],
     },
   ],

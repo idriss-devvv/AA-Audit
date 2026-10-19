@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAccountContext } from "@/lib/account";
-import { PLANS, PLAN_ORDER, ROLE_LABELS, toPlanId } from "@/lib/plans";
+import { PLANS, formatEuros, PLAN_ORDER, ROLE_LABELS, toPlanId } from "@/lib/plans";
 import { AdminAccountsTable, type AdminAccount } from "@/components/app/admin-accounts-table";
 import { AdminInviteForm } from "@/components/app/admin-invite-form";
 import { AdminSupportForm } from "@/components/app/admin-support-form";
@@ -46,7 +46,7 @@ export default async function AdminPage() {
   const revenue = accounts.reduce((sum, a) => sum + PLANS[toPlanId(a.plan)].price, 0);
   const stats = [
     { label: "Utilisateurs", value: overview?.users ?? accounts.length },
-    { label: "Revenu mensuel (formules)", value: `${revenue.toLocaleString("fr-FR")} €` },
+    { label: "Revenu mensuel (formules)", value: `${formatEuros(revenue)} €` },
     { label: "Fiches ce mois-ci", value: overview?.payslips_month ?? 0 },
     { label: "Comptes bloqués", value: overview?.blocked ?? 0 },
   ];

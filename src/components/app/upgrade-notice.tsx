@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PLANS, type PlanId } from "@/lib/plans";
+import { PLANS, formatEuros, type PlanId } from "@/lib/plans";
 
 /**
  * Encart affiché à la place d'une fonctionnalité réservée à une formule
@@ -33,7 +33,7 @@ export function UpgradeNotice({
       <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink-500">{text}</p>
       <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-blue-700">
         Disponible avec la formule {plan.label}
-        {plan.price > 0 ? ` · ${plan.price} € / mois` : ""}
+        {plan.price > 0 ? ` · ${formatEuros(plan.price)} € / mois` : ""}
       </p>
       <Link href="/app/parametres?onglet=abonnement" className="btn-primary mt-6">
         Voir les formules

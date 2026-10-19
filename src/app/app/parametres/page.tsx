@@ -11,7 +11,7 @@ import { SettingsTabs, resolveSettingsTab } from "@/components/app/settings-tabs
 import { ConventionsTab } from "@/components/app/conventions-tab";
 import { CONVENTION_GRIDS } from "@/lib/rules/referentiels/grilles-conventionnelles";
 import { getAccountContext, getQuotaUsage } from "@/lib/account";
-import { PLANS, PLAN_ORDER, ROLE_LABELS, quotaLabel } from "@/lib/plans";
+import { PLANS, PLAN_ORDER, ROLE_LABELS, formatEuros, quotaLabel } from "@/lib/plans";
 import { SubscribeButton } from "@/components/pricing/subscribe-button";
 
 const STATUS_LABELS: Record<string, { label: string; className: string }> = {
@@ -124,7 +124,7 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
           <div>
             <p className="font-display text-4xl leading-none text-ink-900">{plan.label}</p>
             <p className="mt-2 text-sm text-ink-500">
-              {plan.price > 0 ? `${plan.price} € / mois · ` : ""}
+              {plan.price > 0 ? `${formatEuros(plan.price)} € / mois · ` : ""}
               {quotaLabel(plan, quota)}
             </p>
           </div>
@@ -185,7 +185,7 @@ async function SubscriptionTab({ companyId }: { companyId: string | null }) {
                   {current && <span className="badge bg-blue-600 text-beige-50 ring-blue-600">Actuelle</span>}
                 </div>
                 <p className="mt-3 font-display text-4xl leading-none text-ink-900">
-                  {option.price} €<span className="ml-1 font-sans text-sm text-ink-500">/ mois</span>
+                  {formatEuros(option.price)} €<span className="ml-1 font-sans text-sm text-ink-500">/ mois</span>
                 </p>
                 <ul className="mt-4 flex-1 space-y-2 text-sm text-ink-600">
                   {option.features.map((feature) => (
