@@ -4,7 +4,7 @@ import { getActiveCompanyContext } from "@/lib/active-company";
 import { getAccountContext } from "@/lib/account";
 import { employeeDisplayName } from "@/lib/payslips";
 import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
-import { UpgradeNotice } from "@/components/app/upgrade-notice";
+import { DEMO_EMPLOYEES, DEMO_PAYSLIPS, demoCompany, demoEmployeeName } from "@/lib/demo-data";
 import { AddEmployeeForm } from "@/components/app/add-employee-form";
 
 type EmployeeRow = {
@@ -29,45 +29,61 @@ function formatAmount(value: number | null) {
 
 /** Onglet « Salariés » : suivi par salarié (formules Pro et Entreprise). */
 export default async function SalariesPage() {
-  const [account, { activeCompanyId }] = await Promise.all([
+  const [account, { activeCompanyId, activeCompanyName }] = await Promise.all([
     getAccountContext(),
     getActiveCompanyContext(),
   ]);
 
-  if (!account.canManageEmployees) {
-    return (
-      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
-        <h1 className="heading-display text-4xl md:text-[2.75rem]">Salariés</h1>
-        <div className="mt-8 max-w-2xl">
-          <UpgradeNotice
-            title="Suivez chaque salarié dans la durée"
-            text="Retrouvez les fiches de paie et les anomalies regroupées par salarié, mois après mois."
-            requiredPlan="pro"
-          />
-        </div>
-      </div>
-    );
-  }
+  // Version de démonstration : les salariés d'exemple, suivis des salariés
+  // ajoutés manuellement (formules Pro et Entreprise).
+  type EmployeeSummary = {
+    id: string;
+    name: string;
+    company: string | null;
+    count: number;
+    lastPeriod: string | null;
+    lastGross: number | null;
+    anomalies: number;
+  };
 
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("employees")
-    .select("id, first_name, last_name, payslips(period, gross_pay, deleted_at, anomalies(count))")
-    .eq("company_id", activeCompanyId ?? "")
-    .is("payslips.deleted_at", null)
-    .order("last_name", { ascending: true });
-
-  const employees = ((data as unknown as EmployeeRow[] | null) ?? []).map((employee) => {
-    const payslips = [...employee.payslips].sort((a, b) => (b.period ?? "").localeCompare(a.period ?? ""));
+  const demoEmployees: EmployeeSummary[] = DEMO_EMPLOYEES.map((employee) => {
+    const payslips = DEMO_PAYSLIPS.filter((p) => p.employeeId === employee.id).sort((a, b) => b.period.localeCompare(a.period));
     return {
       id: employee.id,
-      name: employeeDisplayName(employee),
+      name: demoEmployeeName(employee),
+      company: demoCompany(employee.companyId)?.name ?? null,
       count: payslips.length,
       lastPeriod: payslips[0]?.period ?? null,
-      lastGross: payslips[0]?.gross_pay ?? null,
-      anomalies: payslips.reduce((sum, p) => sum + (p.anomalies?.[0]?.count ?? 0), 0),
+      lastGross: payslips[0]?.grossPay ?? null,
+      anomalies: payslips.reduce((sum, p) => sum + p.anomalies.length, 0),
     };
   });
+
+  let ownEmployees: EmployeeSummary[] = [];
+  if (account.canManageEmployees) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("employees")
+      .select("id, first_name, last_name, payslips(period, gross_pay, deleted_at, anomalies(count))")
+      .eq("company_id", activeCompanyId ?? "")
+      .is("payslips.deleted_at", null)
+      .order("last_name", { ascending: true });
+
+    ownEmployees = ((data as unknown as EmployeeRow[] | null) ?? []).map((employee) => {
+      const payslips = [...employee.payslips].sort((a, b) => (b.period ?? "").localeCompare(a.period ?? ""));
+      return {
+        id: employee.id,
+        name: employeeDisplayName(employee),
+        company: activeCompanyName,
+        count: payslips.length,
+        lastPeriod: payslips[0]?.period ?? null,
+        lastGross: payslips[0]?.gross_pay ?? null,
+        anomalies: payslips.reduce((sum, p) => sum + (p.anomalies?.[0]?.count ?? 0), 0),
+      };
+    });
+  }
+
+  const employees = [...demoEmployees, ...ownEmployees];
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
@@ -79,7 +95,7 @@ export default async function SalariesPage() {
             grâce au nom imprimé sur chaque fiche importée.
           </p>
         </div>
-        <AddEmployeeForm />
+        {account.canManageEmployees && <AddEmployeeForm />}
       </div>
 
       {employees.length === 0 ? (
@@ -118,7 +134,10 @@ export default async function SalariesPage() {
                           .join("")
                           .toUpperCase()}
                       </span>
-                      <span className="font-medium text-ink-900">{employee.name}</span>
+                      <span>
+                        <span className="block font-medium text-ink-900">{employee.name}</span>
+                        {employee.company && <span className="block text-xs text-ink-500">{employee.company}</span>}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 tabular-nums text-ink-700">{employee.count}</td>

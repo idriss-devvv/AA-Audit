@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getActiveCompanyContext } from "@/lib/active-company";
+import { demoCompany, demoEmployee, demoPayslip } from "@/lib/demo-data";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
 import { PrintReportButton } from "@/components/app/print-report-button";
 import { Logo } from "@/components/ui/logo";
-import { areResultsLocked } from "@/lib/account";
 import { LockedAnomaly } from "@/components/app/locked-anomaly";
 import { UpgradeNotice } from "@/components/app/upgrade-notice";
 import type { PayslipData } from "@/types/payslip";
@@ -77,35 +77,39 @@ export default async function RapportControlePage({
 }: {
   params: { id: string };
 }) {
-  const supabase = await createClient();
+  // Version de démonstration : seules les fiches d'exemple sont consultables.
+  const demo = demoPayslip(params.id);
+  if (!demo) notFound();
 
-  // RLS restreint automatiquement l'accès à la fiche à l'entreprise (ou au
-  // client du cabinet) autorisée — data === null si l'utilisateur n'y a pas
-  // accès, ce qui se traduit ici par un 404 plutôt qu'une fuite d'info.
-  const { data: payslipData } = await supabase
-    .from("payslips")
-    .select(
-      "id, company_id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, mime_type, error_message, deleted_at, company:companies(name), employee:employees(first_name, last_name, employee_ref)"
-    )
-    .eq("id", params.id)
-    .single();
+  const demoEmployeeInfo = demoEmployee(demo.employeeId);
+  const payslip: PayslipDetail = {
+    id: demo.id,
+    company_id: demo.companyId,
+    period: demo.period,
+    original_filename: demo.fileName,
+    gross_pay: demo.grossPay,
+    net_pay: demo.netPay,
+    status: "processed",
+    uploaded_at: demo.uploadedAt,
+    extracted_data: demo.extracted,
+    mime_type: "application/pdf",
+    error_message: null,
+    deleted_at: null,
+    company: { name: demoCompany(demo.companyId)?.name ?? "Entreprise" },
+    employee: demoEmployeeInfo
+      ? { first_name: demoEmployeeInfo.firstName, last_name: demoEmployeeInfo.lastName, employee_ref: null }
+      : null,
+  };
 
-  const payslip = payslipData as unknown as PayslipDetail | null;
-  if (!payslip || payslip.deleted_at) notFound();
-
-  const [{ data: anomaliesData }, locked, paySettings, regulatory] = await Promise.all([
-    supabase
-      .from("anomalies")
-      .select("id, rule_id, severity, message, detected_at")
-      .eq("payslip_id", payslip.id)
-      .order("detected_at", { ascending: false }),
-    // Formule Free : seule la première anomalie est montrée en clair.
-    areResultsLocked(payslip.company_id),
-    getCompanyPaySettings(payslip.company_id),
+  const { activeCompanyId } = await getActiveCompanyContext();
+  const [paySettings, regulatory] = await Promise.all([
+    getCompanyPaySettings(activeCompanyId ?? ""),
     listRegulatoryParameters(),
   ]);
+  const locked = false;
+  const anomaliesData: AnomalyDetail[] = demo.anomalies.map((a) => ({ ...a, detected_at: demo.uploadedAt }));
 
-  const anomalies = (anomaliesData as unknown as AnomalyDetail[] | null) ?? [];
+  const anomalies = anomaliesData;
   const employeeName = employeeDisplayName(payslip.employee, payslip.extracted_data?.employeeName);
   const status = statusInfo(payslip.status, payslip.mime_type);
   const explanation = statusExplanation(payslip.status, payslip.mime_type, payslip.error_message);

@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { PayslipUploadButton } from "@/components/upload/payslip-upload-button";
 import { PayslipPreviewButton } from "@/components/payslips/payslip-preview";
-import { createClient } from "@/lib/supabase/server";
-import { getActiveCompanyContext } from "@/lib/active-company";
-import { SEVERITY_INFO, employeeDisplayName, formatDate, formatPeriod, statusInfo } from "@/lib/payslips";
-import type { PayslipData } from "@/types/payslip";
+import { SEVERITY_INFO, formatDate, formatPeriod, statusInfo } from "@/lib/payslips";
+import { DEMO_EMPLOYEES, demoEmployeeName, demoPayslipsByUploadDate } from "@/lib/demo-data";
 import { getNotifications } from "@/lib/notifications";
 
 const SEVERITY_META: Record<string, { label: string; barClassName: string }> = {
@@ -13,84 +11,44 @@ const SEVERITY_META: Record<string, { label: string; barClassName: string }> = {
   info: { label: "Infos", barClassName: "bg-blue-400" },
 };
 
-type RecentPayslip = {
-  id: string;
-  period: string | null;
-  status: string;
-  mime_type: string | null;
-  uploaded_at: string;
-  extracted_data: Pick<PayslipData, "employeeName"> | null;
-  employee: { first_name: string | null; last_name: string | null; employee_ref: string | null } | null;
-  anomalies: { severity: string }[] | null;
-};
-
-function startOfCurrentMonthIso() {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-}
-
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const { activeCompanyId } = await getActiveCompanyContext();
-
-  // Sans entreprise active (profil incomplet), tableau de bord vide : les
-  // policies RLS renverraient de toute façon zéro ligne.
-  const companyId = activeCompanyId ?? "";
-  const anomaliesOf = () =>
-    supabase
-      .from("anomalies")
-      .select("id, payslips!inner(company_id)", { count: "exact", head: true })
-      .eq("payslips.company_id", companyId);
-
-  const [
-    { count: payslipsCount },
-    { count: employeesCount },
-    { count: criticalCount },
-    { count: warningCount },
-    { count: infoCount },
-    { count: payslipsThisMonth },
-    { data: recentPayslipsData },
-    notifications,
-  ] = await Promise.all([
-    supabase.from("payslips").select("id", { count: "exact", head: true }).eq("company_id", companyId).is("deleted_at", null),
-    supabase.from("employees").select("id", { count: "exact", head: true }).eq("company_id", companyId),
-    anomaliesOf().eq("severity", "critical"),
-    anomaliesOf().eq("severity", "warning"),
-    anomaliesOf().eq("severity", "info"),
-    supabase
-      .from("payslips")
-      .select("id", { count: "exact", head: true })
-      .eq("company_id", companyId)
-      .is("deleted_at", null)
-      .gte("uploaded_at", startOfCurrentMonthIso()),
-    supabase
-      .from("payslips")
-      .select("id, period, status, mime_type, uploaded_at, extracted_data->employeeName, employee:employees(first_name, last_name, employee_ref), anomalies(severity)")
-      .eq("company_id", companyId)
-      .is("deleted_at", null)
-      .order("uploaded_at", { ascending: false })
-      .limit(5),
-    getNotifications(10),
-  ]);
+  // Version de démonstration : statistiques calculées sur les fiches d'exemple.
+  const notifications = await getNotifications(10);
   const alerts = notifications.items.filter((n) => !n.read_at && n.severity !== "info").slice(0, 4);
 
-  const critical = criticalCount ?? 0;
-  const anomaliesTotal = critical + (warningCount ?? 0) + (infoCount ?? 0);
+  const demoPayslips = demoPayslipsByUploadDate();
+  const allAnomalies = demoPayslips.flatMap((p) => p.anomalies);
+  const countOf = (severity: string) => allAnomalies.filter((a) => a.severity === severity).length;
+  const critical = countOf("critical");
+  const warningCount = countOf("warning");
+  const infoCount = countOf("info");
+  const anomaliesTotal = allAnomalies.length;
+  const payslipsCount = demoPayslips.length;
+  const latestMonth = demoPayslips[0]?.uploadedAt.slice(0, 7);
+  const payslipsThisMonth = demoPayslips.filter((p) => p.uploadedAt.startsWith(latestMonth ?? "")).length;
 
   const stats = [
-    { label: "Fiches contrôlées", value: payslipsCount ?? 0, href: "/app/fiches" },
+    { label: "Fiches contrôlées", value: payslipsCount, href: "/app/fiches" },
     { label: "Anomalies détectées", value: anomaliesTotal, href: "/app/fiches" },
-    { label: "Salariés suivis", value: employeesCount ?? 0, href: "/app/salaries" },
-    { label: "Fiches importées ce mois-ci", value: payslipsThisMonth ?? 0, href: "/app/fiches" },
+    { label: "Salariés suivis", value: DEMO_EMPLOYEES.length, href: "/app/salaries" },
+    { label: "Fiches importées ce mois-ci", value: payslipsThisMonth, href: "/app/fiches" },
   ];
 
   const severityBreakdown = [
     { key: "critical", count: critical },
-    { key: "warning", count: warningCount ?? 0 },
-    { key: "info", count: infoCount ?? 0 },
+    { key: "warning", count: warningCount },
+    { key: "info", count: infoCount },
   ];
 
-  const recentPayslips = ((recentPayslipsData as unknown as (Omit<RecentPayslip, "extracted_data"> & { employeeName: string | null })[] | null) ?? []);
+  const recentPayslips = demoPayslips.slice(0, 5).map((p) => ({
+    id: p.id,
+    period: p.period,
+    status: "processed",
+    mime_type: "application/pdf",
+    uploaded_at: p.uploadedAt,
+    name: demoEmployeeName(DEMO_EMPLOYEES.find((e) => e.id === p.employeeId)!),
+    anomalies: p.anomalies,
+  }));
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
@@ -145,7 +103,7 @@ export default async function DashboardPage() {
           </span>
         </Link>
       ) : (
-        (payslipsCount ?? 0) > 0 && (
+        payslipsCount > 0 && (
           <div className="mt-8 flex items-center gap-3 rounded-2xl bg-emerald-50 p-5 text-sm font-medium text-emerald-800 ring-1 ring-inset ring-emerald-200">
             Aucune anomalie critique sur vos fiches de paie.
           </div>
@@ -213,7 +171,7 @@ export default async function DashboardPage() {
             <ul className="mt-4 divide-y divide-ink-100">
               {recentPayslips.map((payslip) => {
                 const st = statusInfo(payslip.status, payslip.mime_type);
-                const name = employeeDisplayName(payslip.employee, payslip.employeeName);
+                const name = payslip.name;
                 const counts = ["critical", "warning", "info"]
                   .map((key) => ({ key, count: (payslip.anomalies ?? []).filter((a) => a.severity === key).length }))
                   .filter((c) => c.count > 0);

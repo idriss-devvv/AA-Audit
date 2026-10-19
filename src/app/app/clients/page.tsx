@@ -3,6 +3,7 @@ import { getAccountContext } from "@/lib/account";
 import { AddClientForm } from "@/components/app/add-client-form";
 import { SwitchToClientButton } from "@/components/app/switch-to-client-button";
 import { UpgradeNotice } from "@/components/app/upgrade-notice";
+import { DEMO_COMPANIES, DEMO_EMPLOYEES, DEMO_PAYSLIPS } from "@/lib/demo-data";
 
 /**
  * Onglet « Sociétés » (« Mes clients » pour un cabinet) : gestion de
@@ -41,7 +42,7 @@ export default async function ClientsPage() {
 
       <div className="mt-6 max-w-2xl">
         <h2 className="card-title">
-          Vos {noun.plural} ({context.clients.length + (context.ownCompanyId ? 1 : 0)})
+          Vos {noun.plural} ({context.clients.length + (context.ownCompanyId ? 1 : 0) + DEMO_COMPANIES.length})
         </h2>
         <div className="mt-4 flex flex-col gap-3">
           {context.ownCompanyId && (
@@ -56,6 +57,23 @@ export default async function ClientsPage() {
               {context.activeCompanyId !== context.ownCompanyId && <SwitchToClientButton companyId={context.ownCompanyId} />}
             </div>
           )}
+          {DEMO_COMPANIES.map((company) => {
+            const employees = DEMO_EMPLOYEES.filter((e) => e.companyId === company.id).length;
+            const payslips = DEMO_PAYSLIPS.filter((p) => p.companyId === company.id).length;
+            return (
+              <div key={company.id} className="card flex items-center justify-between gap-4 p-5">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium text-ink-900">{company.name}</p>
+                    <span className="badge bg-amber-50 text-amber-700 ring-amber-200">Exemple</span>
+                  </div>
+                  <p className="mt-1 text-xs text-ink-500">
+                    {company.agreement} · IDCC {company.idcc} · {employees} salarié{employees > 1 ? "s" : ""} · {payslips} fiche{payslips > 1 ? "s" : ""}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
           {context.clients.map((client) => (
             <div key={client.id} className="card flex items-center justify-between gap-4 p-5">
               <div className="flex flex-wrap items-center gap-2">

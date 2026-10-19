@@ -1,15 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { runAnomalyRules } from "@/lib/rules/anomaly-rules";
+import { NextResponse } from "next/server";
+import { DEMO_UPLOAD_MESSAGE } from "@/lib/demo-data";
 
 /**
  * POST /api/analyze
- * Lance le moteur de règles sur une fiche de paie déjà extraite
- * et retourne la liste des anomalies détectées.
+ * Version de démonstration : l'analyse des fiches de paie est en cours de
+ * développement.
  */
-export async function POST(req: NextRequest) {
-  const payslip = await req.json();
-
-  const anomalies = runAnomalyRules(payslip);
-
-  return NextResponse.json({ anomalies });
+export async function POST() {
+  return NextResponse.json({ error: DEMO_UPLOAD_MESSAGE, code: "COMING_SOON" }, { status: 503 });
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { demoFileUrl, isDemoId } from "@/lib/demo-data";
 
 export function EyeIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
@@ -12,6 +13,7 @@ export function EyeIcon({ className = "h-4 w-4" }: { className?: string }) {
 }
 
 export function fileUrl(payslipId: string) {
+  if (isDemoId(payslipId)) return demoFileUrl(payslipId);
   return `/api/payslips/${payslipId}/file`;
 }
 

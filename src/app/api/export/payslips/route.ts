@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
+import { demoPayslipsByUploadDate } from "@/lib/demo-data";
 import {
   autoSizeColumns,
   styleHeaderRow,
@@ -49,25 +50,20 @@ export async function GET() {
     return NextResponse.json({ error: "Vous devez être connecté." }, { status: 401 });
   }
 
-  const { activeCompanyId, activeCompanyName } = await getActiveCompanyContext();
+  const { activeCompanyName } = await getActiveCompanyContext();
 
-  const { data, error } = await supabase
-    .from("payslips")
-    .select(
-      "id, period, original_filename, gross_pay, net_pay, status, uploaded_at, extracted_data, anomalies(count)"
-    )
-    .eq("company_id", activeCompanyId ?? "")
-    .is("deleted_at", null)
-    .order("uploaded_at", { ascending: false });
-
-  if (error) {
-    return NextResponse.json(
-      { error: "Impossible de récupérer les fiches de paie." },
-      { status: 500 }
-    );
-  }
-
-  const rows = (data as unknown as PayslipExportRow[] | null) ?? [];
+  // Version de démonstration : export des fiches d'exemple.
+  const rows: PayslipExportRow[] = demoPayslipsByUploadDate().map((p) => ({
+    id: p.id,
+    period: p.period,
+    original_filename: p.fileName,
+    gross_pay: p.grossPay,
+    net_pay: p.netPay,
+    status: "processed",
+    uploaded_at: p.uploadedAt,
+    extracted_data: p.extracted,
+    anomalies: [{ count: p.anomalies.length }],
+  }));
 
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "A&A Audit";

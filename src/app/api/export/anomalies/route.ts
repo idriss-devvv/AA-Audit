@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCompanyContext } from "@/lib/active-company";
-import { areResultsLocked } from "@/lib/account";
+import { demoPayslipsByUploadDate } from "@/lib/demo-data";
 import { CATEGORY_LABELS, categoryFromRuleId } from "@/lib/rules/anomaly-rules";
 import {
   autoSizeColumns,
@@ -45,32 +45,16 @@ export async function GET() {
     return NextResponse.json({ error: "Vous devez être connecté." }, { status: 401 });
   }
 
-  const { activeCompanyId, activeCompanyName } = await getActiveCompanyContext();
+  const { activeCompanyName } = await getActiveCompanyContext();
 
-  // Formule Free : le détail des anomalies est masqué, l'export aussi.
-  if (await areResultsLocked(activeCompanyId)) {
-    return NextResponse.json(
-      { error: "L'export des anomalies est disponible à partir de la formule Starter." },
-      { status: 403 }
-    );
-  }
-
-  const { data, error } = await supabase
-    .from("anomalies")
-    .select(
-      "id, rule_id, severity, message, detected_at, payslip:payslips!inner(period, original_filename, company_id)"
-    )
-    .eq("payslip.company_id", activeCompanyId ?? "")
-    .order("detected_at", { ascending: false });
-
-  if (error) {
-    return NextResponse.json(
-      { error: "Impossible de récupérer les anomalies." },
-      { status: 500 }
-    );
-  }
-
-  const rows = (data as unknown as AnomalyExportRow[] | null) ?? [];
+  // Version de démonstration : export des anomalies des fiches d'exemple.
+  const rows: AnomalyExportRow[] = demoPayslipsByUploadDate().flatMap((p) =>
+    p.anomalies.map((a) => ({
+      ...a,
+      detected_at: p.uploadedAt,
+      payslip: { period: p.period, original_filename: p.fileName },
+    }))
+  );
 
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "A&A Audit";

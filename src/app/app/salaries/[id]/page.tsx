@@ -4,6 +4,7 @@ import { employeeDisplayName } from "@/lib/payslips";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAccountContext } from "@/lib/account";
+import { DEMO_PAYSLIPS, demoEmployee, demoEmployeeName } from "@/lib/demo-data";
 
 export const dynamic = "force-dynamic";
 
@@ -37,22 +38,44 @@ function formatAmount(value: number | null) {
 
 /** Détail d'un salarié : ses fiches de paie et leurs anomalies, par période. */
 export default async function SalarieDetailPage({ params }: { params: { id: string } }) {
-  const account = await getAccountContext();
-  if (!account.canManageEmployees) redirect("/app/salaries");
+  let employee: EmployeeDetail | null;
+  let name: string;
+  const demo = demoEmployee(params.id);
+  if (demo) {
+    // Salarié d'exemple de la version de démonstration.
+    employee = {
+      id: demo.id,
+      first_name: demo.firstName,
+      last_name: demo.lastName,
+      payslips: DEMO_PAYSLIPS.filter((p) => p.employeeId === demo.id).map((p) => ({
+        id: p.id,
+        period: p.period,
+        gross_pay: p.grossPay,
+        net_pay: p.netPay,
+        status: "processed",
+        mime_type: "application/pdf",
+        anomalies: p.anomalies,
+      })),
+    };
+    name = demoEmployeeName(demo);
+  } else {
+    const account = await getAccountContext();
+    if (!account.canManageEmployees) redirect("/app/salaries");
 
-  const supabase = await createClient();
-  // RLS : le salarié n'est lisible que s'il appartient à une société accessible.
-  const { data } = await supabase
-    .from("employees")
-    .select("id, first_name, last_name, payslips(id, period, gross_pay, net_pay, status, mime_type, deleted_at, anomalies(severity))")
-    .eq("id", params.id)
-    .is("payslips.deleted_at", null)
-    .maybeSingle();
+    const supabase = await createClient();
+    // RLS : le salarié n'est lisible que s'il appartient à une société accessible.
+    const { data } = await supabase
+      .from("employees")
+      .select("id, first_name, last_name, payslips(id, period, gross_pay, net_pay, status, mime_type, deleted_at, anomalies(severity))")
+      .eq("id", params.id)
+      .is("payslips.deleted_at", null)
+      .maybeSingle();
 
-  const employee = data as unknown as EmployeeDetail | null;
-  if (!employee) notFound();
+    employee = data as unknown as EmployeeDetail | null;
+    if (!employee) notFound();
+    name = employeeDisplayName(employee);
+  }
 
-  const name = employeeDisplayName(employee);
   const payslips = [...employee.payslips].sort((a, b) => (b.period ?? "").localeCompare(a.period ?? ""));
   const totalAnomalies = payslips.reduce((sum, p) => sum + p.anomalies.length, 0);
   const critical = payslips.reduce((sum, p) => sum + p.anomalies.filter((a) => a.severity === "critical").length, 0);

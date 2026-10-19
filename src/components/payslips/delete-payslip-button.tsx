@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { isDemoId } from "@/lib/demo-data";
 
 /**
  * Suppression d'une fiche de paie, après confirmation. Le fichier et les
@@ -26,6 +27,10 @@ export function DeletePayslipButton({
   const [error, setError] = useState<string | null>(null);
 
   async function remove() {
+    if (isDemoId(payslipId)) {
+      setError("Les fiches d'exemple ne peuvent pas être supprimées.");
+      return;
+    }
     setPending(true);
     setError(null);
     const res = await fetch(`/api/payslips/${payslipId}`, { method: "DELETE" }).catch(() => null);
