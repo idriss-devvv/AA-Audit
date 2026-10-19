@@ -7,6 +7,7 @@ import {
   ANNUAL_MONTHS_BILLED,
   ENTERPRISE_QUOTE,
   enterpriseMonthlyPrice,
+  formatEuros,
   monthlyPrice,
   type Billing,
   type PlanDefinition,
@@ -14,7 +15,7 @@ import {
 
 type PricingPlan = PlanDefinition & { highlighted: boolean };
 
-const EURO = (value: number) => value.toLocaleString("fr-FR");
+const EURO = formatEuros;
 
 /** Position « 5000 et plus » du curseur, au-delà du maximum. */
 const SLIDER_OVER = ENTERPRISE_QUOTE.max + ENTERPRISE_QUOTE.step;
@@ -65,7 +66,7 @@ export function PricingSection({ plans }: { plans: PricingPlan[] }) {
                 )}
               </div>
               <p className={`relative mt-6 font-display text-6xl leading-none ${plan.highlighted ? "text-beige-50" : "text-ink-900"}`}>
-                {monthlyPrice(plan.price, billing)} €
+                {EURO(monthlyPrice(plan.price, billing))} €
                 <span className={`ml-1 font-sans text-sm font-medium ${plan.highlighted ? "text-blue-200" : "text-ink-500"}`}>
                   / mois
                 </span>

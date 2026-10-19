@@ -44,7 +44,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   starter: {
     id: "starter",
     label: "Starter",
-    price: 49,
+    price: 49.99,
     description: "Pour contrôler régulièrement les fiches d'une petite structure.",
     quota: 30,
     quotaPeriod: "month",
@@ -57,7 +57,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   pro: {
     id: "pro",
     label: "Pro",
-    price: 149,
+    price: 149.99,
     description: "Pour les PME qui suivent leurs salariés dans la durée.",
     quota: 150,
     quotaPeriod: "month",
@@ -70,7 +70,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
   entreprise: {
     id: "entreprise",
     label: "Cabinet",
-    price: 249,
+    price: 249.99,
     description: "Pour les cabinets et groupes qui gèrent plusieurs sociétés.",
     quota: 300,
     quotaPeriod: "month",
@@ -104,9 +104,15 @@ export const ANNUAL_MONTHS_BILLED = 10;
 
 export type Billing = "monthly" | "annual";
 
-/** Prix mensuel affiché : équivalent mensuel arrondi à l'euro en annuel. */
+/** Prix mensuel affiché : équivalent mensuel arrondi au centime en annuel. */
 export function monthlyPrice(price: number, billing: Billing): number {
-  return billing === "annual" ? Math.round((price * ANNUAL_MONTHS_BILLED) / 12) : price;
+  return billing === "annual" ? Math.round((price * ANNUAL_MONTHS_BILLED * 100) / 12) / 100 : price;
+}
+
+/** Montant en euros au format français : « 49,99 », « 1 000 ». */
+export function formatEuros(value: number): string {
+  const cents = !Number.isInteger(Math.round(value * 100) / 100);
+  return value.toLocaleString("fr-FR", { minimumFractionDigits: cents ? 2 : 0, maximumFractionDigits: 2 });
 }
 
 /**
@@ -114,7 +120,7 @@ export function monthlyPrice(price: number, billing: Billing): number {
  * la page d'accueil. Prix par fiche dégressif, appliqué par tranche.
  */
 export const ENTERPRISE_QUOTE = {
-  min: 300,
+  min: 500,
   max: 5000,
   step: 50,
   tiers: [
